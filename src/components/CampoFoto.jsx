@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import imageCompression from 'browser-image-compression';
 import { supabase } from '../lib/supabase';
 import ModalRitagliaFoto from './ModalRitagliaFoto';
-import { Camera, UploadCloud, Trash2, Loader2, Crop, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Camera, Image as ImageIcon, Trash2, Loader2, Crop } from 'lucide-react';
 
 export default function CampoFoto({
   fotoUrl,
@@ -14,16 +14,18 @@ export default function CampoFoto({
   const [progresso, setProgresso] = useState(0);
   const [errore, setErrore] = useState(null);
 
-  // Stato per la modale di ritaglio
+  // Modale di ritaglio
   const [cropperState, setCropperState] = useState({
     isOpen: false,
     imageSrc: null,
     isExistingUrl: false
   });
 
-  const inputRef = useRef(null);
+  // Due input distinti: uno per la galleria e uno per lo scatto da fotocamera
+  const galleryInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
-  // Selezione file dal dispositivo / fotocamera
+  // Lettura file selezionato
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -31,7 +33,6 @@ export default function CampoFoto({
     setErrore(null);
 
     try {
-      // Legge il file in formato Data URL o Object URL per il cropper
       const reader = new FileReader();
       reader.onload = () => {
         setCropperState({
@@ -45,13 +46,12 @@ export default function CampoFoto({
       console.error('Errore lettura file:', err);
       setErrore('Formato non supportato o file danneggiato. Prova con un\'altra immagine.');
     } finally {
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
+      if (galleryInputRef.current) galleryInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
     }
   };
 
-  // Modifica/Ritaglio di una foto già caricata in precedenza
+  // Modifica foto già esistente
   const handleModificaFotoEsistente = () => {
     if (!fotoUrl) return;
     setCropperState({
@@ -61,17 +61,16 @@ export default function CampoFoto({
     });
   };
 
-  // Callback di conferma dal cropper: comprime e carica su Supabase Storage
+  // Salvataggio ritaglio + compressione + upload su Supabase Storage
   const handleConfirmCrop = async (croppedBlob) => {
     setCropperState({ isOpen: false, imageSrc: null, isExistingUrl: false });
     setCaricamento(true);
     setProgresso(20);
 
     try {
-      // Compressione automatica del ritaglio lato client
       const compressionOptions = {
-        maxSizeMB: 0.8, // Max ~800 KB
-        maxWidthOrHeight: 1600, // Max 1600 px
+        maxSizeMB: 0.8,
+        maxWidthOrHeight: 1600,
         useWebWorker: true,
         fileType: 'image/jpeg',
         onProgress: (p) => {
@@ -82,11 +81,9 @@ export default function CampoFoto({
       const compressedFile = await imageCompression(croppedBlob, compressionOptions);
       setProgresso(70);
 
-      // Genera nome file univoco
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.jpg`;
       const filePath = `piante/${fileName}`;
 
-      // Upload su Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('foto-piante')
         .upload(filePath, compressedFile, {
@@ -99,12 +96,10 @@ export default function CampoFoto({
 
       setProgresso(90);
 
-      // Recupera URL pubblico
       const { data: { publicUrl } } = supabase.storage
         .from('foto-piante')
         .getPublicUrl(filePath);
 
-      // Rimuovi la vecchia foto se presente per evitare accumulo
       if (fotoPath) {
         try {
           await supabase.storage.from('foto-piante').remove([fotoPath]);
@@ -116,15 +111,15 @@ export default function CampoFoto({
       setProgresso(100);
       onChangeFoto(publicUrl, filePath);
     } catch (err) {
-      console.error('Errore durante elaborazione o upload foto:', err);
-      setErrore('Impossibile salvare la foto ritagliata. Riprova.');
+      console.error('Errore durante salvataggio foto:', err);
+      setErrore('Impossibile salvare l\'immagine. Riprova.');
     } finally {
       setCaricamento(false);
       setProgresso(0);
     }
   };
 
-  // Rimozione foto
+  // Eliminazione foto
   const handleEliminaFoto = async () => {
     if (!window.confirm('Vuoi rimuovere questa foto?')) return;
 
@@ -146,50 +141,47 @@ export default function CampoFoto({
           Foto della pianta
         </label>
         <span className="text-[11px] text-stone-500 font-medium">
-          Accetta JPG, PNG, WEBP, HEIC/iPhone, AVIF
+          Accetta Galleria, iPhone .HEIC, JPG, PNG
         </span>
       </div>
 
-      {/* Box Anteprima o Upload */}
-      <div className="relative border-2 border-dashed border-stone-300 rounded-3xl p-4 bg-stone-50/70 hover:bg-stone-50 transition-colors overflow-hidden">
+      {/* Contenitore Foto */}
+      <div className="relative border-2 border-dashed border-stone-300 rounded-2xl p-4 bg-stone-50/80 overflow-hidden">
         {fotoUrl ? (
-          <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-2xl overflow-hidden bg-stone-200 border border-stone-200 shadow-sm group">
+          <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-xl overflow-hidden bg-stone-200 border border-stone-200 shadow-sm group">
             <img
               src={fotoUrl}
               alt="Anteprima foto pianta"
               className="w-full h-full object-cover"
             />
 
-            {/* Barra Azioni Sovrapposta (Touch-friendly) */}
-            <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-[2px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-2.5 p-4">
-              {/* Ritaglia / Modifica Dimensione */}
+            {/* Barra Azioni Touch */}
+            <div className="absolute inset-0 bg-stone-950/70 backdrop-blur-[2px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex flex-col sm:flex-row items-center justify-center gap-2 p-4">
               <button
                 type="button"
                 onClick={handleModificaFotoEsistente}
                 disabled={caricamento}
-                className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3.5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
                 <Crop className="w-4 h-4" />
                 <span>Ritaglia / Ridimensiona</span>
               </button>
 
-              {/* Cambia Foto / Scatta */}
               <button
                 type="button"
-                onClick={() => inputRef.current?.click()}
+                onClick={() => galleryInputRef.current?.click()}
                 disabled={caricamento}
-                className="px-3.5 py-2.5 bg-white text-stone-800 hover:bg-stone-100 rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3.5 py-2.5 bg-white text-stone-800 hover:bg-stone-100 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
-                <Camera className="w-4 h-4" />
-                <span>Cambia Foto</span>
+                <ImageIcon className="w-4 h-4" />
+                <span>Scegli da Galleria</span>
               </button>
 
-              {/* Elimina */}
               <button
                 type="button"
                 onClick={handleEliminaFoto}
                 disabled={caricamento}
-                className="px-3 py-2.5 bg-clay-700 hover:bg-clay-800 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Rimuovi</span>
@@ -197,44 +189,74 @@ export default function CampoFoto({
             </div>
           </div>
         ) : (
-          <div
-            onClick={() => inputRef.current?.click()}
-            className="cursor-pointer py-10 flex flex-col items-center justify-center text-center p-4 touch-target"
-          >
-            <div className="w-16 h-16 rounded-2xl bg-moss-100 text-moss-800 flex items-center justify-center mb-3 shadow-inner">
-              <Camera className="w-8 h-8" />
+          <div className="py-6 sm:py-8 flex flex-col items-center justify-center text-center p-2">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
+              <ImageIcon className="w-7 h-7" />
             </div>
-            <p className="text-sm font-bold text-stone-900">
-              Scatta una foto o caricala dalla galleria
+
+            <p className="text-sm font-bold text-stone-900 mb-1">
+              Aggiungi foto della pianta
             </p>
-            <p className="text-xs text-stone-500 mt-1 max-w-sm leading-relaxed">
-              Supporta tutti i formati (inclusi scatti da iPhone .HEIC). Potrai ritagliarla e regolarne le dimensioni prima di salvare.
+            <p className="text-xs text-stone-500 mb-5 max-w-xs leading-relaxed">
+              Scegli una foto già presente nel telefono oppure scattala adesso in serra.
             </p>
+
+            {/* Due pulsanti distinti: Galleria o Fotocamera */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full max-w-xs">
+              <button
+                type="button"
+                onClick={() => galleryInputRef.current?.click()}
+                className="w-full px-4 py-3 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white rounded-xl text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-2 touch-target"
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>Apri Galleria Foto</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="w-full px-4 py-3 bg-stone-200 hover:bg-stone-300 active:scale-95 text-stone-800 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 touch-target"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Scatta Fotocamera</span>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Input file che accetta tutti i formati immagine */}
+        {/* Input file 1: GALLERIA FOTO (senza capture attribute -> apre la libreria foto) */}
         <input
-          ref={inputRef}
+          ref={galleryInputRef}
           type="file"
           accept="image/*,.heic,.heif,.jpg,.jpeg,.png,.webp,.avif,.bmp,.gif"
+          onChange={handleFileChange}
+          disabled={caricamento}
+          className="hidden"
+          id="campo-foto-galleria"
+        />
+
+        {/* Input file 2: FOTOCAMERA (con capture="environment" -> apre la fotocamera diretta) */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
           capture="environment"
           onChange={handleFileChange}
           disabled={caricamento}
           className="hidden"
-          id="campo-foto-input"
+          id="campo-foto-fotocamera"
         />
 
-        {/* Barra di Avanzamento durante il caricamento */}
+        {/* Avanzamento */}
         {caricamento && (
-          <div className="absolute inset-0 bg-white/95 rounded-3xl flex flex-col items-center justify-center p-6 z-20">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-700 mb-3" />
+          <div className="absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center p-6 z-20">
+            <Loader2 className="w-8 h-8 animate-spin text-emerald-800 mb-3" />
             <p className="text-xs font-bold text-stone-900 mb-2">
               Salvataggio ed elaborazione immagine... ({progresso}%)
             </p>
-            <div className="w-full max-w-xs bg-stone-200 rounded-full h-2.5 overflow-hidden">
+            <div className="w-full max-w-xs bg-stone-200 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-emerald-600 h-full transition-all duration-200 ease-out"
+                className="bg-emerald-700 h-full transition-all duration-200 ease-out"
                 style={{ width: `${progresso}%` }}
               />
             </div>
@@ -243,12 +265,12 @@ export default function CampoFoto({
       </div>
 
       {errore && (
-        <p className="text-xs font-medium text-clay-700 bg-clay-50 p-3 rounded-xl border border-clay-200">
+        <p className="text-xs font-medium text-red-700 bg-red-50 p-3 rounded-xl border border-red-200">
           {errore}
         </p>
       )}
 
-      {/* Modale di Ritaglio / Ridimensionamento */}
+      {/* Modale di Ritaglio */}
       {cropperState.isOpen && (
         <ModalRitagliaFoto
           imageSrc={cropperState.imageSrc}

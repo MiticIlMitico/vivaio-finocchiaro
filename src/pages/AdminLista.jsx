@@ -10,12 +10,7 @@ import {
   Trash2, 
   LogOut, 
   Sprout, 
-  RefreshCw, 
-  AlertCircle,
-  Package,
-  Layers,
-  CheckCircle,
-  X
+  AlertCircle
 } from 'lucide-react';
 import Toast from '../components/Toast';
 
@@ -28,7 +23,7 @@ export default function AdminLista() {
 
   const navigate = useNavigate();
 
-  // Caricamento completo di tutte le piante (visibili e nascoste) per utenti autenticati
+  // Caricamento completo delle piante
   const caricaPiante = async () => {
     setLoading(true);
     try {
@@ -65,11 +60,11 @@ export default function AdminLista() {
     }
   };
 
-  // Toggle visibilità rapido (Occhio) con aggiornamento OTTIMISTICO e rollback
+  // Toggle visibilità rapido (Occhio)
   const handleToggleVisibilita = async (piantaTarget) => {
     const nuovoStato = !piantaTarget.visibile;
     
-    // Aggiornamento ottimistico locale immediato
+    // Aggiornamento ottimistico
     setPiante((prev) =>
       prev.map((p) => (p.id === piantaTarget.id ? { ...p, visibile: nuovoStato } : p))
     );
@@ -83,23 +78,23 @@ export default function AdminLista() {
       if (error) throw error;
 
       setToast({
-        message: `${piantaTarget.nome} ${nuovoStato ? 'ora è visibile nel catalogo' : 'è stata nascosta'}`,
+        message: `${piantaTarget.nome} ${nuovoStato ? 'ora è visibile' : 'è stata nascosta'}`,
         type: 'success'
       });
     } catch (err) {
       console.error('Errore aggiornamento visibilità:', err);
-      // Rollback stato locale
+      // Rollback
       setPiante((prev) =>
         prev.map((p) => (p.id === piantaTarget.id ? { ...p, visibile: piantaTarget.visibile } : p))
       );
       setToast({
-        message: 'Impossibile aggiornare la visibilità. Riprova.',
+        message: 'Impossibile aggiornare la visibilità.',
         type: 'error'
       });
     }
   };
 
-  // Conferma ed eliminazione definitiva pianta + foto da Storage
+  // Eliminazione
   const eseguiEliminazione = async () => {
     const { pianta } = eliminaModal;
     if (!pianta) return;
@@ -107,7 +102,6 @@ export default function AdminLista() {
     setEliminaModal((prev) => ({ ...prev, loading: true }));
 
     try {
-      // 1. Elimina riga dal database
       const { error: dbError } = await supabase
         .from('piante')
         .delete()
@@ -115,7 +109,6 @@ export default function AdminLista() {
 
       if (dbError) throw dbError;
 
-      // 2. Se ha una foto nel bucket Storage, rimuovila
       if (pianta.foto_path) {
         try {
           await supabase.storage.from('foto-piante').remove([pianta.foto_path]);
@@ -124,24 +117,23 @@ export default function AdminLista() {
         }
       }
 
-      // 3. Rimuovi dalla lista locale
       setPiante((prev) => prev.filter((p) => p.id !== pianta.id));
       setToast({
-        message: `"${pianta.nome}" eliminata con successo`,
+        message: `"${pianta.nome}" eliminata.`,
         type: 'success'
       });
       setEliminaModal({ isOpen: false, pianta: null, loading: false });
     } catch (err) {
-      console.error('Errore eliminazione pianta:', err);
+      console.error('Errore eliminazione:', err);
       setToast({
-        message: 'Impossibile eliminare la pianta. Riprova.',
+        message: 'Impossibile eliminare la pianta.',
         type: 'error'
       });
       setEliminaModal((prev) => ({ ...prev, loading: false }));
     }
   };
 
-  // Statistiche riepilogative
+  // Statistiche
   const stats = useMemo(() => {
     const totale = piante.length;
     const visibili = piante.filter((p) => p.visibile).length;
@@ -149,7 +141,7 @@ export default function AdminLista() {
     return { totale, visibili, nascoste };
   }, [piante]);
 
-  // Piante filtrate dalla ricerca
+  // Filtro ricerca
   const pianteFiltrate = useMemo(() => {
     if (!ricerca.trim()) return piante;
     const q = ricerca.toLowerCase();
@@ -161,98 +153,100 @@ export default function AdminLista() {
   }, [piante, ricerca]);
 
   return (
-    <div className="min-h-screen bg-stone-100 pb-28 sm:pb-16">
-      {/* Header Admin */}
+    <div className="min-h-screen bg-stone-100 pb-24 sm:pb-16 text-stone-800">
+      {/* Header Gestione pulito per Smartphone */}
       <div className="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-moss-700 text-white flex items-center justify-center">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+          {/* Titolo e Stemma */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-800 text-white flex items-center justify-center flex-shrink-0">
               <Sprout className="w-4 h-4" />
             </div>
-            <div>
-              <h1 className="font-display font-bold text-base sm:text-lg text-stone-900 leading-tight">
-                Gestione Catalogo
+            <div className="min-w-0">
+              <h1 className="font-bold text-base sm:text-lg text-stone-900 leading-tight truncate">
+                Gestione Vivaio
               </h1>
-              <p className="text-[10px] text-stone-500 hidden sm:block">
-                Pannello vivaio mobile-first
+              <p className="text-[10px] text-stone-500 font-medium leading-none">
+                Pannello per smartphone
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Azioni Header */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               to="/admin/nuova"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-moss-700 hover:bg-moss-800 text-white text-xs font-semibold rounded-xl transition-colors touch-target"
+              className="inline-flex items-center gap-1 px-3 py-2 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white text-xs font-semibold rounded-xl transition-all shadow-sm touch-target"
             >
               <Plus className="w-4 h-4" />
-              <span>Nuova Pianta</span>
+              <span>Nuova</span>
             </Link>
 
             <button
               onClick={handleLogout}
-              className="p-2 sm:px-3 sm:py-2 text-stone-600 hover:text-clay-700 hover:bg-stone-100 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 touch-target"
-              title="Disconnetti"
+              className="p-2 text-stone-600 hover:text-red-700 hover:bg-stone-100 rounded-xl transition-colors touch-target"
+              title="Esci"
+              aria-label="Esci dall'account"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Esci</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
-        {/* Card Riepilogo Statistiche */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200 shadow-sm">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-stone-400 block">
+      <div className="max-w-4xl mx-auto px-4 pt-5">
+        {/* Statistiche leggere */}
+        <div className="grid grid-cols-3 gap-2.5 mb-5">
+          <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-sm text-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-0.5">
               Totali
             </span>
-            <span className="text-xl sm:text-2xl font-display font-bold text-stone-900">
+            <span className="text-xl font-bold text-stone-900">
               {stats.totale}
             </span>
           </div>
 
-          <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200 shadow-sm">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-moss-700 block">
-              Pubblicate
+          <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-sm text-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block mb-0.5">
+              Visibili
             </span>
-            <span className="text-xl sm:text-2xl font-display font-bold text-moss-700">
+            <span className="text-xl font-bold text-emerald-800">
               {stats.visibili}
             </span>
           </div>
 
-          <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200 shadow-sm">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-stone-500 block">
+          <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-sm text-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block mb-0.5">
               Nascoste
             </span>
-            <span className="text-xl sm:text-2xl font-display font-bold text-stone-500">
+            <span className="text-xl font-bold text-stone-500">
               {stats.nascoste}
             </span>
           </div>
         </div>
 
-        {/* Barra di Ricerca */}
-        <div className="relative mb-6">
+        {/* Input Ricerca */}
+        <div className="relative mb-5">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={ricerca}
             onChange={(e) => setRicerca(e.target.value)}
-            placeholder="Cerca pianta nel gestionale..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-moss-600 shadow-sm"
+            placeholder="Cerca pianta per nome o categoria..."
+            className="w-full pl-10 pr-4 py-3 bg-white border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-800 shadow-sm"
           />
         </div>
 
-        {/* Lista Piante Mobile-First */}
+        {/* Elenco Piante */}
         {loading ? (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="bg-white rounded-xl p-4 border border-stone-200 animate-pulse h-20"></div>
             ))}
           </div>
         ) : pianteFiltrate.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 text-center text-stone-500">
-            <p className="text-sm font-medium">Nessuna pianta trovata.</p>
+          <div className="bg-white rounded-xl border border-stone-200 p-8 text-center text-stone-500">
+            <p className="text-sm font-medium">Nessuna pianta trovata nel gestionale.</p>
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -262,12 +256,12 @@ export default function AdminLista() {
                 <div
                   key={pianta.id}
                   className={`bg-white rounded-xl border transition-all p-3 sm:p-4 flex items-center justify-between gap-3 shadow-sm ${
-                    isVisibile ? 'border-stone-200/90' : 'border-stone-200/60 opacity-60 bg-stone-50/50'
+                    isVisibile ? 'border-stone-200' : 'border-stone-200 opacity-60 bg-stone-50'
                   }`}
                 >
-                  {/* Info Principale + Miniatura */}
+                  {/* Foto + Dati Pianta */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-stone-100 flex-shrink-0 overflow-hidden border border-stone-200">
+                    <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-lg bg-stone-100 flex-shrink-0 overflow-hidden border border-stone-200">
                       {pianta.foto_url ? (
                         <img
                           src={pianta.foto_url}
@@ -277,68 +271,71 @@ export default function AdminLista() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-stone-300">
-                          <Sprout className="w-6 h-6" />
+                          <Sprout className="w-5 h-5" />
                         </div>
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-display font-semibold text-sm sm:text-base text-stone-900 truncate">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h3 className="font-bold text-sm sm:text-base text-stone-900 leading-snug">
                           {pianta.nome}
                         </h3>
                         {!isVisibile && (
-                          <span className="text-[10px] bg-stone-200 text-stone-600 px-1.5 py-0.5 rounded font-medium flex-shrink-0">
+                          <span className="text-[10px] bg-stone-200 text-stone-700 px-1.5 py-0.2 rounded font-medium">
                             Nascosta
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-stone-500 mt-0.5">
-                        {pianta.vaso_cm && <span>Vaso Ø {pianta.vaso_cm} cm</span>}
+                      {pianta.nome_comune && (
+                        <p className="text-xs text-stone-500 truncate">
+                          {pianta.nome_comune}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-stone-600 mt-1">
+                        {pianta.vaso_cm && <span>Ø {pianta.vaso_cm} cm</span>}
                         {pianta.disponibilita_carrelli && (
-                          <span className="text-moss-800 font-medium">
+                          <span className="text-emerald-800 font-semibold">
                             Disp: {pianta.disponibilita_carrelli}
                           </span>
                         )}
-                        <span className="font-bold text-stone-800">
+                        <span className="font-bold text-stone-900">
                           {pianta.prezzo ? `€ ${Number(pianta.prezzo).toFixed(2)}` : '-'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* 3 Azioni con touch-target >= 44x44 */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {/* Occhio: Toggle Visibilità */}
+                  {/* Pulsanti Azione (Occhio, Matita, Cestino) */}
+                  <div className="flex items-center gap-0.5 flex-shrink-0">
                     <button
                       onClick={() => handleToggleVisibilita(pianta)}
-                      className={`touch-target p-2.5 rounded-xl transition-colors ${
+                      className={`touch-target p-2 rounded-lg transition-colors ${
                         isVisibile
-                          ? 'text-moss-700 hover:bg-moss-50'
+                          ? 'text-emerald-800 hover:bg-emerald-50'
                           : 'text-stone-400 hover:bg-stone-100'
                       }`}
-                      title={isVisibile ? 'Nascondi pianta dal catalogo pubblico' : 'Rendi pianta visibile nel catalogo'}
-                      aria-label={isVisibile ? `Nascondi ${pianta.nome}` : `Pubblica ${pianta.nome}`}
+                      title={isVisibile ? 'Nascondi dal catalogo' : 'Rendi visibile'}
+                      aria-label={`Toggle visibilità ${pianta.nome}`}
                     >
                       {isVisibile ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                     </button>
 
-                    {/* Matita: Modifica */}
                     <Link
                       to={`/admin/${pianta.id}`}
-                      className="touch-target p-2.5 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors"
-                      title="Modifica pianta"
+                      className="touch-target p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+                      title="Modifica"
                       aria-label={`Modifica ${pianta.nome}`}
                     >
                       <Pencil className="w-5 h-5" />
                     </Link>
 
-                    {/* Cestino: Elimina con conferma */}
                     <button
                       onClick={() => setEliminaModal({ isOpen: true, pianta, loading: false })}
-                      className="touch-target p-2.5 rounded-xl text-stone-400 hover:text-clay-700 hover:bg-clay-50 transition-colors"
-                      title="Elimina pianta"
+                      className="touch-target p-2 text-stone-400 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Elimina"
                       aria-label={`Elimina ${pianta.nome}`}
                     >
                       <Trash2 className="w-5 h-5" />
@@ -351,34 +348,23 @@ export default function AdminLista() {
         )}
       </div>
 
-      {/* Pulsante Floating Mobile "Nuova Pianta" (Sempre raggiungibile col pollice in basso a destra) */}
-      <div className="fixed bottom-6 right-6 sm:hidden z-40">
-        <Link
-          to="/admin/nuova"
-          className="w-14 h-14 bg-moss-700 text-white rounded-full shadow-xl flex items-center justify-center hover:bg-moss-800 active:scale-95 transition-all touch-target"
-          aria-label="Crea nuova pianta"
-        >
-          <Plus className="w-7 h-7" />
-        </Link>
-      </div>
-
-      {/* Modale di Conferma Eliminazione Esplicita */}
+      {/* Modale Eliminazione */}
       {eliminaModal.isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-stone-200">
-            <h3 className="font-display font-bold text-lg text-stone-900 mb-2">
-              Vuoi eliminare {eliminaModal.pianta?.nome}?
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-5 max-w-xs w-full shadow-xl border border-stone-200">
+            <h3 className="font-bold text-base text-stone-900 mb-1.5">
+              Eliminare {eliminaModal.pianta?.nome}?
             </h3>
-            <p className="text-xs text-stone-600 mb-6 leading-relaxed">
-              L'operazione non si annulla. La pianta e la relativa foto verranno cancellate definitivamente dal database e dallo spazio di archiviazione.
+            <p className="text-xs text-stone-600 mb-5 leading-relaxed">
+              La pianta verrà rimossa definitivamente dal database e dallo spazio foto.
             </p>
 
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setEliminaModal({ isOpen: false, pianta: null, loading: false })}
                 disabled={eliminaModal.loading}
-                className="px-4 py-2.5 text-xs font-semibold text-stone-600 hover:bg-stone-100 rounded-xl transition-colors touch-target"
+                className="px-3.5 py-2 text-xs font-semibold text-stone-600 hover:bg-stone-100 rounded-xl transition-colors touch-target"
               >
                 Annulla
               </button>
@@ -386,9 +372,9 @@ export default function AdminLista() {
                 type="button"
                 onClick={eseguiEliminazione}
                 disabled={eliminaModal.loading}
-                className="px-4 py-2.5 text-xs font-semibold bg-clay-700 hover:bg-clay-800 text-white rounded-xl transition-colors shadow-sm touch-target"
+                className="px-4 py-2 text-xs font-semibold bg-red-700 hover:bg-red-800 text-white rounded-xl transition-colors shadow-sm touch-target"
               >
-                {eliminaModal.loading ? 'Eliminazione...' : 'Sì, Elimina'}
+                {eliminaModal.loading ? 'Eliminazione...' : 'Elimina'}
               </button>
             </div>
           </div>
