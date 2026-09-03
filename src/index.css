@@ -13,6 +13,15 @@
   }
 }
 
+/* Scrollbar nascosta ma scrollabile per i chip su mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Accessibilità e supporto animazioni ridotte */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
