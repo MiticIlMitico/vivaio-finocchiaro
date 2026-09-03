@@ -1,31 +1,33 @@
 import React from 'react';
-import { MessageCircle, Sprout, ArrowUpRight, Truck, Package } from 'lucide-react';
+import { MessageCircle, Sprout, ArrowUpRight } from 'lucide-react';
 import { AZIENDA } from '../content/azienda';
 
 export default function CardPianta({ pianta, onOpenLightbox, onOpenDetail }) {
   const {
     nome,
     nome_comune,
+    categoria,
     vaso_cm,
     pz_carrello,
+    pz_pianale,
     disponibilita_carrelli,
     prezzo,
     foto_url
   } = pianta;
 
-  // Link WhatsApp diretto con messaggio semplice
+  // Link WhatsApp con messaggio chiaro
   const whatsappNumber = AZIENDA.contatti.whatsapp.replace(/\D/g, '');
   const testoMessaggio = encodeURIComponent(
-    `Salve, vorrei ordinare o avere informazioni per: ${nome} (Vaso Ø ${vaso_cm || '-'} cm)`
+    `Salve Vivaio Finocchiaro, vorrei ordinare o richiedere disponibilità per: ${nome}${nome_comune ? ` (${nome_comune})` : ''} - Vaso Ø ${vaso_cm || '-'} cm`
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${testoMessaggio}`;
 
   return (
     <article 
       onClick={() => onOpenDetail(pianta)}
-      className="group bg-white rounded-3xl border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer"
+      className="group bg-white rounded-2xl border border-stone-200/90 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full cursor-pointer overflow-hidden"
     >
-      {/* Immagine Pianta Grande */}
+      {/* Immagine Pianta pulita, senza elementi che la coprono */}
       <div className="relative aspect-[4/3] w-full bg-stone-100 overflow-hidden">
         {foto_url ? (
           <img
@@ -35,57 +37,68 @@ export default function CardPianta({ pianta, onOpenLightbox, onOpenDetail }) {
             className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-stone-300 bg-stone-100">
-            <Sprout className="w-14 h-14 mb-1" />
-          </div>
-        )}
-
-        {/* Badge Vaso Grande in alto a sinistra */}
-        {vaso_cm && (
-          <div className="absolute top-3.5 left-3.5 bg-stone-900/90 backdrop-blur-md text-white font-bold text-sm px-3.5 py-1.5 rounded-xl shadow-md border border-white/10">
-            Vaso Ø {vaso_cm} cm
-          </div>
-        )}
-
-        {/* Disponibilità Carrelli in basso */}
-        {disponibilita_carrelli && (
-          <div className="absolute bottom-3.5 left-3.5 bg-emerald-700/95 backdrop-blur-md text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-md flex items-center gap-1.5">
-            <Truck className="w-3.5 h-3.5 text-emerald-200" />
-            <span>{disponibilita_carrelli}</span>
+          <div className="w-full h-full flex flex-col items-center justify-center text-stone-300">
+            <Sprout className="w-12 h-12 stroke-[1.5]" />
           </div>
         )}
       </div>
 
-      {/* Contenuto Essenziale con Testi Grandi */}
-      <div className="p-5 flex-1 flex flex-col justify-between">
+      {/* Contenuto sotto la foto con gerarchia chiara e naturale */}
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Nome Pianta Grande */}
-          <div className="mb-3">
-            <h3 className="font-display font-bold text-xl sm:text-2xl text-stone-900 leading-snug group-hover:text-emerald-800 transition-colors">
-              {nome}
-            </h3>
-            {nome_comune && (
-              <p className="text-stone-500 text-sm font-medium mt-0.5">
-                {nome_comune}
-              </p>
+          {/* Categoria discreta */}
+          {categoria && (
+            <span className="text-[11px] font-medium text-emerald-800 tracking-wide uppercase block mb-1">
+              {categoria}
+            </span>
+          )}
+
+          {/* Nome botanico e comune */}
+          <h3 className="font-semibold text-lg sm:text-xl text-stone-900 leading-snug group-hover:text-emerald-800 transition-colors">
+            {nome}
+          </h3>
+          {nome_comune && (
+            <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+              {nome_comune}
+            </p>
+          )}
+
+          {/* Specifiche tecniche ordinate sotto il titolo */}
+          <div className="mt-3.5 pt-3 border-t border-stone-100 space-y-1.5 text-xs text-stone-600">
+            <div className="flex items-center justify-between">
+              <span className="text-stone-400">Diametro vaso</span>
+              <span className="font-semibold text-stone-800">
+                {vaso_cm ? `Ø ${vaso_cm} cm` : '-'}
+              </span>
+            </div>
+
+            {pz_carrello && (
+              <div className="flex items-center justify-between">
+                <span className="text-stone-400">Pezzi per carrello</span>
+                <span className="font-semibold text-stone-800">{pz_carrello} pz</span>
+              </div>
+            )}
+
+            {disponibilita_carrelli && (
+              <div className="flex items-center justify-between">
+                <span className="text-stone-400">Disponibilità</span>
+                <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  {disponibilita_carrelli}
+                </span>
+              </div>
             )}
           </div>
-
-          {/* Dati Carrello sintetici e grandi */}
-          {pz_carrello && (
-            <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-800 text-xs font-semibold px-3 py-1.5 rounded-xl mb-4">
-              <Package className="w-4 h-4 text-emerald-700" />
-              <span>{pz_carrello} pezzi / carrello</span>
-            </div>
-          )}
         </div>
 
-        {/* Prezzo Grande e Pulsante Diretto WhatsApp */}
-        <div className="pt-3 border-t border-stone-100 flex items-center justify-between gap-3">
+        {/* Prezzo e Tasto Ordina */}
+        <div className="mt-4 pt-3.5 border-t border-stone-100 flex items-center justify-between gap-3">
           <div>
-            <div className="text-2xl sm:text-3xl font-display font-extrabold text-stone-900">
+            <span className="text-[10px] uppercase font-semibold text-stone-400 block leading-none mb-1">
+              Prezzo ingrosso
+            </span>
+            <span className="text-xl sm:text-2xl font-bold text-stone-900 leading-none">
               {prezzo ? `€ ${Number(prezzo).toFixed(2)}` : 'Su richiesta'}
-            </div>
+            </span>
           </div>
 
           <a
@@ -93,10 +106,10 @@ export default function CardPianta({ pianta, onOpenLightbox, onOpenDetail }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-950/20 transition-all touch-target"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white rounded-xl text-xs font-semibold shadow-sm transition-all touch-target"
             aria-label={`Ordina ${nome} su WhatsApp`}
           >
-            <MessageCircle className="w-4 h-4 fill-white/20" />
+            <MessageCircle className="w-3.5 h-3.5" />
             <span>Ordina</span>
           </a>
         </div>
