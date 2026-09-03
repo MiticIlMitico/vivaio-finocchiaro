@@ -10,6 +10,9 @@ export default function Navbar() {
 
   const whatsappNumber = AZIENDA.contatti.whatsapp.replace(/\D/g, '');
 
+  // Sulle rotte admin non mostrare la navbar pubblica (l'area admin ha la sua barra dedicata)
+  if (isAdmin) return null;
+
   return (
     <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-xl border-b border-white/10 text-white transition-all">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
