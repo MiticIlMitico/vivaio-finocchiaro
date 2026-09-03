@@ -10,10 +10,8 @@ import {
   MessageCircle, 
   Phone, 
   MapPin, 
-  Mail, 
-  RefreshCw, 
   AlertCircle,
-  Clock
+  ChevronDown
 } from 'lucide-react';
 
 export default function Home() {
@@ -93,76 +91,115 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-stone-800">
-      {/* 1. HERO ACCOGLIENTE E NATURALE (Non AI-based) */}
-      <section className="pt-10 pb-12 sm:pt-16 sm:pb-16 px-4 sm:px-6 max-w-4xl mx-auto text-center">
-        <span className="text-xs font-semibold uppercase tracking-widest text-emerald-800 block mb-2">
-          Listino all'ingrosso
-        </span>
-        <h1 className="font-display text-3xl sm:text-5xl font-bold text-stone-900 tracking-tight leading-tight mb-3">
-          {AZIENDA.nome}
-        </h1>
-        <p className="text-stone-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-          Produzione e fornitura professionale di piante per rivenditori, garden center e paesaggisti.
-        </p>
+      {/* 1. SEZIONE HERO A SCHERMO INTERO (100vh da telefono con foto di sfondo suggestiva) */}
+      <section className="relative min-h-[calc(100svh-4rem)] sm:min-h-[90vh] flex flex-col justify-between items-center text-white px-5 py-12 sm:py-20 overflow-hidden">
+        {/* Immagine di sfondo ad alta risoluzione (Serra / Vivaio) */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=2000&q=85"
+            alt="Serra Vivaio Finocchiaro"
+            className="w-full h-full object-cover"
+          />
+          {/* Gradiente elegante per garantire leggibilità assoluta ai testi */}
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/65 to-stone-900/50" />
+        </div>
 
-        {/* Pulsante rapido WhatsApp discreto */}
-        <div className="mt-5 flex items-center justify-center gap-3">
+        {/* Spazio superiore per centratura verticale */}
+        <div className="w-full"></div>
+
+        {/* Contenuto Centrale della Hero */}
+        <div className="relative z-10 max-w-2xl mx-auto text-center py-6">
+          <span className="inline-block px-3.5 py-1 rounded-full bg-emerald-900/70 border border-emerald-500/30 text-emerald-200 text-xs font-semibold tracking-wider uppercase mb-4 backdrop-blur-md">
+            Catalogo & Listino Professionale
+          </span>
+
+          <h1 className="font-display text-4xl sm:text-6xl font-bold tracking-tight leading-[1.15] mb-4 text-white">
+            {AZIENDA.nome}
+          </h1>
+
+          <p className="text-stone-200 text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-8 font-normal">
+            Forniture di piante all'ingrosso per garden center, rivenditori e professionisti del verde.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
+            <a
+              href="#ricerca"
+              className="w-full sm:w-auto px-6 py-3.5 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-semibold text-sm rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 touch-target"
+            >
+              <span>Esplora il Catalogo</span>
+              <ChevronDown className="w-4 h-4" />
+            </a>
+
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Salve Vivaio Finocchiaro, vorrei richiedere informazioni sulle piante.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-6 py-3.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white font-semibold text-sm rounded-xl transition-all border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 touch-target"
+            >
+              <MessageCircle className="w-4 h-4 fill-white/20" />
+              <span>Contatta su WhatsApp</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Indicatore di scorrimento in fondo alla prima schermata */}
+        <div className="relative z-10 text-center pb-2 animate-bounce">
           <a
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Salve Vivaio Finocchiaro, vorrei richiedere informazioni.')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full text-xs font-medium transition-colors shadow-sm touch-target"
+            href="#ricerca"
+            className="text-stone-300 hover:text-white text-xs font-medium flex flex-col items-center gap-1 transition-colors"
+            aria-label="Scorri per cercare"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>Contattaci su WhatsApp</span>
+            <span>Scorri per cercare</span>
+            <ChevronDown className="w-4 h-4" />
           </a>
         </div>
       </section>
 
-      {/* 2. SEZIONE RICERCA INTERATTIVA: "Hai una pianta in mente?" */}
-      <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 mb-8">
-        <div className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 shadow-sm">
-          <div className="text-center sm:text-left mb-3">
-            <h2 className="text-base sm:text-lg font-semibold text-stone-900">
-              Hai una pianta in mente?
-            </h2>
-            <p className="text-xs text-stone-500 mt-0.5">
-              Cercala per nome botanico o comune, oppure filtra per categoria e vaso.
-            </p>
-          </div>
+      {/* 2. SECONDA SEZIONE: "HAI UNA PIANTA IN MENTE?" (Ben spaziata e pulita) */}
+      <section id="ricerca" className="py-14 sm:py-20 px-4 sm:px-6 max-w-3xl mx-auto w-full">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight mb-2">
+            Hai una pianta in mente?
+          </h2>
+          <p className="text-stone-500 text-sm sm:text-base max-w-md mx-auto">
+            Cercala per nome botanico o comune, oppure filtra rapidamente per categoria e vaso.
+          </p>
+        </div>
 
-          {/* Campo di Ricerca a Pillola Pulito */}
-          <div className="relative mb-4">
-            <Search className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+        {/* Box di Ricerca Elegante */}
+        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 space-y-4">
+          {/* Barra Input */}
+          <div className="relative">
+            <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={ricerca}
               onChange={(e) => setRicerca(e.target.value)}
-              placeholder="Es. Olivo, Limone, Crassula, Strelitzia..."
-              className="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-800 focus:bg-white transition-all"
+              placeholder="Es. Olivo, Limone, Crassula, Sansevieria..."
+              className="w-full pl-11 pr-10 py-3.5 bg-stone-50 border border-stone-200 rounded-xl text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-800 focus:bg-white transition-all"
             />
             {ricerca && (
               <button
                 onClick={() => setRicerca('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-700 p-1 font-medium"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-700 p-1 font-semibold"
               >
                 Azzera
               </button>
             )}
           </div>
 
-          {/* Filtro Categorie Pulito */}
+          {/* Filtro Categorie */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <button
               type="button"
               onClick={() => setCategoriaAttiva('tutte')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
                 categoriaAttiva === 'tutte'
                   ? 'bg-emerald-800 text-white'
                   : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
               }`}
             >
-              Tutte le piante ({piante.length})
+              Tutte ({piante.length})
             </button>
 
             {categorie.map((cat) => (
@@ -170,7 +207,7 @@ export default function Home() {
                 key={cat}
                 type="button"
                 onClick={() => setCategoriaAttiva(cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
                   categoriaAttiva === cat
                     ? 'bg-emerald-800 text-white'
                     : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
@@ -181,9 +218,9 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Filtro Diametri Vaso */}
+          {/* Filtro Vasi */}
           {diametriVaso.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-stone-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+            <div className="pt-3 border-t border-stone-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
               <span className="text-[11px] font-medium text-stone-400 flex-shrink-0 mr-1">
                 Vaso:
               </span>
@@ -191,7 +228,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setVasoFiltro(null)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
+                className={`px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
                   vasoFiltro === null
                     ? 'bg-stone-800 text-white'
                     : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
@@ -205,7 +242,7 @@ export default function Home() {
                   key={d}
                   type="button"
                   onClick={() => setVasoFiltro(vasoFiltro === d ? null : d)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
                     vasoFiltro === d
                       ? 'bg-stone-800 text-white'
                       : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
@@ -217,28 +254,29 @@ export default function Home() {
             </div>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* 3. GRIGLIA PIANTE (Spaziosa, ordinata, non ammassata) */}
-      <main id="catalogo" className="max-w-6xl mx-auto px-4 sm:px-6 w-full flex-1 pb-16">
-        {/* Intestazione risultati */}
-        <div className="flex items-center justify-between mb-4 px-1">
+      {/* 3. TERZA SEZIONE: VISUALIZZAZIONE DELLE CARD PIANTE (Con ampi spazi) */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 w-full flex-1 pb-20 sm:pb-24">
+        {/* Intestazione e Conteggio Risultati */}
+        <div className="flex items-center justify-between mb-6 px-1">
           <span className="text-xs font-medium text-stone-500">
-            Mostrando <strong>{pianteFiltrate.length}</strong> {pianteFiltrate.length === 1 ? 'pianta' : 'piante'}
+            Disponibili <strong>{pianteFiltrate.length}</strong> varietà
           </span>
+
           {(ricerca || categoriaAttiva !== 'tutte' || vasoFiltro !== null) && (
             <button
               onClick={() => { setRicerca(''); setCategoriaAttiva('tutte'); setVasoFiltro(null); }}
               className="text-xs text-emerald-800 hover:underline font-medium"
             >
-              Rimuovi filtri
+              Azzera tutti i filtri
             </button>
           )}
         </div>
 
         {/* Loading Skeleton */}
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="bg-white rounded-2xl border border-stone-200 p-4 animate-pulse">
                 <div className="aspect-[4/3] bg-stone-200 rounded-xl mb-4"></div>
@@ -264,7 +302,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Stato Vuoto */}
+        {/* Nessun Risultato */}
         {!loading && !errore && pianteFiltrate.length === 0 && (
           <div className="bg-white rounded-2xl border border-stone-200 p-12 text-center my-6">
             <Sprout className="w-10 h-10 text-stone-300 mx-auto mb-2" />
@@ -272,7 +310,7 @@ export default function Home() {
               Nessuna pianta trovata
             </h3>
             <p className="text-xs text-stone-500 mb-4">
-              Nessuna varietà corrisponde ai filtri impostati.
+              Nessuna varietà corrisponde alla ricerca impostata.
             </p>
             <button
               onClick={() => { setRicerca(''); setCategoriaAttiva('tutte'); setVasoFiltro(null); }}
@@ -285,7 +323,7 @@ export default function Home() {
 
         {/* Griglia Card Piante */}
         {!loading && !errore && pianteFiltrate.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {pianteFiltrate.map((pianta) => (
               <CardPianta
                 key={pianta.id}
@@ -298,40 +336,40 @@ export default function Home() {
         )}
       </main>
 
-      {/* 4. SEZIONE CONTATTI PULITA E DISCRETA */}
-      <section className="bg-white border-t border-stone-200/80 py-12 px-4 sm:px-6">
+      {/* 4. SEZIONE CONTATTI E LOGISTICA */}
+      <section id="contatti" className="bg-white border-t border-stone-200/80 py-16 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="font-semibold text-xl sm:text-2xl text-stone-900 mb-1">
-              Informazioni & Logistica
+          <div className="text-center mb-10">
+            <h2 className="font-semibold text-2xl text-stone-900 mb-1">
+              Informazioni & Spedizioni
             </h2>
             <p className="text-xs sm:text-sm text-stone-500">
-              Spedizioni e carichi su carrelli CC e pianali standard.
+              Carichi veloci e consegne settimanali su carrelli CC e pianali standard.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200/60 text-center">
-              <Phone className="w-5 h-5 text-emerald-800 mx-auto mb-1.5" />
+            <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200/60 text-center">
+              <Phone className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
               <span className="text-[11px] uppercase font-semibold text-stone-400 block">Telefono</span>
-              <span className="text-sm font-semibold text-stone-800 block mt-0.5">{AZIENDA.contatti.telefono}</span>
+              <span className="text-sm font-semibold text-stone-800 block mt-1">{AZIENDA.contatti.telefono}</span>
             </div>
 
             <a
               href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-4 rounded-xl bg-emerald-50/60 hover:bg-emerald-50 border border-emerald-200/60 text-center transition-colors block"
+              className="p-5 rounded-2xl bg-emerald-50/70 hover:bg-emerald-50 border border-emerald-200/60 text-center transition-colors block"
             >
-              <MessageCircle className="w-5 h-5 text-emerald-800 mx-auto mb-1.5" />
+              <MessageCircle className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
               <span className="text-[11px] uppercase font-semibold text-emerald-800 block">WhatsApp</span>
-              <span className="text-sm font-semibold text-emerald-950 block mt-0.5">Scrivici per ordini</span>
+              <span className="text-sm font-semibold text-emerald-950 block mt-1">Scrivici per ordini</span>
             </a>
 
-            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200/60 text-center">
-              <MapPin className="w-5 h-5 text-emerald-800 mx-auto mb-1.5" />
-              <span className="text-[11px] uppercase font-semibold text-stone-400 block">Località</span>
-              <span className="text-xs font-semibold text-stone-800 block mt-0.5">{AZIENDA.contatti.indirizzo}</span>
+            <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200/60 text-center">
+              <MapPin className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
+              <span className="text-[11px] uppercase font-semibold text-stone-400 block">Sede & Carico</span>
+              <span className="text-xs font-semibold text-stone-800 block mt-1">{AZIENDA.contatti.indirizzo}</span>
             </div>
           </div>
         </div>
@@ -340,7 +378,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-stone-900 text-stone-400 py-6 text-center text-xs">
         <p className="text-stone-300 font-medium">{AZIENDA.nome} &bull; P.IVA {AZIENDA.contatti.piva}</p>
-        <p className="text-stone-500 text-[11px] mt-0.5">Vendita riservata esclusivamente a possessori di Partita IVA</p>
+        <p className="text-stone-500 text-[11px] mt-0.5">Vendita riservata esclusivamente ad operatori professionali con Partita IVA</p>
       </footer>
 
       {/* FAB WHATSAPP MOBILE */}
