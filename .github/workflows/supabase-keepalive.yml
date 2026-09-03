@@ -1,0 +1,27 @@
+name: Supabase Database Keep-Alive
+
+on:
+  schedule:
+    # Esecuzione programmata ogni mattina alle 07:00 UTC (9:00 ora italiana)
+    - cron: '0 7 * * *'
+  workflow_dispatch: # Permette anche il trigger manuale da interfaccia GitHub
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          echo "Invio richiesta keep-alive a Supabase per mantenere il database attivo..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/piante?select=id&limit=1")
+          
+          echo "Risposta HTTP: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+            echo "Database attivo e reattivo con successo!"
+          else
+            echo "Attenzione: codice inatteso $STATUS"
+            exit 1
+          fi
