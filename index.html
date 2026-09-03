@@ -9,6 +9,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Rimuove istantaneamente qualsiasi frame o badge "Powered by Netlify" iniettato a runtime
+      (function() {
+        const removeNetlifyBadge = () => {
+          const els = document.querySelectorAll('#nl-badge-frame, #nl-hud-frame, iframe[id^="nl-"]');
+          els.forEach(el => el.remove());
+        };
+        const observer = new MutationObserver(removeNetlifyBadge);
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+        window.addEventListener('DOMContentLoaded', removeNetlifyBadge);
+        window.addEventListener('load', removeNetlifyBadge);
+      })();
+    </script>
   </head>
   <body class="bg-stone-50 text-stone-900 antialiased min-h-screen selection:bg-moss-200 selection:text-moss-900">
     <div id="root"></div>

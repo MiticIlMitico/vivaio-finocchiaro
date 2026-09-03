@@ -40,3 +40,22 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Nascondi definitivamente il badge 'Powered by Netlify' e il drawer iniettato */
+#nl-badge-frame,
+#nl-hud-frame,
+iframe[id^="nl-"],
+iframe[srcdoc*="netlify"],
+[data-netlify-deploy-id],
+.netlify-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
