@@ -132,7 +132,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#252824]">
       
       {/* 1. SEZIONE HERO: ESATTAMENTE 100DVH / 100VH A TUTTO SCHERMO SU QUALSIASI DISPOSITIVO */}
-      <section className="relative w-full h-screen h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col justify-between items-center text-white overflow-hidden bg-stone-950">
+      <section id="hero" className="relative w-full h-screen h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col justify-between items-center text-white overflow-hidden bg-stone-950">
         {/* Foto reale del vivaio ultra-ottimizzata con srcset e WebP responsive */}
         <div className="absolute inset-0 z-0">
           <picture>
@@ -580,13 +580,23 @@ export default function Home() {
             
             {/* Logo ufficiale con scritta inclusa in versione bianca per fondo scuro */}
             <div className="md:col-span-5 space-y-4">
-              <img
-                src="/brand/logo-horizontal-white.webp"
-                alt="Campo dei Fiori - Ornamental Plants Sicily"
-                loading="lazy"
-                decoding="async"
-                className="h-11 w-auto object-contain"
-              />
+              <a
+                href="#hero"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="inline-block group focus:outline-none cursor-pointer"
+                title="Torna all'inizio - Campo dei Fiori"
+              >
+                <img
+                  src="/brand/logo-horizontal-white.webp"
+                  alt="Campo dei Fiori - Ornamental Plants Sicily"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-103"
+                />
+              </a>
               <p className="text-xs text-stone-400 leading-relaxed max-w-sm">
                 Coltivazione e vendita all'ingrosso riservata esclusivamente a garden center, grossisti e operatori professionali con Partita IVA.
               </p>

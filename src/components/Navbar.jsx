@@ -31,6 +31,15 @@ export default function Navbar() {
 
   const isDarkNav = !scrolled && !mobileMenuOpen;
 
+  // Cliccando sul logo si torna alla Hero in cima alla pagina
+  const handleLogoClick = (e) => {
+    setMobileMenuOpen(false);
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -41,17 +50,17 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 sm:h-20 flex items-center justify-between">
         
-        {/* Brand Logo Ufficiale con Scritta (Come era prima) */}
+        {/* Brand Logo Ufficiale con Scritta - Clic per tornare alla Hero */}
         <Link 
           to="/" 
           className="flex items-center group py-1.5 focus:outline-none" 
-          title="Campo dei Fiori"
-          onClick={() => setMobileMenuOpen(false)}
+          title="Torna all'inizio - Campo dei Fiori"
+          onClick={handleLogoClick}
         >
           <img
             src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
             alt="Campo dei Fiori - Ornamental Plants Sicily"
-            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103"
+            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 cursor-pointer"
           />
         </Link>
 
