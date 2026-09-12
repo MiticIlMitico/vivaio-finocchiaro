@@ -146,8 +146,10 @@ export default function Home() {
               className="w-full h-full object-cover object-center"
             />
           </picture>
-          {/* Sfumatura cinematografica neutra (nessun verde artificiale) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
+          {/* Sfumatura cinematografica neutra in basso */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+          {/* Sfumatura morbida superiore direttamente sulla foto (più compatta rispetto a sotto) */}
+          <div className="absolute top-0 inset-x-0 h-36 sm:h-44 bg-gradient-to-b from-black/65 via-black/25 to-transparent pointer-events-none" />
         </div>
 
         {/* Spaziatore superiore calibrato sull'altezza della Navbar fissa */}
@@ -156,12 +158,12 @@ export default function Home() {
         {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5 drop-shadow-sm">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5">
             Coltivato in Sicilia.<br />
-            <span className="font-semibold italic text-[#FAF9F6] drop-shadow-sm">Pronto per il mondo.</span>
+            <span className="font-semibold italic text-[#FAF9F6]">Pronto per il mondo.</span>
           </h1>
 
-          <p className="text-white/95 text-sm sm:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8 drop-shadow-xs">
+          <p className="text-white/95 text-sm sm:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8">
             Forniture e catalogo piante all'ingrosso per garden center, grossisti e professionisti del verde.
           </p>
 
