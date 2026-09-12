@@ -3,12 +3,19 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CampoFoto from '../components/CampoFoto';
 import Toast from '../components/Toast';
-import { ArrowLeft, Save, Loader2, Plus, Sprout, AlertCircle, Layers, Trash2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, Sprout, AlertCircle, Layers, Trash2, CheckCircle2, Eye, EyeOff, Package } from 'lucide-react';
 
 export default function AdminForm() {
   const { id } = useParams();
   const isModifica = Boolean(id);
   const navigate = useNavigate();
+
+  // Helper modifica rapida per pollici (+10, +50, +100, -10)
+  const handleModificaRapida = (campo, delta) => {
+    const attuale = parseInt(formData[campo], 10) || 0;
+    const nuovo = Math.max(0, attuale + delta);
+    handleChange(campo, String(nuovo));
+  };
 
   // Stato form
   const [formData, setFormData] = useState({
@@ -556,7 +563,7 @@ export default function AdminForm() {
                   />
                 </div>
 
-                <div className="bg-[#25570A]/5 p-3 rounded-2xl border border-[#25570A]/20">
+                <div className="bg-[#25570A]/5 p-3.5 rounded-2xl border border-[#25570A]/20">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#25570A] mb-1.5 flex items-center justify-between">
                     <span>Disponibilità Vendita (pz)</span>
                     <span className="text-[10px] text-[#25570A]/70 lowercase font-medium">visibile</span>
@@ -567,8 +574,42 @@ export default function AdminForm() {
                     value={formData.disponibile}
                     onChange={(e) => handleChange('disponibile', e.target.value)}
                     placeholder="es. 4000"
-                    className="w-full px-3 py-2 bg-white border border-[#25570A]/40 rounded-xl text-base font-bold text-[#25570A] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                    className="w-full px-3.5 py-2.5 bg-white border border-[#25570A]/40 rounded-xl text-base font-bold text-[#25570A] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                   />
+                  {/* Tasti Rapidi Pollice */}
+                  <div className="flex items-center justify-between gap-1 pt-1.5 mt-1 border-t border-[#25570A]/10">
+                    <span className="text-[10px] text-[#25570A]/70 font-bold uppercase">Rapido:</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleModificaRapida('disponibile', -10)}
+                        className="px-2 py-0.5 bg-white border border-[#25570A]/20 hover:bg-[#25570A]/10 text-[11px] font-bold text-[#1C201C] rounded-md active:scale-95 touch-target"
+                      >
+                        -10
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaRapida('disponibile', 10)}
+                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
+                      >
+                        +10
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaRapida('disponibile', 50)}
+                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
+                      >
+                        +50
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaRapida('disponibile', 100)}
+                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
+                      >
+                        +100
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#1C201C]/10">
@@ -704,28 +745,52 @@ export default function AdminForm() {
               />
             </div>
 
-            {/* Toggle Visibilità */}
+            {/* Toggle Visibilità Touch Friendly a Card */}
             <div className="pt-2">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={formData.visibile}
-                  onChange={(e) => handleChange('visibile', e.target.checked)}
-                  className="w-5 h-5 text-[#25570A] rounded border-[#1C201C]/20 focus:ring-[#25570A]"
-                />
-                <div>
-                  <span className="text-sm font-semibold text-[#1C201C] block">
-                    Pubblicata e visibile sul catalogo online
-                  </span>
-                  <span className="text-xs text-[#1C201C]/60">
-                    Se disattivata, la pianta resta salvata nel gestionale ma non compare ai clienti.
-                  </span>
+              <div
+                onClick={() => handleChange('visibile', !formData.visibile)}
+                className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-3 select-none touch-target ${
+                  formData.visibile
+                    ? 'bg-[#25570A]/5 border-[#25570A]/40'
+                    : 'bg-[#FAF9F6] border-[#1C201C]/15 opacity-75'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                      formData.visibile ? 'bg-[#25570A] text-white' : 'bg-[#1C201C]/15 text-[#1C201C]/50'
+                    }`}
+                  >
+                    {formData.visibile ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-sm font-bold text-[#1C201C] block">
+                      {formData.visibile ? 'Visibile nel catalogo online' : 'Nascosta dal catalogo'}
+                    </span>
+                    <span className="text-xs text-[#1C201C]/60 block truncate sm:whitespace-normal">
+                      {formData.visibile
+                        ? 'I clienti possono vedere questa pianta e i suoi dati.'
+                        : 'La pianta è salvata nel gestionale ma non compare ai clienti.'}
+                    </span>
+                  </div>
                 </div>
-              </label>
+
+                <div
+                  className={`w-12 h-7 rounded-full p-1 transition-colors flex-shrink-0 flex items-center ${
+                    formData.visibile ? 'bg-[#25570A]' : 'bg-[#1C201C]/25'
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
+                      formData.visibile ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Pulsante Salva in fondo alla form */}
+          {/* Pulsante Salva in fondo alla form (Desktop) */}
           <div className="pt-4 border-t border-[#1C201C]/10 flex items-center justify-end gap-3">
             <Link
               to="/admin"
@@ -747,12 +812,40 @@ export default function AdminForm() {
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Salva Pianta</span>
+                  <span>{isModifica ? 'Salva Modifiche' : 'Salva Nuova Pianta'}</span>
                 </>
               )}
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Barra Salva Fissa per Smartphone (Sempre a portata di pollice in fondo allo schermo) */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md p-3 border-t border-[#1C201C]/15 shadow-2xl flex items-center justify-between gap-3 z-40">
+        <Link
+          to="/admin"
+          className="px-4 py-3 text-xs font-bold text-[#1C201C]/70 hover:bg-[#1C201C]/5 rounded-xl transition-colors touch-target"
+        >
+          Annulla
+        </Link>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={salvataggioInCorso}
+          className="flex-1 py-3.5 bg-[#D34816] hover:bg-[#B83D12] active:scale-98 text-white text-sm font-bold rounded-2xl transition-all flex items-center justify-center gap-2 shadow-md touch-target"
+        >
+          {salvataggioInCorso ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Salvataggio...</span>
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4" />
+              <span>{isModifica ? 'Salva Modifiche' : 'Salva Nuova Pianta'}</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Toast Feedback */}

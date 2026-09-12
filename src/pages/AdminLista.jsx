@@ -30,6 +30,10 @@ export default function AdminLista() {
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [eliminaModal, setEliminaModal] = useState({ isOpen: false, pianta: null, loading: false });
 
+  // Filtri rapidi per usabilità immediata da smartphone
+  const [filtroStato, setFiltroStato] = useState('tutte'); // 'tutte' | 'visibili' | 'nascoste'
+  const [filtroCategoria, setFiltroCategoria] = useState('tutte');
+
   // Modale gestione rapida disponibilità per calibro vaso
   const [vasiModal, setVasiModal] = useState({
     isOpen: false,
@@ -72,6 +76,17 @@ export default function AdminLista() {
     setVasiModal(prev => {
       const copy = [...prev.varianti];
       copy[index] = { ...copy[index], [field]: value };
+      return { ...prev, varianti: copy };
+    });
+  };
+
+  // Modifica rapida quantità (+10, +50, +100, -10) senza tastiera
+  const handleModificaQuantitaRapida = (index, field, delta) => {
+    setVasiModal(prev => {
+      const copy = [...prev.varianti];
+      const valAttuale = parseInt(copy[index][field], 10) || 0;
+      const nuovoVal = Math.max(0, valAttuale + delta);
+      copy[index] = { ...copy[index], [field]: String(nuovoVal) };
       return { ...prev, varianti: copy };
     });
   };
@@ -318,19 +333,37 @@ export default function AdminLista() {
     return { totale, visibili, nascoste };
   }, [piante]);
 
-  // Filtro ricerca
+  // Elenco unico categorie
+  const categorieDisponibili = useMemo(() => {
+    const cats = Array.from(new Set(piante.map((p) => p.categoria).filter(Boolean)));
+    return cats.sort();
+  }, [piante]);
+
+  // Filtro combinato ricerca + visibilità + categoria
   const pianteFiltrate = useMemo(() => {
-    if (!ricerca.trim()) return piante;
-    const q = ricerca.toLowerCase();
-    return piante.filter((p) =>
-      p.nome.toLowerCase().includes(q) ||
-      (p.nome_comune && p.nome_comune.toLowerCase().includes(q)) ||
-      (p.categoria && p.categoria.toLowerCase().includes(q))
-    );
-  }, [piante, ricerca]);
+    return piante.filter((p) => {
+      // 1. Filtro visibilità
+      if (filtroStato === 'visibili' && !p.visibile) return false;
+      if (filtroStato === 'nascoste' && p.visibile) return false;
+
+      // 2. Filtro categoria
+      if (filtroCategoria !== 'tutte' && p.categoria !== filtroCategoria) return false;
+
+      // 3. Ricerca testuale
+      if (ricerca.trim()) {
+        const q = ricerca.toLowerCase();
+        const matchNome = p.nome?.toLowerCase().includes(q);
+        const matchComune = p.nome_comune?.toLowerCase().includes(q);
+        const matchCat = p.categoria?.toLowerCase().includes(q);
+        if (!matchNome && !matchComune && !matchCat) return false;
+      }
+
+      return true;
+    });
+  }, [piante, ricerca, filtroStato, filtroCategoria]);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-24 sm:pb-16 text-[#1C201C] font-sans antialiased">
+    <div className="min-h-screen bg-[#FAF9F6] pb-28 sm:pb-16 text-[#1C201C] font-sans antialiased">
       {/* Header Unico e Pulito Gestione */}
       <header className="sticky top-0 z-30 bg-[#1C201C] text-white shadow-md border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
@@ -391,11 +424,11 @@ export default function AdminLista() {
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="w-2.5 h-2.5 rounded-full bg-[#6BB221] animate-pulse flex-shrink-0"></span>
             <div className="min-w-0">
-              <span className="text-xs font-medium text-white/95 block truncate">
-                Gestionale Serra & Vivaio
+              <span className="text-xs font-bold text-white/95 block truncate">
+                Gestionale Vivaio & Serra
               </span>
               <span className="text-[10px] text-white/70 block">
-                Tocca un formato vaso per aggiornare giacenza e disponibilità
+                Tocca la disponibilità per aggiornare scorte e formati vaso
               </span>
             </div>
           </div>
@@ -436,61 +469,114 @@ export default function AdminLista() {
           </form>
         </div>
 
-        {/* Statistiche */}
-        <div className="grid grid-cols-3 gap-2.5 mb-4">
-          <div className="bg-white p-3 rounded-2xl border border-[#1C201C]/10 shadow-xs text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1C201C]/50 block mb-0.5">
-              Totali
-            </span>
-            <span className="text-xl font-bold text-[#1C201C]">
-              {stats.totale}
-            </span>
+        {/* Barra di Ricerca con Tasto Cancella Rapido (X) & Filtro Categoria */}
+        <div className="flex gap-2 mb-3">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#1C201C]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={ricerca}
+              onChange={(e) => setRicerca(e.target.value)}
+              placeholder="Cerca pianta, varietà o categoria..."
+              className="w-full pl-10 pr-10 py-3 bg-white border border-[#1C201C]/15 rounded-2xl text-sm text-[#1C201C] placeholder-[#1C201C]/40 focus:outline-none focus:ring-2 focus:ring-[#25570A] shadow-xs"
+            />
+            {ricerca && (
+              <button
+                type="button"
+                onClick={() => setRicerca('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#1C201C]/40 hover:text-[#1C201C] rounded-full"
+                title="Cancella ricerca"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
-          <div className="bg-white p-3 rounded-2xl border border-[#1C201C]/10 shadow-xs text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] block mb-0.5">
-              Visibili
-            </span>
-            <span className="text-xl font-bold text-[#25570A]">
-              {stats.visibili}
-            </span>
-          </div>
-
-          <div className="bg-white p-3 rounded-2xl border border-[#1C201C]/10 shadow-xs text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1C201C]/50 block mb-0.5">
-              Nascoste
-            </span>
-            <span className="text-xl font-bold text-[#1C201C]/50">
-              {stats.nascoste}
-            </span>
-          </div>
+          {categorieDisponibili.length > 0 && (
+            <select
+              value={filtroCategoria}
+              onChange={(e) => setFiltroCategoria(e.target.value)}
+              className="px-3 py-3 bg-white border border-[#1C201C]/15 rounded-2xl text-xs sm:text-sm text-[#1C201C] font-semibold focus:outline-none focus:ring-2 focus:ring-[#25570A] shadow-xs max-w-[130px] sm:max-w-[200px]"
+              title="Filtra per categoria"
+            >
+              <option value="tutte">Tutte le Categorie</option>
+              {categorieDisponibili.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          )}
         </div>
 
-        {/* Ricerca */}
-        <div className="relative mb-4">
-          <Search className="w-4 h-4 text-[#1C201C]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={ricerca}
-            onChange={(e) => setRicerca(e.target.value)}
-            placeholder="Cerca per nome botanico o comune..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] placeholder-[#1C201C]/40 focus:outline-none focus:ring-2 focus:ring-[#25570A] shadow-xs"
-          />
+        {/* Filtri Rapidi di Stato (Tutte / Visibili Online / Nascoste) per uso col Pollice */}
+        <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setFiltroStato('tutte')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all touch-target flex items-center gap-1.5 flex-shrink-0 ${
+              filtroStato === 'tutte'
+                ? 'bg-[#1C201C] text-white shadow-xs'
+                : 'bg-white text-[#1C201C]/70 border border-[#1C201C]/10 hover:bg-[#1C201C]/5'
+            }`}
+          >
+            <span>Tutte</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${filtroStato === 'tutte' ? 'bg-white/20 text-white' : 'bg-[#1C201C]/10 text-[#1C201C]'}`}>
+              {stats.totale}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroStato('visibili')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all touch-target flex items-center gap-1.5 flex-shrink-0 ${
+              filtroStato === 'visibili'
+                ? 'bg-[#25570A] text-white shadow-xs'
+                : 'bg-white text-[#25570A] border border-[#25570A]/20 hover:bg-[#25570A]/5'
+            }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Visibili Online</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${filtroStato === 'visibili' ? 'bg-white/20 text-white' : 'bg-[#25570A]/10 text-[#25570A]'}`}>
+              {stats.visibili}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFiltroStato('nascoste')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all touch-target flex items-center gap-1.5 flex-shrink-0 ${
+              filtroStato === 'nascoste'
+                ? 'bg-[#1C201C]/80 text-white shadow-xs'
+                : 'bg-white text-[#1C201C]/50 border border-[#1C201C]/10 hover:bg-[#1C201C]/5'
+            }`}
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            <span>Nascoste</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${filtroStato === 'nascoste' ? 'bg-white/20 text-white' : 'bg-[#1C201C]/10 text-[#1C201C]/70'}`}>
+              {stats.nascoste}
+            </span>
+          </button>
         </div>
 
         {/* Lista Piante */}
         {loading ? (
           <div className="space-y-2.5">
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="bg-white rounded-2xl p-4 border border-[#1C201C]/10 animate-pulse h-20"></div>
+              <div key={n} className="bg-white rounded-3xl p-4 border border-[#1C201C]/10 animate-pulse h-28"></div>
             ))}
           </div>
         ) : pianteFiltrate.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#1C201C]/10 p-8 text-center text-[#1C201C]/60">
-            <p className="text-sm font-medium">Nessuna pianta trovata nel gestionale.</p>
+          <div className="bg-white rounded-3xl border border-[#1C201C]/10 p-8 text-center text-[#1C201C]/60">
+            <p className="text-sm font-semibold">Nessuna pianta corrisponde ai filtri selezionati.</p>
+            <button
+              type="button"
+              onClick={() => { setRicerca(''); setFiltroStato('tutte'); setFiltroCategoria('tutte'); }}
+              className="mt-3 px-4 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-xs font-bold text-[#25570A] hover:bg-[#25570A]/10"
+            >
+              Azzera tutti i filtri
+            </button>
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {pianteFiltrate.map((pianta) => {
               const isVisibile = pianta.visibile;
               const hasVarianti = Array.isArray(pianta.varianti) && pianta.varianti.length > 0;
@@ -498,146 +584,140 @@ export default function AdminLista() {
               return (
                 <div
                   key={pianta.id}
-                  className={`bg-white rounded-2xl border transition-all p-3.5 flex items-center justify-between gap-3 shadow-xs ${
-                    isVisibile ? 'border-[#1C201C]/10 hover:border-[#25570A]/30' : 'border-[#1C201C]/5 opacity-60 bg-[#FAF9F6]'
+                  className={`bg-white rounded-3xl border transition-all p-3.5 sm:p-4 shadow-xs ${
+                    isVisibile ? 'border-[#1C201C]/10 hover:border-[#25570A]/30' : 'border-[#1C201C]/5 opacity-75 bg-[#FAF9F6]'
                   }`}
                 >
-                  {/* Miniatura Foto con dimensioni rigorosamente FISSE (64px x 64px) */}
-                  <div className="w-16 h-16 min-w-[64px] max-w-[64px] rounded-xl bg-[#FAF9F6] flex-shrink-0 overflow-hidden border border-[#1C201C]/10 relative">
-                    {pianta.foto_url ? (
-                      <img
-                        src={pianta.foto_url}
-                        alt={pianta.nome}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#1C201C]/30">
-                        <Sprout className="w-6 h-6" />
-                      </div>
-                    )}
-                  </div>
+                  <div className="flex items-start sm:items-center justify-between gap-3">
+                    {/* Miniatura Foto (64px x 64px) con click per aprire modifica */}
+                    <Link
+                      to={`/admin/${pianta.id}`}
+                      className="w-16 h-16 min-w-[64px] max-w-[64px] rounded-2xl bg-[#FAF9F6] flex-shrink-0 overflow-hidden border border-[#1C201C]/10 relative group block"
+                      title="Tocca per modificare la pianta"
+                    >
+                      {pianta.foto_url ? (
+                        <img
+                          src={pianta.foto_url}
+                          alt={pianta.nome}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#1C201C]/30">
+                          <Sprout className="w-6 h-6" />
+                        </div>
+                      )}
+                    </Link>
 
-                  {/* Testi Pianta */}
-                  <div className="min-w-0 flex-1 py-0.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <h3 className="font-bold text-sm sm:text-base text-[#1C201C] leading-snug truncate">
-                        {pianta.nome}
-                      </h3>
-                      {!isVisibile && (
-                        <span className="text-[10px] bg-[#1C201C]/10 text-[#1C201C]/70 px-1.5 py-0.5 rounded-md font-medium">
-                          Nascosta
-                        </span>
+                    {/* Informazioni Pianta */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Link
+                          to={`/admin/${pianta.id}`}
+                          className="font-bold text-sm sm:text-base text-[#1C201C] hover:text-[#25570A] leading-snug truncate transition-colors"
+                        >
+                          {pianta.nome}
+                        </Link>
+                        {!isVisibile && (
+                          <span className="text-[10px] bg-[#1C201C]/10 text-[#1C201C]/70 px-2 py-0.5 rounded-full font-bold">
+                            Nascosta
+                          </span>
+                        )}
+                      </div>
+
+                      {pianta.nome_comune && (
+                        <p className="text-xs text-[#1C201C]/60 truncate mt-0.5">
+                          {pianta.nome_comune}
+                        </p>
+                      )}
+
+                      {/* Pill Vasi / Disponibilità Interattiva con un tocco */}
+                      {hasVarianti && pianta.varianti.length > 1 ? (
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                          {pianta.varianti.map((v, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => openVasiModal(pianta)}
+                              className="inline-flex items-center gap-1.5 bg-[#FAF9F6] active:scale-95 hover:bg-[#25570A]/10 border border-[#1C201C]/10 text-[#1C201C] text-[11px] font-semibold px-2.5 py-1 rounded-xl transition-all cursor-pointer"
+                              title="Tocca per aggiornare disponibilità"
+                            >
+                              <span className="text-[#1C201C]/70">Ø {v.vaso_cm} cm:</span>
+                              <span className="text-[#25570A] font-bold">
+                                {Number(v.disponibile).toLocaleString('it-IT')} pz
+                              </span>
+                            </button>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => openVasiModal(pianta)}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D34816] hover:underline px-1 py-1"
+                          >
+                            <Layers className="w-3.5 h-3.5" />
+                            <span>Vasi</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => openVasiModal(pianta)}
+                            className="inline-flex items-center gap-1.5 bg-[#25570A]/10 hover:bg-[#25570A]/20 active:scale-95 border border-[#25570A]/20 text-[#25570A] text-xs font-bold px-2.5 py-1 rounded-xl transition-all cursor-pointer"
+                            title="Tocca per aggiornare la disponibilità"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#25570A]" />
+                            <span>
+                              {pianta.vaso_cm ? `Ø ${pianta.vaso_cm} cm · ` : ''}
+                              {Number(pianta.disponibile || 0).toLocaleString('it-IT')} pz disp.
+                            </span>
+                          </button>
+                        </div>
                       )}
                     </div>
 
-                    {pianta.nome_comune && (
-                      <p className="text-xs text-[#1C201C]/60 truncate">
-                        {pianta.nome_comune}
-                      </p>
-                    )}
-
-                    {/* Varianti / Vasi e disponibilità - Interattivi con un tocco */}
-                    {hasVarianti && pianta.varianti.length > 1 ? (
-                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                        {pianta.varianti.map((v, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => openVasiModal(pianta)}
-                            className="inline-flex items-center gap-1 bg-[#FAF9F6] hover:bg-[#25570A]/10 border border-[#1C201C]/10 hover:border-[#25570A]/30 text-[#1C201C] text-[11px] font-medium px-2 py-0.5 rounded-lg transition-colors cursor-pointer group"
-                            title="Tocca per modificare le disponibilità per vaso"
-                          >
-                            <span className="font-bold text-[#1C201C]/80">Ø {v.vaso_cm} cm:</span>
-                            <span className="text-[#25570A] font-bold group-hover:underline">
-                              {Number(v.disponibile).toLocaleString('it-IT')} pz
-                            </span>
-                          </button>
-                        ))}
-                        <button
-                          type="button"
-                          onClick={() => openVasiModal(pianta)}
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-[#D34816] hover:underline px-1 py-0.5"
-                          title="Gestisci formati vaso"
-                        >
-                          <Layers className="w-3 h-3" />
-                          <span>Modifica Vasi</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#1C201C]/70 mt-1.5">
-                        {pianta.vaso_cm && (
-                          <button
-                            type="button"
-                            onClick={() => openVasiModal(pianta)}
-                            className="font-medium text-[#1C201C] bg-[#FAF9F6] hover:bg-[#25570A]/10 border border-[#1C201C]/10 px-2 py-0.5 rounded-md flex items-center gap-1 cursor-pointer transition-colors"
-                            title="Tocca per gestire i formati vaso"
-                          >
-                            <Layers className="w-3 h-3 text-[#25570A]" />
-                            <span>Ø {pianta.vaso_cm} cm</span>
-                          </button>
-                        )}
-                        {pianta.disponibile !== null && pianta.disponibile !== undefined && (
-                          <span className="text-[#25570A] font-bold bg-[#25570A]/10 border border-[#25570A]/20 px-2 py-0.5 rounded-md flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-[#25570A]" />
-                            Disp: {Number(pianta.disponibile).toLocaleString('it-IT')} pz
-                          </span>
-                        )}
-                        {pianta.giacenza !== null && pianta.giacenza !== undefined && (
-                          <span className="text-[#1C201C]/60 font-medium bg-[#FAF9F6] border border-[#1C201C]/10 px-1.5 py-0.5 rounded-md flex items-center gap-1">
-                            <Warehouse className="w-3 h-3 text-[#1C201C]/40" />
-                            Giac: {Number(pianta.giacenza).toLocaleString('it-IT')}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Azioni Tattili (Vasi, Occhio, Matita, Cestino) */}
-                  <div className="flex items-center gap-0.5 flex-shrink-0">
-                    {/* Tasto rapido gestione vasi */}
-                    <button
-                      type="button"
-                      onClick={() => openVasiModal(pianta)}
-                      className="touch-target p-2 rounded-xl text-[#1C201C]/60 hover:text-[#25570A] hover:bg-[#25570A]/10 transition-colors"
-                      title="Gestione vasi e scorte per formato"
-                      aria-label={`Formati vaso ${pianta.nome}`}
-                    >
-                      <Layers className="w-5 h-5" />
-                    </button>
-
-                    {/* Occhio: visibilità */}
+                    {/* Tasto Occhio Visibilità Immediato e Comodo (44x44px touch target) */}
                     <button
                       onClick={() => handleToggleVisibilita(pianta)}
-                      className={`touch-target p-2 rounded-xl transition-colors ${
+                      className={`touch-target p-2.5 rounded-2xl transition-all flex items-center justify-center flex-shrink-0 active:scale-90 ${
                         isVisibile
-                          ? 'text-[#25570A] hover:bg-[#25570A]/10'
-                          : 'text-[#1C201C]/30 hover:bg-[#1C201C]/10'
+                          ? 'bg-[#25570A]/10 text-[#25570A] hover:bg-[#25570A]/20'
+                          : 'bg-[#1C201C]/5 text-[#1C201C]/40 hover:bg-[#1C201C]/10'
                       }`}
-                      title={isVisibile ? 'Nascondi dal catalogo' : 'Rendi visibile'}
+                      title={isVisibile ? 'Visibile ai clienti (Tocca per nascondere)' : 'Nascosta (Tocca per rendere visibile)'}
                       aria-label={`Visibilità ${pianta.nome}`}
                     >
                       {isVisibile ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                     </button>
+                  </div>
 
-                    {/* Matita: modifica scheda */}
-                    <Link
-                      to={`/admin/${pianta.id}`}
-                      className="touch-target p-2 text-[#1C201C]/60 hover:text-[#1C201C] hover:bg-[#1C201C]/10 rounded-xl transition-colors"
-                      title="Modifica scheda completa"
-                      aria-label={`Modifica ${pianta.nome}`}
-                    >
-                      <Pencil className="w-5 h-5" />
-                    </Link>
+                  {/* Barra Azioni Secondarie in basso alla card: Modifica ed Elimina ben distanziate */}
+                  <div className="mt-3 pt-2.5 border-t border-[#1C201C]/5 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/admin/${pianta.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF9F6] hover:bg-[#1C201C]/5 active:scale-95 text-[#1C201C] rounded-xl text-xs font-bold border border-[#1C201C]/10 transition-all touch-target"
+                      >
+                        <Pencil className="w-3.5 h-3.5 text-[#25570A]" />
+                        <span>Modifica Scheda</span>
+                      </Link>
 
-                    {/* Cestino: elimina */}
+                      <button
+                        type="button"
+                        onClick={() => openVasiModal(pianta)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF9F6] hover:bg-[#25570A]/10 active:scale-95 text-[#25570A] rounded-xl text-xs font-bold border border-[#1C201C]/10 transition-all touch-target"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Disponibilità</span> Vasi
+                      </button>
+                    </div>
+
                     <button
                       onClick={() => setEliminaModal({ isOpen: true, pianta, loading: false })}
-                      className="touch-target p-2 text-[#1C201C]/40 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors"
-                      title="Elimina"
+                      className="p-2 text-[#1C201C]/40 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors touch-target"
+                      title="Elimina pianta"
                       aria-label={`Elimina ${pianta.nome}`}
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -646,6 +726,16 @@ export default function AdminLista() {
           </div>
         )}
       </main>
+
+      {/* Pulsante Fluttuante (FAB) per Mobile per aggiungere piante all'istante con il pollice */}
+      <Link
+        to="/admin/nuova"
+        className="sm:hidden fixed bottom-6 right-4 z-40 bg-[#D34816] hover:bg-[#B83D12] active:scale-95 text-white font-bold px-4 py-3.5 rounded-full shadow-2xl flex items-center gap-2 border-2 border-white transition-transform touch-target"
+        title="Aggiungi Nuova Pianta"
+      >
+        <Plus className="w-5 h-5 stroke-[2.5]" />
+        <span className="text-xs font-extrabold tracking-wide">Nuova Pianta</span>
+      </Link>
 
       {/* Modale Rapida Gestione Disponibilità per Calibro Vaso */}
       {vasiModal.isOpen && (
@@ -677,7 +767,7 @@ export default function AdminLista() {
 
             {/* Istruzione per l'operatore */}
             <div className="mb-4 bg-[#FAF9F6] p-3 rounded-xl border border-[#1C201C]/10 text-xs text-[#1C201C]/80 leading-relaxed">
-              La pianta resta una sola nel catalogo. Qui imposti i diversi formati di vaso con le rispettive quantità disponibili e le giacenze.
+              Tocca i tasti rapidi (+10, +50, +100) per aggiornare le quantità in serra senza digitare sulla tastiera.
             </div>
 
             {/* Elenco Formati Vaso */}
@@ -718,7 +808,7 @@ export default function AdminLista() {
                         value={v.vaso_cm}
                         onChange={(e) => handleVasoChange(idx, 'vaso_cm', e.target.value)}
                         placeholder="es. 16"
-                        className="w-full px-2.5 py-2 bg-white border border-[#1C201C]/15 rounded-xl text-sm font-bold text-[#1C201C] text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                        className="w-full px-2.5 py-2.5 bg-white border border-[#1C201C]/15 rounded-xl text-sm font-bold text-[#1C201C] text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                       />
                     </div>
 
@@ -732,7 +822,7 @@ export default function AdminLista() {
                         value={v.disponibile}
                         onChange={(e) => handleVasoChange(idx, 'disponibile', e.target.value)}
                         placeholder="0"
-                        className="w-full px-2.5 py-2 bg-white border border-[#25570A]/40 rounded-xl text-sm font-bold text-[#25570A] text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                        className="w-full px-2.5 py-2.5 bg-white border border-[#25570A]/40 rounded-xl text-sm font-bold text-[#25570A] text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                       />
                     </div>
 
@@ -746,8 +836,47 @@ export default function AdminLista() {
                         value={v.giacenza}
                         onChange={(e) => handleVasoChange(idx, 'giacenza', e.target.value)}
                         placeholder="0"
-                        className="w-full px-2.5 py-2 bg-white border border-[#1C201C]/15 rounded-xl text-sm font-medium text-[#1C201C]/70 text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                        className="w-full px-2.5 py-2.5 bg-white border border-[#1C201C]/15 rounded-xl text-sm font-medium text-[#1C201C]/70 text-center focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                       />
+                    </div>
+                  </div>
+
+                  {/* Tasti Rapidi Incremento/Decremento Pollice-Friendly */}
+                  <div className="flex items-center justify-between gap-1 pt-1 border-t border-[#1C201C]/5">
+                    <span className="text-[10px] text-[#1C201C]/50 font-bold uppercase">Rapido Disp:</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleModificaQuantitaRapida(idx, 'disponibile', -10)}
+                        className="px-2 py-1 bg-white border border-[#1C201C]/15 hover:bg-[#1C201C]/5 text-[11px] font-bold text-[#1C201C] rounded-lg active:scale-95 touch-target"
+                        title="Togli 10 pezzi"
+                      >
+                        -10
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaQuantitaRapida(idx, 'disponibile', 10)}
+                        className="px-2 py-1 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-lg active:scale-95 touch-target"
+                        title="Aggiungi 10 pezzi"
+                      >
+                        +10
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaQuantitaRapida(idx, 'disponibile', 50)}
+                        className="px-2 py-1 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-lg active:scale-95 touch-target"
+                        title="Aggiungi 50 pezzi"
+                      >
+                        +50
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModificaQuantitaRapida(idx, 'disponibile', 100)}
+                        className="px-2 py-1 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-lg active:scale-95 touch-target"
+                        title="Aggiungi 100 pezzi"
+                      >
+                        +100
+                      </button>
                     </div>
                   </div>
                 </div>

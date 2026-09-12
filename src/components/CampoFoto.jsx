@@ -148,40 +148,45 @@ export default function CampoFoto({
       {/* Contenitore Foto */}
       <div className="relative border-2 border-dashed border-[#1C201C]/15 rounded-3xl p-4 bg-[#FAF9F6] overflow-hidden">
         {fotoUrl ? (
-          <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-2xl overflow-hidden bg-[#FAF9F6] border border-[#1C201C]/10 shadow-xs group">
-            <img
-              src={fotoUrl}
-              alt="Anteprima foto pianta"
-              className="w-full h-full object-cover"
-            />
+          <div className="space-y-3 max-w-md mx-auto">
+            <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-[#FAF9F6] border border-[#1C201C]/10 shadow-xs">
+              <img
+                src={fotoUrl}
+                alt="Anteprima foto pianta"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-            {/* Barra Azioni Touch */}
-            <div className="absolute inset-0 bg-[#1C201C]/75 backdrop-blur-[2px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex flex-col sm:flex-row items-center justify-center gap-2 p-4">
+            {/* Pulsanti Azione Foto Ben Distinti e Facili da Toccare */}
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={handleModificaFotoEsistente}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3.5 py-2.5 bg-[#25570A] hover:bg-[#1E4608] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="py-2.5 px-2 bg-white hover:bg-[#FAF9F6] border border-[#1C201C]/15 text-[#1C201C] rounded-xl text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 touch-target active:scale-95 shadow-xs"
+                title="Ritaglia o ricentra la foto"
               >
-                <Crop className="w-4 h-4" />
-                <span>Ritaglia / Modifica</span>
+                <Crop className="w-4 h-4 text-[#25570A]" />
+                <span>Ritaglia</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3.5 py-2.5 bg-white text-[#1C201C] hover:bg-[#FAF9F6] rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="py-2.5 px-2 bg-[#25570A] hover:bg-[#1E4608] text-white rounded-xl text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 touch-target active:scale-95 shadow-xs"
+                title="Scegli un'altra foto dalla galleria"
               >
-                <ImageIcon className="w-4 h-4 text-[#25570A]" />
-                <span>Scegli da Galleria</span>
+                <ImageIcon className="w-4 h-4" />
+                <span>Cambia</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleEliminaFoto}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="py-2.5 px-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 touch-target active:scale-95"
+                title="Rimuovi foto"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Rimuovi</span>
