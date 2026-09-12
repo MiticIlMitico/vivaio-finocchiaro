@@ -51,9 +51,7 @@ export default function Navbar() {
           <img
             src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
             alt="Campo dei Fiori - Ornamental Plants Sicily"
-            className={`h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 ${
-              isDarkNav ? 'drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]' : ''
-            }`}
+            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103"
           />
         </Link>
 
@@ -63,7 +61,7 @@ export default function Navbar() {
             href="#storia" 
             className={`transition-colors ${
               isDarkNav 
-                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                ? 'text-white/85 hover:text-white' 
                 : 'text-[#252824]/75 hover:text-[#25570A]'
             }`}
           >
@@ -73,7 +71,7 @@ export default function Navbar() {
             href="#catalogo" 
             className={`transition-colors ${
               isDarkNav 
-                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                ? 'text-white/85 hover:text-white' 
                 : 'text-[#252824]/75 hover:text-[#25570A]'
             }`}
           >
@@ -83,7 +81,7 @@ export default function Navbar() {
             href="#logistica" 
             className={`transition-colors ${
               isDarkNav 
-                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                ? 'text-white/85 hover:text-white' 
                 : 'text-[#252824]/75 hover:text-[#25570A]'
             }`}
           >
@@ -93,7 +91,7 @@ export default function Navbar() {
             href="#contatti" 
             className={`transition-colors ${
               isDarkNav 
-                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                ? 'text-white/85 hover:text-white' 
                 : 'text-[#252824]/75 hover:text-[#25570A]'
             }`}
           >
@@ -107,10 +105,10 @@ export default function Navbar() {
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni sulle disponibilità all'ingrosso di Campo dei Fiori.`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-xs touch-target active:scale-95 ${
+            className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all touch-target active:scale-95 ${
               isDarkNav
-                ? 'bg-black/35 hover:bg-black/50 text-white border border-white/35 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.5)] [text-shadow:_0_1px_3px_rgba(0,0,0,0.7)]'
-                : 'bg-[#25570A] hover:bg-[#1A3E07] text-white'
+                ? 'bg-white/15 hover:bg-white/25 text-white border border-white/25 backdrop-blur-md'
+                : 'bg-[#25570A] hover:bg-[#1A3E07] text-white shadow-xs'
             }`}
             aria-label="Ufficio Vendite WhatsApp"
           >
@@ -126,7 +124,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2.5 rounded-xl transition-colors touch-target focus:outline-none ${
               isDarkNav 
-                ? 'text-white bg-black/35 backdrop-blur-md border border-white/25 shadow-[0_2px_10px_rgba(0,0,0,0.5)] hover:bg-black/50' 
+                ? 'text-white hover:bg-white/10' 
                 : 'text-[#252824] hover:bg-stone-100'
             }`}
             aria-label={mobileMenuOpen ? "Chiudi menu" : "Apri menu"}

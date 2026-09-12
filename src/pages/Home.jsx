@@ -156,12 +156,12 @@ export default function Home() {
         {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.08] mb-5 drop-shadow-md">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.08] mb-5">
             Coltivato in Sicilia.<br />
             <span className="font-normal italic text-[#FAF9F6]/90">Pronto per il mondo.</span>
           </h1>
 
-          <p className="text-white/90 text-sm sm:text-lg max-w-xl mx-auto font-normal leading-relaxed mb-8 drop-shadow-xs">
+          <p className="text-white/90 text-sm sm:text-lg max-w-xl mx-auto font-normal leading-relaxed mb-8">
             Forniture e catalogo piante all'ingrosso per garden center, grossisti e professionisti del verde.
           </p>
 
@@ -206,8 +206,8 @@ export default function Home() {
         <SectionReveal>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
-            {/* Immagini Autentiche */}
-            <div className="lg:col-span-5 space-y-4">
+            {/* Immagini Autentiche (Su mobile appare DOPO il testo) */}
+            <div className="lg:col-span-5 space-y-4 order-2 lg:order-1">
               <div className="rounded-3xl overflow-hidden shadow-md aspect-[4/5] bg-stone-100 border border-stone-200/60">
                 <picture>
                   <source media="(max-width: 768px)" srcSet="/brand/storia-serra-mobile.webp" type="image/webp" />
@@ -226,8 +226,8 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Racconto Aziendale Naturale */}
-            <div className="lg:col-span-7 space-y-6">
+            {/* Racconto Aziendale Naturale (Su mobile appare PRIMA) */}
+            <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
               <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block">
                 Santa Venerina &bull; Sicilia
               </span>
