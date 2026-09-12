@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Sfondo squircle verde profondo vivaistico -->
+  <rect width="64" height="64" rx="16" fill="#064e3b" />
+  
+  <!-- Petali e germogli floreali Campo dei Fiori -->
+  <path d="M32 32 C18 32 14 20 23 13 C32 6 32 23 32 32 Z" fill="#6ee7b7" opacity="0.9" />
+  <path d="M32 32 C46 32 50 20 41 13 C32 6 32 23 32 32 Z" fill="#34d399" opacity="0.8" />
+  <path d="M32 44 C25 32 26 17 32 11 C38 17 39 32 32 44 Z" fill="#a7f3d0" />
+  <path d="M32 40 C32 49 30 53 32 53" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round" />
+  <path d="M32 43 C22 43 19 36 25 33 C31 30 31 39 32 43 Z" fill="#34d399" opacity="0.85" />
+  <path d="M32 43 C42 43 45 36 39 33 C33 30 33 39 32 43 Z" fill="#6ee7b7" opacity="0.75" />
+  <circle cx="32" cy="28" r="3.2" fill="#fef08a" />
+</svg>

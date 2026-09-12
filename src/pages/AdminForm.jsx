@@ -22,6 +22,8 @@ export default function AdminForm() {
     pz_pianale: '',
     pz_carrello: '',
     disponibilita_carrelli: '',
+    giacenza: '',
+    disponibile: '',
     prezzo: '',
     descrizione: '',
     note: '',
@@ -51,10 +53,12 @@ export default function AdminForm() {
         if (!catError && catData) {
           const catSet = new Set(catData.map(c => c.categoria).filter(Boolean));
           // Assicurati che ci siano alcune categorie standard di vivaio
-          catSet.add('Piante Grasse e Succulente');
-          catSet.add('Piante Mediterranee e Aromatiche');
-          catSet.add('Palme ed Esotiche');
-          catSet.add('Agrumi ed Interno');
+          catSet.add('Cactacee & Opuntia');
+          catSet.add('Euphorbia');
+          catSet.add('Crassula & Succulente');
+          catSet.add('Ficus & Foglia Ornamentale');
+          catSet.add('Palme & Mediterranee');
+          catSet.add('Piante da Vivaio');
           setCategorieEsistenti(Array.from(catSet));
         }
 
@@ -72,15 +76,17 @@ export default function AdminForm() {
             setFormData({
               nome: pianta.nome || '',
               nome_comune: pianta.nome_comune || '',
-              categoria: pianta.categoria || 'Altre piante',
+              categoria: pianta.categoria || 'Piante da Vivaio',
               tipologia: pianta.tipologia || '',
-              vaso_cm: pianta.vaso_cm !== null ? String(pianta.vaso_cm) : '',
+              vaso_cm: pianta.vaso_cm !== null && pianta.vaso_cm !== undefined ? String(pianta.vaso_cm) : '',
               altezza_cm: pianta.altezza_cm || '',
-              peso_kg: pianta.peso_kg !== null ? String(pianta.peso_kg) : '',
+              peso_kg: pianta.peso_kg !== null && pianta.peso_kg !== undefined ? String(pianta.peso_kg) : '',
               pz_pianale: pianta.pz_pianale || '',
               pz_carrello: pianta.pz_carrello || '',
               disponibilita_carrelli: pianta.disponibilita_carrelli || '',
-              prezzo: pianta.prezzo !== null ? String(pianta.prezzo) : '',
+              giacenza: pianta.giacenza !== null && pianta.giacenza !== undefined ? String(pianta.giacenza) : '',
+              disponibile: pianta.disponibile !== null && pianta.disponibile !== undefined ? String(pianta.disponibile) : '',
+              prezzo: pianta.prezzo !== null && pianta.prezzo !== undefined ? String(pianta.prezzo) : '',
               descrizione: pianta.descrizione || '',
               note: pianta.note || '',
               visibile: pianta.visibile ?? true,
@@ -122,15 +128,9 @@ export default function AdminForm() {
     e.preventDefault();
     setErrore(null);
 
-    // Validazione dei soli campi obbligatori
+    // Validazione del solo nome botanico obbligatorio
     if (!formData.nome.trim()) {
       setErrore('Il nome botanico della pianta è obbligatorio.');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (!formData.prezzo || isNaN(Number(formData.prezzo.replace(',', '.')))) {
-      setErrore('Inserisci un prezzo valido (es: 4.50).');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -139,14 +139,18 @@ export default function AdminForm() {
 
     try {
       // Normalizzazione payload
-      const prezzoNumerico = Number(formData.prezzo.replace(',', '.'));
+      const prezzoNumerico = formData.prezzo && !isNaN(Number(formData.prezzo.replace(',', '.'))) 
+        ? Number(formData.prezzo.replace(',', '.')) 
+        : null;
       const vasoNumerico = formData.vaso_cm ? Number(formData.vaso_cm.replace(',', '.')) : null;
       const pesoNumerico = formData.peso_kg ? Number(formData.peso_kg.replace(',', '.')) : null;
+      const giacenzaNumerica = formData.giacenza ? parseInt(formData.giacenza, 10) : 0;
+      const disponibileNumerico = formData.disponibile ? parseInt(formData.disponibile, 10) : 0;
 
       const payload = {
         nome: formData.nome.trim(),
         nome_comune: formData.nome_comune.trim() || null,
-        categoria: formData.categoria || 'Altre piante',
+        categoria: formData.categoria || 'Piante da Vivaio',
         tipologia: formData.tipologia.trim() || null,
         vaso_cm: isNaN(vasoNumerico) ? null : vasoNumerico,
         altezza_cm: formData.altezza_cm.trim() || null,
@@ -154,6 +158,8 @@ export default function AdminForm() {
         pz_pianale: formData.pz_pianale.trim() || null,
         pz_carrello: formData.pz_carrello.trim() || null,
         disponibilita_carrelli: formData.disponibilita_carrelli.trim() || null,
+        giacenza: isNaN(giacenzaNumerica) ? 0 : giacenzaNumerica,
+        disponibile: isNaN(disponibileNumerico) ? 0 : disponibileNumerico,
         prezzo: prezzoNumerico,
         descrizione: formData.descrizione.trim() || null,
         note: formData.note.trim() || null,
@@ -202,19 +208,19 @@ export default function AdminForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-24 sm:pb-16">
+    <div className="min-h-screen bg-[#F2F3EB] pb-24 sm:pb-16 text-[#282B27]">
       {/* Header Form */}
-      <header className="sticky top-0 z-30 bg-stone-900 text-white shadow-md">
+      <header className="sticky top-0 z-30 bg-[#25570A] text-white shadow-md border-b border-[#357C0E]/40">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
           <Link
             to="/admin"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold touch-target transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#183806] hover:bg-[#122A04] text-[#6BB221] border border-[#6BB221]/30 text-xs font-bold touch-target transition-all active:scale-95"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#6BB221]" />
             <span>Lista Piante</span>
           </Link>
 
-          <h1 className="font-bold text-sm sm:text-base text-white truncate max-w-[160px] sm:max-w-xs">
+          <h1 className="font-display font-bold text-base sm:text-lg text-white truncate max-w-[160px] sm:max-w-xs">
             {isModifica ? `Modifica: ${formData.nome || 'Pianta'}` : 'Nuova Pianta'}
           </h1>
 
@@ -222,7 +228,7 @@ export default function AdminForm() {
             type="button"
             onClick={handleSubmit}
             disabled={salvataggioInCorso}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-sm touch-target"
+            className="px-4 py-2 bg-[#EA4707] hover:bg-[#CF3B02] active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-sm touch-target"
           >
             {salvataggioInCorso ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -363,18 +369,35 @@ export default function AdminForm() {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Prezzo Ingrosso (Obbligatorio) */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
-                  Prezzo all'ingrosso (€) *
+              {/* Disponibilità vendita (pz) */}
+              <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200">
+                <label className="block text-xs font-bold uppercase tracking-wider text-emerald-900 mb-1.5 flex items-center justify-between">
+                  <span>Disponibilità Vendita (pz)</span>
+                  <span className="text-[10px] text-emerald-700 font-medium lowercase">visibile</span>
                 </label>
                 <input
                   type="text"
-                  required
-                  value={formData.prezzo}
-                  onChange={(e) => handleChange('prezzo', e.target.value)}
-                  placeholder="es. 4.80"
-                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-moss-600 focus:bg-white"
+                  inputMode="numeric"
+                  value={formData.disponibile}
+                  onChange={(e) => handleChange('disponibile', e.target.value)}
+                  placeholder="es. 4000"
+                  className="w-full px-3.5 py-3 bg-white border border-emerald-300 rounded-xl text-base font-bold text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-700"
+                />
+              </div>
+
+              {/* Giacenza Magazzino (pz) */}
+              <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-1.5 flex items-center justify-between">
+                  <span>Giacenza Magazzino (pz)</span>
+                  <span className="text-[10px] text-stone-500 font-medium lowercase">gestionale</span>
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={formData.giacenza}
+                  onChange={(e) => handleChange('giacenza', e.target.value)}
+                  placeholder="es. 4000"
+                  className="w-full px-3.5 py-3 bg-white border border-stone-300 rounded-xl text-base font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 />
               </div>
 
@@ -385,10 +408,11 @@ export default function AdminForm() {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={formData.vaso_cm}
                   onChange={(e) => handleChange('vaso_cm', e.target.value)}
-                  placeholder="es. 18"
-                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-moss-600 focus:bg-white"
+                  placeholder="es. 14, 16, 20"
+                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white"
                 />
               </div>
 
@@ -402,21 +426,21 @@ export default function AdminForm() {
                   value={formData.altezza_cm}
                   onChange={(e) => handleChange('altezza_cm', e.target.value)}
                   placeholder="es. 40/60"
-                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-moss-600 focus:bg-white"
+                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white"
                 />
               </div>
 
-              {/* Peso */}
+              {/* Prezzo interno (Facoltativo - Non mostrato al cliente) */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
-                  Peso stimato (kg)
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-400 mb-1.5">
+                  Prezzo interno (€ - Facoltativo)
                 </label>
                 <input
                   type="text"
-                  value={formData.peso_kg}
-                  onChange={(e) => handleChange('peso_kg', e.target.value)}
-                  placeholder="es. 2.5"
-                  className="w-full px-3.5 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-moss-600 focus:bg-white"
+                  value={formData.prezzo}
+                  onChange={(e) => handleChange('prezzo', e.target.value)}
+                  placeholder="Non mostrato ai clienti"
+                  className="w-full px-3.5 py-3 bg-stone-50/50 border border-stone-200 rounded-xl text-sm text-stone-600 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white"
                 />
               </div>
 

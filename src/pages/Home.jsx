@@ -11,27 +11,34 @@ import {
   Phone, 
   MapPin, 
   AlertCircle,
-  ChevronDown
+  ChevronDown,
+  ArrowDown,
+  Plus
 } from 'lucide-react';
 
 export default function Home() {
   const [piante, setPiante] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errore, setErrore] = useState(null);
+  const [validoFino, setValidoFino] = useState('31 Agosto 2026');
 
-  // Filtri
+  // Filtri catalogo
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('tutte');
   const [vasoFiltro, setVasoFiltro] = useState(null);
+
+  // Paginazione progressiva (12 piante alla volta)
+  const [visibiliCount, setVisibiliCount] = useState(12);
 
   // Modali
   const [piantaDettaglio, setPiantaDettaglio] = useState(null);
   const [lightboxData, setLightboxData] = useState({ isOpen: false, src: '', title: '' });
 
-  const caricaPiante = async () => {
+  const caricaDati = async () => {
     setLoading(true);
     setErrore(null);
     try {
+      // 1. Carica catalogo piante visibili
       const { data, error } = await supabase
         .from('piante')
         .select('*')
@@ -41,6 +48,17 @@ export default function Home() {
 
       if (error) throw error;
       setPiante(data || []);
+
+      // 2. Carica periodo di validità listino
+      const { data: impData } = await supabase
+        .from('impostazioni')
+        .select('valore')
+        .eq('chiave', 'valido_fino')
+        .single();
+
+      if (impData?.valore) {
+        setValidoFino(impData.valore);
+      }
     } catch (err) {
       console.error('Errore nel caricamento del catalogo:', err);
       setErrore('Impossibile caricare il catalogo in questo momento.');
@@ -50,10 +68,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    caricaPiante();
+    caricaDati();
   }, []);
 
-  // Categorie
+  // Categorie univoche
   const categorie = useMemo(() => {
     const set = new Set();
     piante.forEach(p => {
@@ -62,14 +80,24 @@ export default function Home() {
     return Array.from(set);
   }, [piante]);
 
-  // Vasi
+  // Diametri vasi disponibili
   const diametriVaso = useMemo(() => {
     const setVasi = new Set();
     piante.forEach(p => {
       if (p.vaso_cm) setVasi.add(Number(p.vaso_cm));
+      if (Array.isArray(p.varianti)) {
+        p.varianti.forEach(v => {
+          if (v.vaso_cm) setVasi.add(Number(v.vaso_cm));
+        });
+      }
     });
     return Array.from(setVasi).sort((a, b) => a - b);
   }, [piante]);
+
+  // Reset del contatore visibili ogni volta che cambiano i filtri
+  useEffect(() => {
+    setVisibiliCount(12);
+  }, [ricerca, categoriaAttiva, vasoFiltro]);
 
   // Piante filtrate
   const pianteFiltrate = useMemo(() => {
@@ -81,107 +109,179 @@ export default function Home() {
         p.nome.toLowerCase().includes(q) ||
         (p.nome_comune && p.nome_comune.toLowerCase().includes(q));
 
-      const matchVaso = vasoFiltro === null || Number(p.vaso_cm) === Number(vasoFiltro);
+      let matchVaso = true;
+      if (vasoFiltro !== null) {
+        const haNelVasoPrincipale = Number(p.vaso_cm) === Number(vasoFiltro);
+        const haNelleVarianti = Array.isArray(p.varianti) && p.varianti.some(v => Number(v.vaso_cm) === Number(vasoFiltro));
+        matchVaso = haNelVasoPrincipale || haNelleVarianti;
+      }
 
       return matchCategoria && matchTesto && matchVaso;
     });
   }, [piante, categoriaAttiva, ricerca, vasoFiltro]);
 
+  // Piante visibili correnti (12 alla volta)
+  const pianteVisibili = useMemo(() => {
+    return pianteFiltrate.slice(0, visibiliCount);
+  }, [pianteFiltrate, visibiliCount]);
+
   const whatsappNumber = AZIENDA.contatti.whatsapp.replace(/\D/g, '');
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-stone-800">
-      {/* 1. SEZIONE HERO A SCHERMO INTERO (100vh da telefono con foto di sfondo suggestiva) */}
-      <section className="relative min-h-[calc(100svh-4rem)] sm:min-h-[90vh] flex flex-col justify-between items-center text-white px-5 py-12 sm:py-20 overflow-hidden">
-        {/* Immagine di sfondo ad alta risoluzione (Serra / Vivaio) */}
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#252824]">
+      
+      {/* 1. SEZIONE HERO: FOTOGRAFIA AUTENTICA E COLORI NATURALI (Senza filtri verdi artificiali) */}
+      <section className="relative min-h-[85vh] flex items-center justify-center text-white overflow-hidden bg-stone-900">
+        {/* Foto reale del vivaio con i suoi colori naturali e veri */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=2000&q=85"
-            alt="Serra Vivaio Finocchiaro"
-            className="w-full h-full object-cover"
+            src="/brand/hero-cover.png"
+            alt="Vivaio Campo dei Fiori a Santa Venerina"
+            className="w-full h-full object-cover object-center"
           />
-          {/* Gradiente elegante per garantire leggibilità assoluta ai testi */}
-          <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/65 to-stone-900/50" />
+          {/* Sfumatura naturale e neutra da pellicola (nessun verde acido o strano) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/25" />
         </div>
 
-        {/* Spazio superiore per centratura verticale */}
-        <div className="w-full"></div>
-
-        {/* Contenuto Centrale della Hero */}
-        <div className="relative z-10 max-w-2xl mx-auto text-center py-6">
-          <span className="inline-block px-3.5 py-1 rounded-full bg-emerald-900/70 border border-emerald-500/30 text-emerald-200 text-xs font-semibold tracking-wider uppercase mb-4 backdrop-blur-md">
-            Catalogo & Listino Professionale
-          </span>
-
-          <h1 className="font-display text-4xl sm:text-6xl font-bold tracking-tight leading-[1.15] mb-4 text-white">
-            {AZIENDA.nome}
+        {/* Contenuto Essenziale & Diretto (Senza troppe scritte) */}
+        <div className="relative z-10 max-w-4xl mx-auto px-6 py-16 text-center">
+          
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.1] mb-5 drop-shadow-md">
+            Coltivato in Sicilia.<br />
+            <span className="font-normal italic text-[#FAF9F6]/90">Pronto per il mondo.</span>
           </h1>
 
-          <p className="text-stone-200 text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-8 font-normal">
-            Forniture di piante all'ingrosso per garden center, rivenditori e professionisti del verde.
+          <p className="text-white/90 text-sm sm:text-lg max-w-xl mx-auto font-normal leading-relaxed mb-8 drop-shadow-xs">
+            Forniture e catalogo piante all'ingrosso per garden center, grossisti e professionisti del verde.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
+          {/* Azioni Rapide */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto">
             <a
-              href="#ricerca"
-              className="w-full sm:w-auto px-6 py-3.5 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-semibold text-sm rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 touch-target"
+              href="#catalogo"
+              className="w-full sm:w-auto px-8 py-3.5 bg-[#D34816] hover:bg-[#B83E12] active:scale-95 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full transition-all shadow-lg flex items-center justify-center gap-2 touch-target"
             >
-              <span>Esplora il Catalogo</span>
-              <ChevronDown className="w-4 h-4" />
+              <span>Esplora il Listino</span>
+              <ArrowDown className="w-4 h-4" />
             </a>
 
             <a
-              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Salve Vivaio Finocchiaro, vorrei richiedere informazioni sulle piante.')}`}
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-6 py-3.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white font-semibold text-sm rounded-xl transition-all border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 touch-target"
+              className="w-full sm:w-auto px-7 py-3.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider rounded-full transition-all border border-white/30 backdrop-blur-md flex items-center justify-center gap-2 touch-target"
             >
               <MessageCircle className="w-4 h-4 fill-white/20" />
-              <span>Contatta su WhatsApp</span>
+              <span>Contatto Ordini</span>
             </a>
           </div>
         </div>
+      </section>
 
-        {/* Indicatore di scorrimento in fondo alla prima schermata */}
-        <div className="relative z-10 text-center pb-2 animate-bounce">
-          <a
-            href="#ricerca"
-            className="text-stone-300 hover:text-white text-xs font-medium flex flex-col items-center gap-1 transition-colors"
-            aria-label="Scorri per cercare"
-          >
-            <span>Scorri per cercare</span>
-            <ChevronDown className="w-4 h-4" />
-          </a>
+
+      {/* 2. SEZIONE IL VIVAIO & IL TERRITORIO (Editoriale pulito, colori naturali e rilassanti) */}
+      <section id="storia" className="py-20 sm:py-28 px-5 sm:px-8 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* Immagini Autentiche */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="rounded-3xl overflow-hidden shadow-md aspect-[4/5] bg-stone-100 border border-stone-200/60">
+              <img
+                src="/brand/storia-serra.png"
+                alt="Serre Campo dei Fiori a Santa Venerina"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-xs text-[#252824]/60 italic text-center">
+              Serre di coltivazione a Santa Venerina (Catania) &bull; Pendici dell'Etna
+            </p>
+          </div>
+
+          {/* Racconto Aziendale Naturale */}
+          <div className="lg:col-span-7 space-y-6">
+            <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block">
+              Santa Venerina &bull; Sicilia
+            </span>
+
+            <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] leading-[1.15] tracking-tight">
+              Dalla terra minerale dell'Etna ai mercati di tutta Europa.
+            </h2>
+
+            <div className="space-y-4 text-[#252824]/80 text-sm sm:text-base leading-relaxed">
+              <p>
+                Guidata da <strong>Marco Adornetto</strong> a Santa Venerina (Catania), <em>Campo dei Fiori</em> unisce la naturale fertilità della terra vulcanica con metodologie vivaistiche all'avanguardia.
+              </p>
+              <p>
+                Il microclima delle pendici dell'Etna offre una combinazione unica di soleggiamento costante ed escursione termica equilibrata: le piante sviluppano radici solide, chiome vigorose e colorazioni intense, perfette per una tenuta impeccabile durante il trasporto refrigerato e nei garden center.
+              </p>
+            </div>
+
+            {/* I 3 Punti Guida di Produzione */}
+            <div className="pt-6 border-t border-stone-200 space-y-5">
+              <div className="flex items-start gap-4">
+                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">01</span>
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Terra Vulcanica & Radicazione Robusta</h3>
+                  <p className="text-xs text-[#252824]/70 mt-0.5">Il suolo etneo stimola apparati radicali compatti e longevi.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">02</span>
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Lotti Calibrati e Uniformi</h3>
+                  <p className="text-xs text-[#252824]/70 mt-0.5">Forniture uniformi per diametro vaso, altezza e sviluppo fogliare.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">03</span>
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Logistica Roll CC Danesi</h3>
+                  <p className="text-xs text-[#252824]/70 mt-0.5">Carichi rapidi e protetti su carrelli standard per consegne in tutta Italia ed Europa.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      {/* 2. SECONDA SEZIONE: "HAI UNA PIANTA IN MENTE?" (Ben spaziata e pulita) */}
-      <section id="ricerca" className="py-14 sm:py-20 px-4 sm:px-6 max-w-3xl mx-auto w-full">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight mb-2">
-            Hai una pianta in mente?
-          </h2>
-          <p className="text-stone-500 text-sm sm:text-base max-w-md mx-auto">
-            Cercala per nome botanico o comune, oppure filtra rapidamente per categoria e vaso.
-          </p>
+
+      {/* 3. SEZIONE CATALOGO & LISTINO ALL'INGROSSO */}
+      <section id="catalogo" className="py-20 sm:py-28 px-4 sm:px-8 max-w-7xl mx-auto w-full">
+        
+        {/* Intestazione Catalogo */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-stone-200">
+          <div>
+            <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
+              Disponibilità Magazzino
+            </span>
+            <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] tracking-tight">
+              Listino Piante & Varietà
+            </h2>
+          </div>
+          <div className="text-xs font-semibold text-[#252824]/70">
+            Disponibilità valide fino al <strong className="text-[#25570A] font-bold">{validoFino}</strong>
+          </div>
         </div>
 
-        {/* Box di Ricerca Elegante */}
-        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 space-y-4">
-          {/* Barra Input */}
+        {/* Filtri & Ricerca Puliti */}
+        <div className="space-y-4 mb-10">
+          {/* Input di Ricerca */}
           <div className="relative">
-            <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="w-5 h-5 text-[#252824]/40 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={ricerca}
               onChange={(e) => setRicerca(e.target.value)}
-              placeholder="Es. Olivo, Limone, Crassula, Sansevieria..."
-              className="w-full pl-11 pr-10 py-3.5 bg-stone-50 border border-stone-200 rounded-xl text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-800 focus:bg-white transition-all"
+              placeholder="Cerca specie botanica o nome comune (es. Olivo, Bougainvillea, Limone, Crassula...)"
+              className="w-full pl-12 pr-12 py-3.5 bg-white border border-stone-200 rounded-full text-sm sm:text-base text-[#252824] placeholder-[#252824]/40 focus:outline-none focus:ring-2 focus:ring-[#25570A] transition-all shadow-xs"
             />
             {ricerca && (
               <button
                 onClick={() => setRicerca('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-700 p-1 font-semibold"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[#252824]/50 hover:text-[#252824] p-1 font-bold"
               >
                 Azzera
               </button>
@@ -189,17 +289,17 @@ export default function Home() {
           </div>
 
           {/* Filtro Categorie */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             <button
               type="button"
               onClick={() => setCategoriaAttiva('tutte')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
+              className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 ${
                 categoriaAttiva === 'tutte'
-                  ? 'bg-emerald-800 text-white'
-                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                  ? 'bg-[#25570A] text-white shadow-xs'
+                  : 'bg-white text-[#252824]/75 hover:bg-stone-100 border border-stone-200'
               }`}
             >
-              Tutte ({piante.length})
+              Tutte le varietà ({piante.length})
             </button>
 
             {categorie.map((cat) => (
@@ -207,10 +307,10 @@ export default function Home() {
                 key={cat}
                 type="button"
                 onClick={() => setCategoriaAttiva(cat)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors touch-target flex-shrink-0 ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 ${
                   categoriaAttiva === cat
-                    ? 'bg-emerald-800 text-white'
-                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                    ? 'bg-[#25570A] text-white shadow-xs'
+                    : 'bg-white text-[#252824]/75 hover:bg-stone-100 border border-stone-200'
                 }`}
               >
                 {cat}
@@ -218,23 +318,23 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Filtro Vasi */}
+          {/* Filtro Diametro Vasi */}
           {diametriVaso.length > 0 && (
-            <div className="pt-3 border-t border-stone-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-              <span className="text-[11px] font-medium text-stone-400 flex-shrink-0 mr-1">
-                Vaso:
+            <div className="pt-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#252824]/50 mr-1 flex-shrink-0">
+                Calibro:
               </span>
 
               <button
                 type="button"
                 onClick={() => setVasoFiltro(null)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
+                className={`px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 ${
                   vasoFiltro === null
-                    ? 'bg-stone-800 text-white'
-                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                    ? 'bg-[#25570A] text-white'
+                    : 'bg-white text-[#252824]/70 hover:bg-stone-100 border border-stone-200'
                 }`}
               >
-                Tutti
+                Tutti i diametri
               </button>
 
               {diametriVaso.map((d) => (
@@ -242,10 +342,10 @@ export default function Home() {
                   key={d}
                   type="button"
                   onClick={() => setVasoFiltro(vasoFiltro === d ? null : d)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 touch-target ${
+                  className={`px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 ${
                     vasoFiltro === d
-                      ? 'bg-stone-800 text-white'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                      ? 'bg-[#25570A] text-white'
+                      : 'bg-white text-[#252824]/70 hover:bg-stone-100 border border-stone-200'
                   }`}
                 >
                   Ø {d} cm
@@ -254,35 +354,32 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
 
-      {/* 3. TERZA SEZIONE: VISUALIZZAZIONE DELLE CARD PIANTE (Con ampi spazi) */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 w-full flex-1 pb-20 sm:pb-24">
-        {/* Intestazione e Conteggio Risultati */}
-        <div className="flex items-center justify-between mb-6 px-1">
-          <span className="text-xs font-medium text-stone-500">
-            Disponibili <strong>{pianteFiltrate.length}</strong> varietà
+        {/* Conteggio Risultati */}
+        <div className="flex items-center justify-between mb-8 px-1">
+          <span className="text-xs sm:text-sm font-medium text-[#252824]/70">
+            Trovate <strong>{pianteFiltrate.length}</strong> varietà botaniche
           </span>
 
           {(ricerca || categoriaAttiva !== 'tutte' || vasoFiltro !== null) && (
             <button
               onClick={() => { setRicerca(''); setCategoriaAttiva('tutte'); setVasoFiltro(null); }}
-              className="text-xs text-emerald-800 hover:underline font-medium"
+              className="text-xs text-[#25570A] hover:underline font-bold"
             >
-              Azzera tutti i filtri
+              Azzera filtri
             </button>
           )}
         </div>
 
         {/* Loading Skeleton */}
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-stone-200 p-4 animate-pulse">
-                <div className="aspect-[4/3] bg-stone-200 rounded-xl mb-4"></div>
-                <div className="h-5 bg-stone-200 rounded w-2/3 mb-2"></div>
+              <div key={i} className="bg-white rounded-3xl p-5 animate-pulse border border-stone-200">
+                <div className="aspect-[4/3] bg-stone-200 rounded-2xl mb-4"></div>
+                <div className="h-6 bg-stone-200 rounded w-2/3 mb-2"></div>
                 <div className="h-4 bg-stone-100 rounded w-1/3 mb-4"></div>
-                <div className="h-10 bg-stone-100 rounded-lg"></div>
+                <div className="h-10 bg-stone-100 rounded-xl"></div>
               </div>
             ))}
           </div>
@@ -290,41 +387,41 @@ export default function Home() {
 
         {/* Errore */}
         {errore && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 text-center my-6">
-            <AlertCircle className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-stone-700 mb-3">{errore}</p>
+          <div className="bg-white rounded-3xl border border-red-200 p-8 text-center my-6 shadow-sm">
+            <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+            <p className="text-sm font-semibold text-red-700 mb-3">{errore}</p>
             <button
-              onClick={caricaPiante}
-              className="px-4 py-2 bg-emerald-800 text-white rounded-lg text-xs font-medium"
+              onClick={caricaDati}
+              className="px-5 py-2.5 bg-[#25570A] text-white rounded-xl text-xs font-bold"
             >
-              Ricarica
+              Ricarica Catalogo
             </button>
           </div>
         )}
 
         {/* Nessun Risultato */}
         {!loading && !errore && pianteFiltrate.length === 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-12 text-center my-6">
-            <Sprout className="w-10 h-10 text-stone-300 mx-auto mb-2" />
-            <h3 className="font-semibold text-lg text-stone-800 mb-1">
-              Nessuna pianta trovata
+          <div className="bg-white rounded-3xl border border-stone-200 p-12 text-center my-6">
+            <Sprout className="w-10 h-10 text-[#25570A] mx-auto mb-2" />
+            <h3 className="font-display font-bold text-xl text-[#25570A] mb-1">
+              Nessuna varietà trovata
             </h3>
-            <p className="text-xs text-stone-500 mb-4">
-              Nessuna varietà corrisponde alla ricerca impostata.
+            <p className="text-xs sm:text-sm text-[#252824]/60 mb-4">
+              Nessuna pianta corrisponde ai parametri impostati.
             </p>
             <button
               onClick={() => { setRicerca(''); setCategoriaAttiva('tutte'); setVasoFiltro(null); }}
-              className="px-4 py-2 bg-stone-800 text-white text-xs font-medium rounded-lg"
+              className="px-5 py-2 bg-[#25570A] text-white text-xs font-bold rounded-full"
             >
-              Mostra tutte le piante
+              Mostra tutte le varietà
             </button>
           </div>
         )}
 
         {/* Griglia Card Piante */}
-        {!loading && !errore && pianteFiltrate.length > 0 && (
+        {!loading && !errore && pianteVisibili.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {pianteFiltrate.map((pianta) => (
+            {pianteVisibili.map((pianta) => (
               <CardPianta
                 key={pianta.id}
                 pianta={pianta}
@@ -334,67 +431,169 @@ export default function Home() {
             ))}
           </div>
         )}
-      </main>
 
-      {/* 4. SEZIONE CONTATTI E LOGISTICA */}
-      <section id="contatti" className="bg-white border-t border-stone-200/80 py-16 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="font-semibold text-2xl text-stone-900 mb-1">
-              Informazioni & Spedizioni
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-500">
-              Carichi veloci e consegne settimanali su carrelli CC e pianali standard.
-            </p>
+        {/* PULSANTE CARICA ALTRE PIANTE (Paginazione a 12 alla volta) */}
+        {!loading && !errore && pianteFiltrate.length > visibiliCount && (
+          <div className="mt-14 text-center">
+            <button
+              onClick={() => setVisibiliCount(prev => prev + 12)}
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-[#25570A] hover:bg-[#1A3E07] active:scale-95 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full shadow-md transition-all touch-target"
+            >
+              <Plus className="w-4 h-4" />
+              <span>
+                Carica altre varietà ({visibiliCount} di {pianteFiltrate.length})
+              </span>
+            </button>
           </div>
+        )}
+      </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200/60 text-center">
-              <Phone className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
-              <span className="text-[11px] uppercase font-semibold text-stone-400 block">Telefono</span>
-              <span className="text-sm font-semibold text-stone-800 block mt-1">{AZIENDA.contatti.telefono}</span>
+
+      {/* 4. SEZIONE LOGISTICA CC & FORNITURE PROFESSIONALI */}
+      <section id="logistica" className="bg-[#1C201C] text-white py-20 sm:py-28 px-5 sm:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-5">
+              <span className="text-[#6BB221] text-xs font-bold tracking-[0.25em] uppercase block">
+                Standard Logistico
+              </span>
+              <h2 className="font-display text-3xl sm:text-5xl font-medium tracking-tight leading-[1.15]">
+                Carichi veloci e protetti su roll carrelli CC danesi.
+              </h2>
+              <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
+                Tutte le spedizioni di <em>Campo dei Fiori</em> sono allestite secondo i rigorosi standard europei di logistica vivaistica. Le piante vengono preparate con cura su carrelli roll CC e pianali dedicati per garantire ventilazione ottimale e protezione totale della vegetazione.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-stone-700">
+                <div>
+                  <span className="font-display text-3xl font-bold text-white block">100%</span>
+                  <span className="text-xs text-stone-400 mt-1 block">Passaporto Fitosanitario UE</span>
+                </div>
+                <div>
+                  <span className="font-display text-3xl font-bold text-white block">Settimanali</span>
+                  <span className="text-xs text-stone-400 mt-1 block">Carichi diretti e puntuali</span>
+                </div>
+              </div>
             </div>
 
-            <a
-              href={`https://wa.me/${whatsappNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-5 rounded-2xl bg-emerald-50/70 hover:bg-emerald-50 border border-emerald-200/60 text-center transition-colors block"
-            >
-              <MessageCircle className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
-              <span className="text-[11px] uppercase font-semibold text-emerald-800 block">WhatsApp</span>
-              <span className="text-sm font-semibold text-emerald-950 block mt-1">Scrivici per ordini</span>
-            </a>
-
-            <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200/60 text-center">
-              <MapPin className="w-5 h-5 text-emerald-800 mx-auto mb-2" />
-              <span className="text-[11px] uppercase font-semibold text-stone-400 block">Sede & Carico</span>
-              <span className="text-xs font-semibold text-stone-800 block mt-1">{AZIENDA.contatti.indirizzo}</span>
+            <div className="lg:col-span-6">
+              <div className="rounded-3xl overflow-hidden shadow-2xl border border-stone-700 aspect-[16/10]">
+                <img
+                  src="/brand/brand-action.png"
+                  alt="Carrelli roll CC e imballaggi per garden center"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-stone-900 text-stone-400 py-6 text-center text-xs">
-        <p className="text-stone-300 font-medium">{AZIENDA.nome} &bull; P.IVA {AZIENDA.contatti.piva}</p>
-        <p className="text-stone-500 text-[11px] mt-0.5">Vendita riservata esclusivamente ad operatori professionali con Partita IVA</p>
+
+      {/* 5. SEZIONE CONTATTI COMMERCIALI */}
+      <section id="contatti" className="py-20 sm:py-28 px-5 sm:px-8 max-w-5xl mx-auto w-full">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
+            Ufficio Commerciale
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl font-medium text-[#25570A]">
+            Contatta il Vivaio
+          </h2>
+          <p className="text-xs sm:text-sm text-[#252824]/70 mt-2">
+            Richiesta quotazioni all'ingrosso, disponibilità lotti e visite in vivaio.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
+            <Phone className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Ufficio Vendite</span>
+            <span className="text-sm sm:text-base font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.telefono}</span>
+          </div>
+
+          <a
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-6 rounded-3xl bg-[#D34816] hover:bg-[#B83E12] text-white text-center transition-all shadow-md block active:scale-98"
+          >
+            <MessageCircle className="w-5 h-5 text-white mx-auto mb-2 fill-white/20" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 block">WhatsApp Diretto</span>
+            <span className="text-sm sm:text-base font-bold text-white block mt-1">Richiedi Disponibilità</span>
+          </a>
+
+          <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
+            <MapPin className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Sede & Vivaio</span>
+            <span className="text-xs sm:text-sm font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.indirizzo}</span>
+          </div>
+        </div>
+      </section>
+
+
+      {/* 6. FOOTER EDITORIALE (Con logo orizzontale autentico e dettagli societari) */}
+      <footer className="bg-[#141714] text-[#FAF9F6] border-t border-stone-800 py-16 px-5 sm:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-stone-800 items-start">
+            
+            {/* Logo ufficiale con scritta inclusa in versione bianca per fondo scuro */}
+            <div className="md:col-span-5 space-y-4">
+              <img
+                src="/brand/logo-horizontal-white.png"
+                alt="Campo dei Fiori - Ornamental Plants Sicily"
+                className="h-11 w-auto object-contain"
+              />
+              <p className="text-xs text-stone-400 leading-relaxed max-w-sm">
+                Coltivazione e vendita all'ingrosso riservata esclusivamente a garden center, grossisti e operatori professionali con Partita IVA.
+              </p>
+            </div>
+
+            {/* Dati Fiscali */}
+            <div className="md:col-span-4 space-y-2 text-xs text-stone-400">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#6BB221] block mb-2">
+                Dati Societari
+              </span>
+              <p><strong className="text-white font-semibold">Ragione Sociale:</strong> {AZIENDA.ragioneSociale}</p>
+              <p><strong className="text-white font-semibold">Sede Operativa:</strong> {AZIENDA.contatti.via}, {AZIENDA.contatti.cap} {AZIENDA.contatti.comune} ({AZIENDA.contatti.provincia})</p>
+              <p><strong className="text-white font-semibold">Partita IVA:</strong> {AZIENDA.contatti.piva}</p>
+              <p><strong className="text-white font-semibold">PEC:</strong> {AZIENDA.contatti.pec}</p>
+            </div>
+
+            {/* Recapiti Diretti */}
+            <div className="md:col-span-3 space-y-2 text-xs text-stone-400">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#6BB221] block mb-2">
+                Recapiti Diretti
+              </span>
+              <p><strong className="text-white font-semibold">Ufficio Vendite:</strong> {AZIENDA.contatti.telefono}</p>
+              <p><strong className="text-white font-semibold">Email:</strong> {AZIENDA.contatti.email}</p>
+              <p><strong className="text-white font-semibold">Orari Carico:</strong> {AZIENDA.contatti.orari}</p>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
+            <p>&copy; {new Date().getFullYear()} {AZIENDA.ragioneSociale}. Tutti i diritti riservati.</p>
+            <p className="text-[11px] uppercase tracking-widest font-mono text-[#6BB221]">
+              Coltivato alle pendici dell'Etna &bull; Sicilia
+            </p>
+          </div>
+        </div>
       </footer>
+
 
       {/* FAB WHATSAPP MOBILE */}
       <div className="fixed bottom-5 right-5 z-40 sm:hidden">
         <a
-          href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Salve Vivaio Finocchiaro, vorrei informazioni sulle piante.')}`}
+          href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni sulle disponibilità piante.`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-13 h-13 p-3.5 rounded-full bg-emerald-800 text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform touch-target"
+          className="w-14 h-14 rounded-full bg-[#D34816] text-white shadow-xl shadow-black/40 flex items-center justify-center active:scale-95 transition-transform touch-target"
           aria-label="Contatta su WhatsApp"
         >
-          <MessageCircle className="w-6 h-6 fill-white/20" />
+          <MessageCircle className="w-7 h-7 fill-white/20" />
         </a>
       </div>
 
-      {/* MODALE DETTAGLIO */}
+      {/* MODALE DETTAGLIO PIANTA */}
       {piantaDettaglio && (
         <DettaglioPiantaModal
           pianta={piantaDettaglio}
@@ -403,7 +602,7 @@ export default function Home() {
         />
       )}
 
-      {/* LIGHTBOX */}
+      {/* LIGHTBOX PER INGRANDIRE FOTO */}
       {lightboxData.isOpen && (
         <Lightbox
           src={lightboxData.src}

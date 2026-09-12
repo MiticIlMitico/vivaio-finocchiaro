@@ -56,18 +56,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F2F3EB] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <Link to="/" className="flex items-center justify-center gap-2 mb-6 group">
-          <div className="w-12 h-12 rounded-2xl bg-moss-700 text-white flex items-center justify-center shadow-md">
-            <Sprout className="w-6 h-6" />
-          </div>
+        <Link to="/" className="flex flex-col items-center justify-center gap-2 mb-6 group">
+          <img
+            src="/brand/logo-mark.png"
+            alt="Logo Campo dei Fiori"
+            className="w-16 h-16 object-contain drop-shadow-md group-hover:scale-105 transition-transform"
+          />
+          <span className="font-display font-bold text-2xl text-[#25570A] tracking-tight">
+            Campo dei Fiori
+          </span>
         </Link>
-        <h2 className="text-center font-display font-bold text-2xl sm:text-3xl text-stone-900 tracking-tight">
-          Area Riservata Vivaio
+        <h2 className="text-center font-display font-bold text-2xl sm:text-3xl text-[#25570A] tracking-tight">
+          Gestione Vivaio & Magazzino
         </h2>
-        <p className="mt-2 text-center text-xs text-stone-600">
-          Accesso riservato alla gestione del catalogo e listino {AZIENDA.nome}
+        <p className="mt-2 text-center text-xs text-[#282B27]/70">
+          Accesso riservato all'amministrazione del catalogo e listino all'ingrosso
         </p>
       </div>
 
@@ -125,7 +130,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-4 bg-moss-700 hover:bg-moss-800 text-white text-sm font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-moss-600 focus:ring-offset-2 touch-target"
+                className="w-full py-3.5 px-4 bg-[#25570A] hover:bg-[#183806] text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:ring-offset-2 touch-target active:scale-98"
               >
                 {loading ? (
                   <>
@@ -142,10 +147,10 @@ export default function Login() {
             </div>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-stone-100 text-center">
+          <div className="mt-6 pt-6 border-t border-[#B7BEA9]/30 text-center">
             <Link
               to="/"
-              className="text-xs font-medium text-stone-500 hover:text-moss-700 transition-colors"
+              className="text-xs font-semibold text-[#25570A] hover:underline transition-colors"
             >
               &larr; Torna alla vetrina pubblica
             </Link>

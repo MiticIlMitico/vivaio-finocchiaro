@@ -1,6 +1,6 @@
-# Vivaio Finocchiaro — WebApp Catalogo & Listino All'Ingrosso
+# Campo dei Fiori — WebApp Catalogo & Listino All'Ingrosso
 
-Catalogo e listino prezzi all'ingrosso per vivaio, ottimizzato per consultazione clienti e gestione mobile-first da parte del vivaista direttamente dallo smartphone in serra.
+Catalogo e listino prezzi all'ingrosso per l'azienda florovivaistica Campo dei Fiori (Santa Venerina, CT), ottimizzato per consultazione clienti e gestione mobile-first da parte del titolare direttamente dallo smartphone in serra.
 
 ## Stack Tecnologico
 - **Frontend**: React 18, Vite, Tailwind CSS, Lucide React, React Router DOM v6

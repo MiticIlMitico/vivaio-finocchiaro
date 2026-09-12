@@ -23,7 +23,10 @@ create table if not exists public.piante (
   pz_carrello             text,                       -- text: es. "100"
   disponibilita_carrelli  text,                       -- text: es. "6 CC"
 
-  prezzo                  numeric(10,2),
+  giacenza                integer default 0,          -- pezzi fisici in magazzino
+  disponibile             integer default 0,          -- pezzi disponibili alla vendita
+
+  prezzo                  numeric(10,2),              -- facoltativo / disattivato da vetrina
   note                    text,                       -- sconti, condizioni
 
   foto_url                text,                       -- URL pubblico per la vetrina
@@ -91,6 +94,40 @@ create policy "cancellazione solo autenticati"
   on public.piante for delete
   to authenticated
   using (true);
+
+-- ---------- 3b. Tabella impostazioni generali & periodo validità ----------
+
+create table if not exists public.impostazioni (
+  chiave                  text primary key,
+  valore                  text,
+  updated_at              timestamptz default now()
+);
+
+alter table public.impostazioni enable row level security;
+
+drop policy if exists "lettura pubblica impostazioni" on public.impostazioni;
+create policy "lettura pubblica impostazioni"
+  on public.impostazioni for select
+  to anon
+  using (true);
+
+drop policy if exists "lettura autenticata impostazioni" on public.impostazioni;
+create policy "lettura autenticata impostazioni"
+  on public.impostazioni for select
+  to authenticated
+  using (true);
+
+drop policy if exists "modifica impostazioni autenticati" on public.impostazioni;
+create policy "modifica impostazioni autenticati"
+  on public.impostazioni for all
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Valore iniziale periodo validità listino
+insert into public.impostazioni (chiave, valore)
+values ('valido_fino', '31 Agosto 2026')
+on conflict (chiave) do update set valore = excluded.valore;
 
 -- ---------- 4. Bucket Storage per le foto ----------
 

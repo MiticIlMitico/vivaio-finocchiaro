@@ -12,7 +12,11 @@ import {
   LogOut, 
   Sprout, 
   ArrowRight,
-  Store
+  Store,
+  Calendar,
+  Save,
+  CheckCircle2,
+  Warehouse
 } from 'lucide-react';
 import Toast from '../components/Toast';
 
@@ -23,12 +27,17 @@ export default function AdminLista() {
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [eliminaModal, setEliminaModal] = useState({ isOpen: false, pianta: null, loading: false });
 
+  // Periodo di validità listino
+  const [validoFino, setValidoFino] = useState('31 Agosto 2026');
+  const [salvataggioValidoFino, setSalvataggioValidoFino] = useState(false);
+
   const navigate = useNavigate();
 
-  // Caricamento completo delle piante
-  const caricaPiante = async () => {
+  // Caricamento completo delle piante e impostazioni
+  const caricaDati = async () => {
     setLoading(true);
     try {
+      // 1. Piante
       const { data, error } = await supabase
         .from('piante')
         .select('*')
@@ -37,8 +46,19 @@ export default function AdminLista() {
 
       if (error) throw error;
       setPiante(data || []);
+
+      // 2. Impostazione valido_fino
+      const { data: impData } = await supabase
+        .from('impostazioni')
+        .select('valore')
+        .eq('chiave', 'valido_fino')
+        .single();
+
+      if (impData?.valore) {
+        setValidoFino(impData.valore);
+      }
     } catch (err) {
-      console.error('Errore nel caricamento piante admin:', err);
+      console.error('Errore nel caricamento dati admin:', err);
       setToast({
         message: 'Errore nel caricamento del catalogo. Riprova.',
         type: 'error'
@@ -49,8 +69,40 @@ export default function AdminLista() {
   };
 
   useEffect(() => {
-    caricaPiante();
+    caricaDati();
   }, []);
+
+  // Salvataggio rapido periodo di validità listino
+  const handleSalvaValidoFino = async (e) => {
+    e.preventDefault();
+    if (!validoFino.trim()) return;
+
+    setSalvataggioValidoFino(true);
+    try {
+      const { error } = await supabase
+        .from('impostazioni')
+        .upsert({
+          chiave: 'valido_fino',
+          valore: validoFino.trim(),
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      setToast({
+        message: 'Periodo di validità listino aggiornato con successo!',
+        type: 'success'
+      });
+    } catch (err) {
+      console.error('Errore salvataggio periodo validità:', err);
+      setToast({
+        message: 'Impossibile aggiornare la data di validità.',
+        type: 'error'
+      });
+    } finally {
+      setSalvataggioValidoFino(false);
+    }
+  };
 
   // Logout
   const handleLogout = async () => {
@@ -155,20 +207,22 @@ export default function AdminLista() {
   }, [piante, ricerca]);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] pb-24 sm:pb-16 text-stone-800">
+    <div className="min-h-screen bg-[#F2F3EB] pb-24 sm:pb-16 text-[#282B27]">
       {/* Header Unico e Pulito Gestione */}
-      <header className="sticky top-0 z-30 bg-stone-900 text-white shadow-md">
+      <header className="sticky top-0 z-30 bg-[#25570A] text-white shadow-md border-b border-[#357C0E]/40">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
           {/* Brand con Link Diretto alla Home */}
-          <Link to="/" className="flex items-center gap-2 min-w-0 group" title="Vai al Catalogo Pubblico">
-            <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-              <Sprout className="w-4 h-4" />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 min-w-0 group" title="Vai al Catalogo Pubblico">
+            <img
+              src="/brand/logo-mark.png"
+              alt="Logo Campo dei Fiori"
+              className="h-8 w-auto object-contain drop-shadow group-hover:scale-105 transition-transform"
+            />
             <div className="min-w-0">
-              <h1 className="font-bold text-sm sm:text-base text-white leading-tight truncate">
+              <h1 className="font-display font-bold text-base sm:text-lg text-white leading-tight truncate">
                 {AZIENDA.nome}
               </h1>
-              <p className="text-[10px] text-emerald-400 font-medium leading-none mt-0.5">
+              <p className="text-[10px] text-[#6BB221] font-bold uppercase tracking-wider leading-none mt-0.5">
                 Pannello Gestione
               </p>
             </div>
@@ -179,16 +233,16 @@ export default function AdminLista() {
             {/* Tasto esplicito e visibile per tornare al sito normale */}
             <Link
               to="/"
-              className="px-3 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all touch-target active:scale-95"
+              className="px-3 py-2 rounded-xl bg-[#183806] hover:bg-[#122A04] text-[#6BB221] border border-[#6BB221]/30 text-xs font-bold flex items-center gap-1.5 transition-all touch-target active:scale-95"
               title="Esci dalla gestione e torna al sito per i clienti"
             >
-              <Store className="w-4 h-4 text-emerald-400" />
-              <span>Torna al Sito</span>
+              <Store className="w-4 h-4 text-[#6BB221]" />
+              <span>Vedi Sito</span>
             </Link>
 
             <Link
               to="/admin/nuova"
-              className="inline-flex items-center gap-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-sm touch-target"
+              className="inline-flex items-center gap-1 px-3 py-2 bg-[#EA4707] hover:bg-[#CF3B02] active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-sm touch-target"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Nuova Pianta</span>
@@ -224,6 +278,35 @@ export default function AdminLista() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
+
+        {/* Box Modifica Periodo di Validità Listino */}
+        <div className="mb-4 bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2 text-stone-900 font-bold text-xs sm:text-sm">
+              <Calendar className="w-4 h-4 text-emerald-800" />
+              <span>Periodo di validità listino (visibile ai clienti)</span>
+            </div>
+            <span className="text-[10px] text-stone-400 font-medium hidden sm:inline">Modifica con un tocco</span>
+          </div>
+          <form onSubmit={handleSalvaValidoFino} className="flex items-center gap-2">
+            <input
+              type="text"
+              value={validoFino}
+              onChange={(e) => setValidoFino(e.target.value)}
+              placeholder="Es. 31 Agosto 2026 oppure Fine Settimana..."
+              className="flex-1 px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-800"
+            />
+            <button
+              type="submit"
+              disabled={salvataggioValidoFino}
+              className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-700 active:scale-95 text-white font-semibold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5 touch-target flex-shrink-0"
+            >
+              <Save className="w-3.5 h-3.5" />
+              <span>{salvataggioValidoFino ? 'Salvataggio...' : 'Salva'}</span>
+            </button>
+          </form>
+        </div>
+
         {/* Statistiche */}
         <div className="grid grid-cols-3 gap-2.5 mb-4">
           <div className="bg-white p-3 rounded-xl border border-stone-200 shadow-sm text-center">
@@ -323,21 +406,40 @@ export default function AdminLista() {
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs text-stone-600 mt-1">
-                      {pianta.vaso_cm && (
-                        <span className="font-medium text-stone-700">
-                          Ø {pianta.vaso_cm} cm
-                        </span>
-                      )}
-                      {pianta.disponibilita_carrelli && (
-                        <span className="text-emerald-800 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded">
-                          {pianta.disponibilita_carrelli}
-                        </span>
-                      )}
-                      <span className="font-bold text-stone-900">
-                        {pianta.prezzo ? `€ ${Number(pianta.prezzo).toFixed(2)}` : '-'}
-                      </span>
-                    </div>
+                    {/* Varianti / Vasi e disponibilità */}
+                    {Array.isArray(pianta.varianti) && pianta.varianti.length > 1 ? (
+                      <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                        {pianta.varianti.map((v, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1 bg-stone-100 border border-stone-200 text-stone-800 text-[11px] font-medium px-2 py-0.5 rounded-lg"
+                          >
+                            <span className="font-bold">Ø {v.vaso_cm} cm:</span>
+                            <span className="text-emerald-800 font-bold">{Number(v.disponibile).toLocaleString('it-IT')} pz</span>
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-stone-600 mt-1">
+                        {pianta.vaso_cm && (
+                          <span className="font-medium text-stone-700 bg-stone-100 px-1.5 py-0.5 rounded">
+                            Ø {pianta.vaso_cm} cm
+                          </span>
+                        )}
+                        {pianta.disponibile !== null && pianta.disponibile !== undefined && (
+                          <span className="text-emerald-900 font-bold bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                            Disp: {Number(pianta.disponibile).toLocaleString('it-IT')} pz
+                          </span>
+                        )}
+                        {pianta.giacenza !== null && pianta.giacenza !== undefined && (
+                          <span className="text-stone-600 font-medium bg-stone-100 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <Warehouse className="w-3 h-3 text-stone-400" />
+                            Giac: {Number(pianta.giacenza).toLocaleString('it-IT')}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Azioni Tattili (Occhio, Matita, Cestino) */}
