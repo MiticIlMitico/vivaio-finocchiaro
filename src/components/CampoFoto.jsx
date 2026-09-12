@@ -137,18 +137,18 @@ export default function CampoFoto({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700">
+        <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80">
           Foto della pianta
         </label>
-        <span className="text-[11px] text-stone-500 font-medium">
+        <span className="text-[11px] text-[#1C201C]/60 font-medium">
           Accetta Galleria, iPhone .HEIC, JPG, PNG
         </span>
       </div>
 
       {/* Contenitore Foto */}
-      <div className="relative border-2 border-dashed border-stone-300 rounded-2xl p-4 bg-stone-50/80 overflow-hidden">
+      <div className="relative border-2 border-dashed border-[#1C201C]/15 rounded-3xl p-4 bg-[#FAF9F6] overflow-hidden">
         {fotoUrl ? (
-          <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-xl overflow-hidden bg-stone-200 border border-stone-200 shadow-sm group">
+          <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-2xl overflow-hidden bg-[#FAF9F6] border border-[#1C201C]/10 shadow-xs group">
             <img
               src={fotoUrl}
               alt="Anteprima foto pianta"
@@ -156,24 +156,24 @@ export default function CampoFoto({
             />
 
             {/* Barra Azioni Touch */}
-            <div className="absolute inset-0 bg-stone-950/70 backdrop-blur-[2px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex flex-col sm:flex-row items-center justify-center gap-2 p-4">
+            <div className="absolute inset-0 bg-[#1C201C]/75 backdrop-blur-[2px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex flex-col sm:flex-row items-center justify-center gap-2 p-4">
               <button
                 type="button"
                 onClick={handleModificaFotoEsistente}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3.5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3.5 py-2.5 bg-[#25570A] hover:bg-[#1E4608] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
                 <Crop className="w-4 h-4" />
-                <span>Ritaglia / Ridimensiona</span>
+                <span>Ritaglia / Modifica</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3.5 py-2.5 bg-white text-stone-800 hover:bg-stone-100 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3.5 py-2.5 bg-white text-[#1C201C] hover:bg-[#FAF9F6] rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
-                <ImageIcon className="w-4 h-4" />
+                <ImageIcon className="w-4 h-4 text-[#25570A]" />
                 <span>Scegli da Galleria</span>
               </button>
 
@@ -181,7 +181,7 @@ export default function CampoFoto({
                 type="button"
                 onClick={handleEliminaFoto}
                 disabled={caricamento}
-                className="w-full sm:w-auto px-3 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
+                className="w-full sm:w-auto px-3 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 touch-target active:scale-95"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Rimuovi</span>
@@ -190,14 +190,14 @@ export default function CampoFoto({
           </div>
         ) : (
           <div className="py-6 sm:py-8 flex flex-col items-center justify-center text-center p-2">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
+            <div className="w-14 h-14 rounded-2xl bg-[#25570A]/10 text-[#25570A] flex items-center justify-center mb-3">
               <ImageIcon className="w-7 h-7" />
             </div>
 
-            <p className="text-sm font-bold text-stone-900 mb-1">
+            <p className="font-serif font-bold text-base text-[#1C201C] mb-1">
               Aggiungi foto della pianta
             </p>
-            <p className="text-xs text-stone-500 mb-5 max-w-xs leading-relaxed">
+            <p className="text-xs text-[#1C201C]/60 mb-5 max-w-xs leading-relaxed">
               Scegli una foto già presente nel telefono oppure scattala adesso in serra.
             </p>
 
@@ -206,7 +206,7 @@ export default function CampoFoto({
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
-                className="w-full px-4 py-3 bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white rounded-xl text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-2 touch-target"
+                className="w-full px-4 py-3 bg-[#25570A] hover:bg-[#1E4608] active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 touch-target"
               >
                 <ImageIcon className="w-4 h-4" />
                 <span>Apri Galleria Foto</span>
@@ -215,9 +215,9 @@ export default function CampoFoto({
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="w-full px-4 py-3 bg-stone-200 hover:bg-stone-300 active:scale-95 text-stone-800 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 touch-target"
+                className="w-full px-4 py-3 bg-white hover:bg-[#FAF9F6] border border-[#1C201C]/15 active:scale-95 text-[#1C201C] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 touch-target shadow-xs"
               >
-                <Camera className="w-4 h-4" />
+                <Camera className="w-4 h-4 text-[#D34816]" />
                 <span>Scatta Fotocamera</span>
               </button>
             </div>
@@ -250,13 +250,13 @@ export default function CampoFoto({
         {/* Avanzamento */}
         {caricamento && (
           <div className="absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center p-6 z-20">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-800 mb-3" />
-            <p className="text-xs font-bold text-stone-900 mb-2">
+            <Loader2 className="w-8 h-8 animate-spin text-[#25570A] mb-3" />
+            <p className="text-xs font-bold text-[#1C201C] mb-2">
               Salvataggio ed elaborazione immagine... ({progresso}%)
             </p>
-            <div className="w-full max-w-xs bg-stone-200 rounded-full h-2 overflow-hidden">
+            <div className="w-full max-w-xs bg-[#FAF9F6] border border-[#1C201C]/10 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-emerald-700 h-full transition-all duration-200 ease-out"
+                className="bg-[#25570A] h-full transition-all duration-200 ease-out"
                 style={{ width: `${progresso}%` }}
               />
             </div>

@@ -25,6 +25,7 @@ create table if not exists public.piante (
 
   giacenza                integer default 0,          -- pezzi fisici in magazzino
   disponibile             integer default 0,          -- pezzi disponibili alla vendita
+  varianti                jsonb default '[]'::jsonb,  -- calibri vasi multipli con disponibilità e giacenza: [{"vaso_cm": 16, "disponibile": 600, "giacenza": 600}]
 
   prezzo                  numeric(10,2),              -- facoltativo / disattivato da vetrina
   note                    text,                       -- sconti, condizioni

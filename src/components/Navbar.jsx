@@ -41,7 +41,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 sm:h-20 flex items-center justify-between">
         
-        {/* Brand Logo Ufficiale (Con scritta integrata nella grafica) */}
+        {/* Brand Icona Ufficiale (Solo simbolo, senza scritta) */}
         <Link 
           to="/" 
           className="flex items-center group py-1.5 focus:outline-none" 
@@ -49,9 +49,9 @@ export default function Navbar() {
           onClick={() => setMobileMenuOpen(false)}
         >
           <img
-            src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
-            alt="Campo dei Fiori - Ornamental Plants Sicily"
-            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103"
+            src="/brand/logo-mark.webp"
+            alt="Campo dei Fiori"
+            className="h-10 sm:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-108"
           />
         </Link>
 
