@@ -156,12 +156,12 @@ export default function Home() {
         {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.08] mb-5">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5 drop-shadow-sm">
             Coltivato in Sicilia.<br />
-            <span className="font-normal italic text-[#FAF9F6]/90">Pronto per il mondo.</span>
+            <span className="font-semibold italic text-[#FAF9F6] drop-shadow-sm">Pronto per il mondo.</span>
           </h1>
 
-          <p className="text-white/90 text-sm sm:text-lg max-w-xl mx-auto font-normal leading-relaxed mb-8">
+          <p className="text-white/95 text-sm sm:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8 drop-shadow-xs">
             Forniture e catalogo piante all'ingrosso per garden center, grossisti e professionisti del verde.
           </p>
 
