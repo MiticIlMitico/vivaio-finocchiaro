@@ -179,7 +179,7 @@ export default function Home() {
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-7 py-3.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider rounded-full transition-all border border-white/30 backdrop-blur-md flex items-center justify-center gap-2 touch-target"
+              className="w-full sm:w-auto px-7 py-3.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider rounded-full transition-all border border-white/30 flex items-center justify-center gap-2 touch-target"
             >
               <MessageCircle className="w-4 h-4 fill-white/20" />
               <span>Contatto Ordini</span>

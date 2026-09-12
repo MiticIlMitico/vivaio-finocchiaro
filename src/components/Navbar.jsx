@@ -35,8 +35,8 @@ export default function Navbar() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isDarkNav 
-          ? 'bg-black/15 backdrop-blur-[3px] border-b border-white/25 text-white' 
-          : 'bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#1C201C]/10 text-[#1C201C] shadow-xs'
+          ? 'bg-transparent border-b border-white/20 text-white' 
+          : 'bg-[#FAF9F6] border-b border-[#1C201C]/10 text-[#1C201C] shadow-xs'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 sm:h-20 flex items-center justify-between">
@@ -107,7 +107,7 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all touch-target active:scale-95 ${
               isDarkNav
-                ? 'bg-white/15 hover:bg-white/25 text-white border border-white/25 backdrop-blur-md'
+                ? 'bg-white/15 hover:bg-white/25 text-white border border-white/25'
                 : 'bg-[#25570A] hover:bg-[#1A3E07] text-white shadow-xs'
             }`}
             aria-label="Ufficio Vendite WhatsApp"
