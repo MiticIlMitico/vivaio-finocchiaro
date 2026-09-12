@@ -95,9 +95,9 @@ export default function Home() {
     return Array.from(setVasi).sort((a, b) => a - b);
   }, [piante]);
 
-  // Reset del contatore visibili ogni volta che cambiano i filtri
+  // Reset del contatore visibili ogni volta che cambiano i filtri (sempre 6 di base)
   useEffect(() => {
-    setVisibiliCount(12);
+    setVisibiliCount(6);
   }, [ricerca, categoriaAttiva, vasoFiltro]);
 
   // Piante filtrate
@@ -121,7 +121,7 @@ export default function Home() {
     });
   }, [piante, categoriaAttiva, ricerca, vasoFiltro]);
 
-  // Piante visibili correnti (12 alla volta)
+  // Piante visibili correnti (6 di base + 6 alla volta)
   const pianteVisibili = useMemo(() => {
     return pianteFiltrate.slice(0, visibiliCount);
   }, [pianteFiltrate, visibiliCount]);
