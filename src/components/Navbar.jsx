@@ -35,8 +35,8 @@ export default function Navbar() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isDarkNav 
-          ? 'bg-gradient-to-b from-black/65 via-black/30 to-transparent border-b border-white/15 text-white shadow-[0_4px_30px_rgba(0,0,0,0.3)]' 
-          : 'bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#252824]/10 text-[#252824] shadow-xs'
+          ? 'bg-black/15 backdrop-blur-[3px] border-b border-white/25 text-white' 
+          : 'bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#1C201C]/10 text-[#1C201C] shadow-xs'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 sm:h-20 flex items-center justify-between">
