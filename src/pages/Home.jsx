@@ -130,23 +130,26 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#252824]">
       
-      {/* 1. SEZIONE HERO: FOTOGRAFIA AUTENTICA E COLORI NATURALI (Senza filtri verdi artificiali) */}
-      <section className="relative min-h-[85vh] flex items-center justify-center text-white overflow-hidden bg-stone-900">
-        {/* Foto reale del vivaio con i suoi colori naturali e veri */}
+      {/* 1. SEZIONE HERO: ESATTAMENTE 100DVH / 100VH A TUTTO SCHERMO SU QUALSIASI DISPOSITIVO */}
+      <section className="relative w-full h-screen h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col justify-between items-center text-white overflow-hidden bg-stone-950">
+        {/* Foto reale del vivaio con colori naturali e veri */}
         <div className="absolute inset-0 z-0">
           <img
             src="/brand/hero-cover.png"
             alt="Vivaio Campo dei Fiori a Santa Venerina"
             className="w-full h-full object-cover object-center"
           />
-          {/* Sfumatura naturale e neutra da pellicola (nessun verde acido o strano) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/25" />
+          {/* Sfumatura cinematografica neutra (nessun verde artificiale) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
         </div>
 
-        {/* Contenuto Essenziale & Diretto (Senza troppe scritte) */}
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-16 text-center">
+        {/* Spaziatore superiore calibrato sull'altezza della Navbar fissa */}
+        <div className="w-full h-20 sm:h-24 flex-shrink-0" />
+
+        {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.1] mb-5 drop-shadow-md">
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.08] mb-5 drop-shadow-md">
             Coltivato in Sicilia.<br />
             <span className="font-normal italic text-[#FAF9F6]/90">Pronto per il mondo.</span>
           </h1>
@@ -156,7 +159,7 @@ export default function Home() {
           </p>
 
           {/* Azioni Rapide */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full max-w-md mx-auto">
             <a
               href="#catalogo"
               className="w-full sm:w-auto px-8 py-3.5 bg-[#D34816] hover:bg-[#B83E12] active:scale-95 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full transition-all shadow-lg flex items-center justify-center gap-2 touch-target"
@@ -175,6 +178,18 @@ export default function Home() {
               <span>Contatto Ordini</span>
             </a>
           </div>
+        </div>
+
+        {/* Indicatore discreto di scorrimento a fondo schermata (contenuto esattamente nel 100vh) */}
+        <div className="relative z-10 h-16 sm:h-20 flex-shrink-0 flex items-center justify-center pb-2">
+          <a
+            href="#storia"
+            className="inline-flex flex-col items-center gap-1 text-xs uppercase tracking-widest text-white/70 hover:text-white transition-colors"
+            aria-label="Scorri per scoprire il vivaio"
+          >
+            <span className="text-[10px] font-semibold">Scopri il vivaio</span>
+            <ChevronDown className="w-4 h-4 animate-bounce" />
+          </a>
         </div>
       </section>
 
