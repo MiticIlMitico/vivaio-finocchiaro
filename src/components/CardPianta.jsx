@@ -20,6 +20,7 @@ export default function CardPianta({ pianta, onOpenDetail }) {
 
   // Stato variante attiva (default: prima variante disponibile)
   const [varianteAttiva, setVarianteAttiva] = useState(elencoVarianti[0]);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const vasoCorrente = varianteAttiva?.vaso_cm ?? vaso_cm;
   const dispCorrente = varianteAttiva?.disponibile ?? disponibile ?? 0;
@@ -43,7 +44,7 @@ export default function CardPianta({ pianta, onOpenDetail }) {
   return (
     <article 
       onClick={handleCardClick}
-      className="group bg-white rounded-2xl sm:rounded-3xl border border-[#25570A]/10 shadow-[0_4px_20px_-4px_rgba(37,87,10,0.06)] hover:shadow-[0_16px_32px_-8px_rgba(37,87,10,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer overflow-hidden relative select-none"
+      className="group bg-white rounded-2xl sm:rounded-3xl border border-[#25570A]/10 shadow-[0_4px_20px_-4px_rgba(37,87,10,0.06)] hover:shadow-[0_16px_32px_-8px_rgba(37,87,10,0.12)] hover:-translate-y-1 transition-all duration-500 flex flex-col h-full cursor-pointer overflow-hidden relative select-none animate-in fade-in-50 duration-500"
     >
       {/* 1. ZONA FOTO CON OVERLAY & BADGE MINIMALE */}
       <div className="relative aspect-[4/3] w-full bg-[#E5E7DC]/50 overflow-hidden">
@@ -52,7 +53,11 @@ export default function CardPianta({ pianta, onOpenDetail }) {
             src={foto_url}
             alt={nome}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            decoding="async"
+            onLoad={() => setImgLoaded(true)}
+            className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+              imgLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-98 blur-xs'
+            }`}
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-[#B7BEA9] bg-[#E5E7DC]/30">

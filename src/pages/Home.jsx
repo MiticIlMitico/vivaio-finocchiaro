@@ -4,6 +4,7 @@ import { AZIENDA } from '../content/azienda';
 import CardPianta from '../components/CardPianta';
 import DettaglioPiantaModal from '../components/DettaglioPiantaModal';
 import Lightbox from '../components/Lightbox';
+import SectionReveal from '../components/SectionReveal';
 import { 
   Search, 
   Sprout, 
@@ -27,8 +28,8 @@ export default function Home() {
   const [categoriaAttiva, setCategoriaAttiva] = useState('tutte');
   const [vasoFiltro, setVasoFiltro] = useState(null);
 
-  // Paginazione progressiva (12 piante alla volta)
-  const [visibiliCount, setVisibiliCount] = useState(12);
+  // Paginazione progressiva (6 piante alla volta)
+  const [visibiliCount, setVisibiliCount] = useState(6);
 
   // Modali
   const [piantaDettaglio, setPiantaDettaglio] = useState(null);
@@ -132,13 +133,19 @@ export default function Home() {
       
       {/* 1. SEZIONE HERO: ESATTAMENTE 100DVH / 100VH A TUTTO SCHERMO SU QUALSIASI DISPOSITIVO */}
       <section className="relative w-full h-screen h-[100dvh] min-h-[100dvh] max-h-[100dvh] flex flex-col justify-between items-center text-white overflow-hidden bg-stone-950">
-        {/* Foto reale del vivaio con colori naturali e veri */}
+        {/* Foto reale del vivaio ultra-ottimizzata con srcset e WebP responsive */}
         <div className="absolute inset-0 z-0">
-          <img
-            src="/brand/hero-cover.png"
-            alt="Vivaio Campo dei Fiori a Santa Venerina"
-            className="w-full h-full object-cover object-center"
-          />
+          <picture>
+            <source media="(max-width: 768px)" srcSet="/brand/hero-cover-mobile.webp" type="image/webp" />
+            <source srcSet="/brand/hero-cover.webp" type="image/webp" />
+            <img
+              src="/brand/hero-cover.jpg"
+              alt="Vivaio Campo dei Fiori a Santa Venerina"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover object-center"
+            />
+          </picture>
           {/* Sfumatura cinematografica neutra (nessun verde artificiale) */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
         </div>
@@ -196,70 +203,78 @@ export default function Home() {
 
       {/* 2. SEZIONE IL VIVAIO & IL TERRITORIO (Editoriale pulito, colori naturali e rilassanti) */}
       <section id="storia" className="py-20 sm:py-28 px-5 sm:px-8 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* Immagini Autentiche */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="rounded-3xl overflow-hidden shadow-md aspect-[4/5] bg-stone-100 border border-stone-200/60">
-              <img
-                src="/brand/storia-serra.png"
-                alt="Serre Campo dei Fiori a Santa Venerina"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <p className="text-xs text-[#252824]/60 italic text-center">
-              Serre di coltivazione a Santa Venerina (Catania) &bull; Pendici dell'Etna
-            </p>
-          </div>
-
-          {/* Racconto Aziendale Naturale */}
-          <div className="lg:col-span-7 space-y-6">
-            <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block">
-              Santa Venerina &bull; Sicilia
-            </span>
-
-            <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] leading-[1.15] tracking-tight">
-              Dalla terra minerale dell'Etna ai mercati di tutta Europa.
-            </h2>
-
-            <div className="space-y-4 text-[#252824]/80 text-sm sm:text-base leading-relaxed">
-              <p>
-                Guidata da <strong>Marco Adornetto</strong> a Santa Venerina (Catania), <em>Campo dei Fiori</em> unisce la naturale fertilità della terra vulcanica con metodologie vivaistiche all'avanguardia.
-              </p>
-              <p>
-                Il microclima delle pendici dell'Etna offre una combinazione unica di soleggiamento costante ed escursione termica equilibrata: le piante sviluppano radici solide, chiome vigorose e colorazioni intense, perfette per una tenuta impeccabile durante il trasporto refrigerato e nei garden center.
+        <SectionReveal>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Immagini Autentiche */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="rounded-3xl overflow-hidden shadow-md aspect-[4/5] bg-stone-100 border border-stone-200/60">
+                <picture>
+                  <source media="(max-width: 768px)" srcSet="/brand/storia-serra-mobile.webp" type="image/webp" />
+                  <source srcSet="/brand/storia-serra.webp" type="image/webp" />
+                  <img
+                    src="/brand/storia-serra.jpg"
+                    alt="Serre Campo dei Fiori a Santa Venerina"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-102"
+                  />
+                </picture>
+              </div>
+              <p className="text-xs text-[#252824]/60 italic text-center">
+                Serre di coltivazione a Santa Venerina (Catania) &bull; Pendici dell'Etna
               </p>
             </div>
 
-            {/* I 3 Punti Guida di Produzione */}
-            <div className="pt-6 border-t border-stone-200 space-y-5">
-              <div className="flex items-start gap-4">
-                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">01</span>
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Terra Vulcanica & Radicazione Robusta</h3>
-                  <p className="text-xs text-[#252824]/70 mt-0.5">Il suolo etneo stimola apparati radicali compatti e longevi.</p>
-                </div>
+            {/* Racconto Aziendale Naturale */}
+            <div className="lg:col-span-7 space-y-6">
+              <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block">
+                Santa Venerina &bull; Sicilia
+              </span>
+
+              <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] leading-[1.15] tracking-tight">
+                Dalla terra minerale dell'Etna ai mercati di tutta Europa.
+              </h2>
+
+              <div className="space-y-4 text-[#252824]/80 text-sm sm:text-base leading-relaxed">
+                <p>
+                  Guidata da <strong>Marco Adornetto</strong> a Santa Venerina (Catania), <em>Campo dei Fiori</em> unisce la naturale fertilità della terra vulcanica con metodologie vivaistiche all'avanguardia.
+                </p>
+                <p>
+                  Il microclima delle pendici dell'Etna offre una combinazione unica di soleggiamento costante ed escursione termica equilibrata: le piante sviluppano radici solide, chiome vigorose e colorazioni intense, perfette per una tenuta impeccabile durante il trasporto refrigerato e nei garden center.
+                </p>
               </div>
 
-              <div className="flex items-start gap-4">
-                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">02</span>
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Lotti Calibrati e Uniformi</h3>
-                  <p className="text-xs text-[#252824]/70 mt-0.5">Forniture uniformi per diametro vaso, altezza e sviluppo fogliare.</p>
+              {/* I 3 Punti Guida di Produzione */}
+              <div className="pt-6 border-t border-stone-200 space-y-5">
+                <div className="flex items-start gap-4">
+                  <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">01</span>
+                  <div>
+                    <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Terra Vulcanica Minerale</h3>
+                    <p className="text-xs text-[#252824]/70 mt-0.5">Il suolo etneo stimola apparati radicali compatti e longevi.</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-4">
-                <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">03</span>
-                <div>
-                  <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Logistica Roll CC Danesi</h3>
-                  <p className="text-xs text-[#252824]/70 mt-0.5">Carichi rapidi e protetti su carrelli standard per consegne in tutta Italia ed Europa.</p>
+                <div className="flex items-start gap-4">
+                  <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">02</span>
+                  <div>
+                    <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Lotti Calibrati e Uniformi</h3>
+                    <p className="text-xs text-[#252824]/70 mt-0.5">Forniture uniformi per diametro vaso, altezza e sviluppo fogliare.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">03</span>
+                  <div>
+                    <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Logistica Roll CC Danesi</h3>
+                    <p className="text-xs text-[#252824]/70 mt-0.5">Carichi rapidi e protetti su carrelli standard per consegne in tutta Italia ed Europa.</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-        </div>
+          </div>
+        </SectionReveal>
       </section>
 
 
@@ -447,16 +462,16 @@ export default function Home() {
           </div>
         )}
 
-        {/* PULSANTE CARICA ALTRE PIANTE (Paginazione a 12 alla volta) */}
+        {/* PULSANTE CARICA ALTRE PIANTE (Paginazione a 6 alla volta) */}
         {!loading && !errore && pianteFiltrate.length > visibiliCount && (
           <div className="mt-14 text-center">
             <button
-              onClick={() => setVisibiliCount(prev => prev + 12)}
+              onClick={() => setVisibiliCount(prev => prev + 6)}
               className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-[#25570A] hover:bg-[#1A3E07] active:scale-95 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full shadow-md transition-all touch-target"
             >
               <Plus className="w-4 h-4" />
               <span>
-                Carica altre varietà ({visibiliCount} di {pianteFiltrate.length})
+                Carica altre varietà (+6) &bull; visualizzate {visibiliCount} di {pianteFiltrate.length}
               </span>
             </button>
           </div>
@@ -466,83 +481,93 @@ export default function Home() {
 
       {/* 4. SEZIONE LOGISTICA CC & FORNITURE PROFESSIONALI */}
       <section id="logistica" className="bg-[#1C201C] text-white py-20 sm:py-28 px-5 sm:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-6 space-y-5">
-              <span className="text-[#6BB221] text-xs font-bold tracking-[0.25em] uppercase block">
-                Standard Logistico
-              </span>
-              <h2 className="font-display text-3xl sm:text-5xl font-medium tracking-tight leading-[1.15]">
-                Carichi veloci e protetti su roll carrelli CC danesi.
-              </h2>
-              <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
-                Tutte le spedizioni di <em>Campo dei Fiori</em> sono allestite secondo i rigorosi standard europei di logistica vivaistica. Le piante vengono preparate con cura su carrelli roll CC e pianali dedicati per garantire ventilazione ottimale e protezione totale della vegetazione.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-stone-700">
-                <div>
-                  <span className="font-display text-3xl font-bold text-white block">100%</span>
-                  <span className="text-xs text-stone-400 mt-1 block">Passaporto Fitosanitario UE</span>
-                </div>
-                <div>
-                  <span className="font-display text-3xl font-bold text-white block">Settimanali</span>
-                  <span className="text-xs text-stone-400 mt-1 block">Carichi diretti e puntuali</span>
+        <SectionReveal>
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-6 space-y-5">
+                <span className="text-[#6BB221] text-xs font-bold tracking-[0.25em] uppercase block">
+                  Standard Logistico
+                </span>
+                <h2 className="font-display text-3xl sm:text-5xl font-medium tracking-tight leading-[1.15]">
+                  Carichi veloci e protetti su roll carrelli CC danesi.
+                </h2>
+                <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
+                  Tutte le spedizioni di <em>Campo dei Fiori</em> sono allestite secondo i rigorosi standard europei di logistica vivaistica. Le piante vengono preparate con cura su carrelli roll CC e pianali dedicati per garantire ventilazione ottimale e protezione totale della vegetazione.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-stone-700">
+                  <div>
+                    <span className="font-display text-3xl font-bold text-white block">100%</span>
+                    <span className="text-xs text-stone-400 mt-1 block">Passaporto Fitosanitario UE</span>
+                  </div>
+                  <div>
+                    <span className="font-display text-3xl font-bold text-white block">Settimanali</span>
+                    <span className="text-xs text-stone-400 mt-1 block">Carichi diretti e puntuali</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="lg:col-span-6">
-              <div className="rounded-3xl overflow-hidden shadow-2xl border border-stone-700 aspect-[16/10]">
-                <img
-                  src="/brand/brand-action.png"
-                  alt="Carrelli roll CC e imballaggi per garden center"
-                  className="w-full h-full object-cover"
-                />
+              <div className="lg:col-span-6">
+                <div className="rounded-3xl overflow-hidden shadow-2xl border border-stone-700 aspect-[16/10]">
+                  <picture>
+                    <source media="(max-width: 768px)" srcSet="/brand/brand-action-mobile.webp" type="image/webp" />
+                    <source srcSet="/brand/brand-action.webp" type="image/webp" />
+                    <img
+                      src="/brand/brand-action.jpg"
+                      alt="Carrelli roll CC e imballaggi per garden center"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover"
+                    />
+                  </picture>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </SectionReveal>
       </section>
 
 
       {/* 5. SEZIONE CONTATTI COMMERCIALI */}
       <section id="contatti" className="py-20 sm:py-28 px-5 sm:px-8 max-w-5xl mx-auto w-full">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
-            Ufficio Commerciale
-          </span>
-          <h2 className="font-display text-3xl sm:text-4xl font-medium text-[#25570A]">
-            Contatta il Vivaio
-          </h2>
-          <p className="text-xs sm:text-sm text-[#252824]/70 mt-2">
-            Richiesta quotazioni all'ingrosso, disponibilità lotti e visite in vivaio.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
-            <Phone className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Ufficio Vendite</span>
-            <span className="text-sm sm:text-base font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.telefono}</span>
+        <SectionReveal>
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
+              Ufficio Commerciale
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-medium text-[#25570A]">
+              Contatta il Vivaio
+            </h2>
+            <p className="text-xs sm:text-sm text-[#252824]/70 mt-2">
+              Richiesta quotazioni all'ingrosso, disponibilità lotti e visite in vivaio.
+            </p>
           </div>
 
-          <a
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-6 rounded-3xl bg-[#D34816] hover:bg-[#B83E12] text-white text-center transition-all shadow-md block active:scale-98"
-          >
-            <MessageCircle className="w-5 h-5 text-white mx-auto mb-2 fill-white/20" />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 block">WhatsApp Diretto</span>
-            <span className="text-sm sm:text-base font-bold text-white block mt-1">Richiedi Disponibilità</span>
-          </a>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
+              <Phone className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Ufficio Vendite</span>
+              <span className="text-sm sm:text-base font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.telefono}</span>
+            </div>
 
-          <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
-            <MapPin className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Sede & Vivaio</span>
-            <span className="text-xs sm:text-sm font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.indirizzo}</span>
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-6 rounded-3xl bg-[#D34816] hover:bg-[#B83E12] text-white text-center transition-all shadow-md block active:scale-98"
+            >
+              <MessageCircle className="w-5 h-5 text-white mx-auto mb-2 fill-white/20" />
+              <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 block">WhatsApp Diretto</span>
+              <span className="text-sm sm:text-base font-bold text-white block mt-1">Richiedi Disponibilità</span>
+            </a>
+
+            <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
+              <MapPin className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Sede & Vivaio</span>
+              <span className="text-xs sm:text-sm font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.indirizzo}</span>
+            </div>
           </div>
-        </div>
+        </SectionReveal>
       </section>
 
 
@@ -554,8 +579,10 @@ export default function Home() {
             {/* Logo ufficiale con scritta inclusa in versione bianca per fondo scuro */}
             <div className="md:col-span-5 space-y-4">
               <img
-                src="/brand/logo-horizontal-white.png"
+                src="/brand/logo-horizontal-white.webp"
                 alt="Campo dei Fiori - Ornamental Plants Sicily"
+                loading="lazy"
+                decoding="async"
                 className="h-11 w-auto object-contain"
               />
               <p className="text-xs text-stone-400 leading-relaxed max-w-sm">

@@ -29,3 +29,6 @@ dist-ssr
 
 # Scratch and temp files
 scratch/
+
+# Local Netlify folder
+.netlify

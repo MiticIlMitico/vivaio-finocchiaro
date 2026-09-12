@@ -60,8 +60,9 @@ export default function Login() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
         <Link to="/" className="flex flex-col items-center justify-center gap-2 mb-6 group">
           <img
-            src="/brand/logo-mark.png"
+            src="/brand/logo-mark.webp"
             alt="Logo Campo dei Fiori"
+            decoding="async"
             className="w-16 h-16 object-contain drop-shadow-md group-hover:scale-105 transition-transform"
           />
           <span className="font-display font-bold text-2xl text-[#25570A] tracking-tight">

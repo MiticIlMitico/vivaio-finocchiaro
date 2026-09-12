@@ -35,7 +35,7 @@ export default function Navbar() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isDarkNav 
-          ? 'bg-transparent border-b border-white/10 text-white' 
+          ? 'bg-gradient-to-b from-black/65 via-black/30 to-transparent border-b border-white/15 text-white shadow-[0_4px_30px_rgba(0,0,0,0.3)]' 
           : 'bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#252824]/10 text-[#252824] shadow-xs'
       }`}
     >
@@ -49,9 +49,11 @@ export default function Navbar() {
           onClick={() => setMobileMenuOpen(false)}
         >
           <img
-            src={isDarkNav ? "/brand/logo-horizontal-white.png" : "/brand/logo-horizontal.png"}
+            src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
             alt="Campo dei Fiori - Ornamental Plants Sicily"
-            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103"
+            className={`h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 ${
+              isDarkNav ? 'drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]' : ''
+            }`}
           />
         </Link>
 
@@ -59,25 +61,41 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-[0.16em]">
           <a 
             href="#storia" 
-            className={`transition-colors ${isDarkNav ? 'text-white/80 hover:text-white' : 'text-[#252824]/75 hover:text-[#25570A]'}`}
+            className={`transition-colors ${
+              isDarkNav 
+                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                : 'text-[#252824]/75 hover:text-[#25570A]'
+            }`}
           >
             Il Vivaio
           </a>
           <a 
             href="#catalogo" 
-            className={`transition-colors ${isDarkNav ? 'text-white/80 hover:text-white' : 'text-[#252824]/75 hover:text-[#25570A]'}`}
+            className={`transition-colors ${
+              isDarkNav 
+                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                : 'text-[#252824]/75 hover:text-[#25570A]'
+            }`}
           >
             Listino Piante
           </a>
           <a 
             href="#logistica" 
-            className={`transition-colors ${isDarkNav ? 'text-white/80 hover:text-white' : 'text-[#252824]/75 hover:text-[#25570A]'}`}
+            className={`transition-colors ${
+              isDarkNav 
+                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                : 'text-[#252824]/75 hover:text-[#25570A]'
+            }`}
           >
             Logistica CC
           </a>
           <a 
             href="#contatti" 
-            className={`transition-colors ${isDarkNav ? 'text-white/80 hover:text-white' : 'text-[#252824]/75 hover:text-[#25570A]'}`}
+            className={`transition-colors ${
+              isDarkNav 
+                ? 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)] [text-shadow:_0_1px_4px_rgba(0,0,0,0.8)]' 
+                : 'text-[#252824]/75 hover:text-[#25570A]'
+            }`}
           >
             Contatti
           </a>
@@ -91,7 +109,7 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-xs touch-target active:scale-95 ${
               isDarkNav
-                ? 'bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-md'
+                ? 'bg-black/35 hover:bg-black/50 text-white border border-white/35 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.5)] [text-shadow:_0_1px_3px_rgba(0,0,0,0.7)]'
                 : 'bg-[#25570A] hover:bg-[#1A3E07] text-white'
             }`}
             aria-label="Ufficio Vendite WhatsApp"
@@ -108,7 +126,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2.5 rounded-xl transition-colors touch-target focus:outline-none ${
               isDarkNav 
-                ? 'text-white hover:bg-white/10' 
+                ? 'text-white bg-black/35 backdrop-blur-md border border-white/25 shadow-[0_2px_10px_rgba(0,0,0,0.5)] hover:bg-black/50' 
                 : 'text-[#252824] hover:bg-stone-100'
             }`}
             aria-label={mobileMenuOpen ? "Chiudi menu" : "Apri menu"}
