@@ -370,7 +370,7 @@ export default function AdminLista() {
           {/* Brand con Link Diretto alla Home (Solo icona logo ufficiale) */}
           <Link to="/" className="flex items-center gap-3 min-w-0 group" title="Vai al Catalogo Pubblico">
             <img
-              src="/brand/logo-mark.webp"
+              src="/brand/logo-mark.svg"
               alt="Logo Campo dei Fiori"
               decoding="async"
               className="h-9 w-auto object-contain drop-shadow group-hover:scale-105 transition-transform"

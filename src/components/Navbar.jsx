@@ -58,7 +58,7 @@ export default function Navbar() {
           onClick={handleLogoClick}
         >
           <img
-            src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
+            src={isDarkNav ? "/brand/logo-horizontal-white.svg" : "/brand/logo-horizontal.svg"}
             alt="Campo dei Fiori - Ornamental Plants Sicily"
             className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 cursor-pointer"
           />

@@ -638,7 +638,7 @@ export default function Home() {
                 title="Torna all'inizio - Campo dei Fiori"
               >
                 <img
-                  src="/brand/logo-horizontal-white.webp"
+                  src="/brand/logo-horizontal-white.svg"
                   alt="Campo dei Fiori - Ornamental Plants Sicily"
                   loading="lazy"
                   decoding="async"
