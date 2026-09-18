@@ -41,6 +41,8 @@ export default function CardPianta({ pianta, onOpenDetail }) {
     });
   };
 
+  const imgSource = varianteAttiva?.foto_url || foto_url;
+
   return (
     <article 
       onClick={handleCardClick}
@@ -48,9 +50,10 @@ export default function CardPianta({ pianta, onOpenDetail }) {
     >
       {/* 1. ZONA FOTO CON OVERLAY & BADGE MINIMALE */}
       <div className="relative aspect-[4/3] w-full bg-[#E5E7DC]/50 overflow-hidden">
-        {foto_url ? (
+        {imgSource ? (
           <img
-            src={foto_url}
+            key={imgSource}
+            src={imgSource}
             alt={nome}
             loading="lazy"
             decoding="async"

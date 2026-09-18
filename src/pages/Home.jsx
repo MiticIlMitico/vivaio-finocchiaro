@@ -35,6 +35,16 @@ export default function Home() {
   const [piantaDettaglio, setPiantaDettaglio] = useState(null);
   const [lightboxData, setLightboxData] = useState({ isOpen: false, src: '', title: '' });
 
+  // Galleria Paesaggi Vivaio
+  const fotoPaesaggi = [
+    { src: '/brand/paesaggio-1.jpg', alt: 'Serre di coltivazione alle pendici dell\'Etna', caption: 'Serre e coltivazioni alle pendici dell\'Etna' },
+    { src: '/brand/paesaggio-2.jpg', alt: 'Panoramica vivaio Campo dei Fiori a Santa Venerina', caption: 'Panoramica vivaio a Santa Venerina' },
+    { src: '/brand/paesaggio-3.jpg', alt: 'Appezzamenti e filari di piante ornamentali', caption: 'Appezzamenti e filari piante' },
+    { src: '/brand/paesaggio-4.jpg', alt: 'Vista collinare del vivaio Campo dei Fiori', caption: 'Vista collinare della tenuta' },
+    { src: '/brand/paesaggio-5.jpg', alt: 'Aree di coltivazione ed esposizione solare', caption: 'Campi di coltivazione in pieno sole' },
+  ];
+  const [paesaggioIndex, setPaesaggioIndex] = useState(0);
+
   const caricaDati = async () => {
     setLoading(true);
     setErrore(null);
@@ -210,21 +220,59 @@ export default function Home() {
             
             {/* Immagini Autentiche (Su mobile appare DOPO il testo) */}
             <div className="lg:col-span-5 space-y-4 order-2 lg:order-1">
-              <div className="rounded-3xl overflow-hidden shadow-md aspect-[4/5] bg-stone-100 border border-stone-200/60">
-                <picture>
-                  <source media="(max-width: 768px)" srcSet="/brand/storia-serra-mobile.webp" type="image/webp" />
-                  <source srcSet="/brand/storia-serra.webp" type="image/webp" />
-                  <img
-                    src="/brand/storia-serra.jpg"
-                    alt="Serre Campo dei Fiori a Santa Venerina"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-102"
-                  />
-                </picture>
+              <div 
+                className="rounded-3xl overflow-hidden shadow-lg aspect-[4/3] sm:aspect-[4/5] bg-stone-100 border border-stone-200/80 relative group cursor-pointer"
+                onClick={() => setLightboxData({ 
+                  isOpen: true, 
+                  src: fotoPaesaggi[paesaggioIndex].src, 
+                  title: `${fotoPaesaggi[paesaggioIndex].caption} • Campo dei Fiori` 
+                })}
+              >
+                <img
+                  key={fotoPaesaggi[paesaggioIndex].src}
+                  src={fotoPaesaggi[paesaggioIndex].src}
+                  alt={fotoPaesaggi[paesaggioIndex].alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-103"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white">
+                  <span className="text-xs sm:text-sm font-medium drop-shadow-sm">
+                    {fotoPaesaggi[paesaggioIndex].caption}
+                  </span>
+                  <span className="text-[10px] font-bold bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/30">
+                    {paesaggioIndex + 1} / {fotoPaesaggi.length}
+                  </span>
+                </div>
               </div>
+
+              {/* 5 Miniature per navigare le foto autentiche del vivaio */}
+              <div className="grid grid-cols-5 gap-2">
+                {fotoPaesaggi.map((item, idx) => (
+                  <button
+                    key={item.src}
+                    type="button"
+                    onClick={() => setPaesaggioIndex(idx)}
+                    className={`relative rounded-xl overflow-hidden aspect-[4/3] border-2 transition-all duration-200 touch-target ${
+                      paesaggioIndex === idx
+                        ? 'border-[#25570A] ring-2 ring-[#25570A]/30 scale-102 shadow-sm'
+                        : 'border-stone-200 opacity-60 hover:opacity-100'
+                    }`}
+                    aria-label={`Visualizza foto vivaio ${idx + 1}`}
+                  >
+                    <img
+                      src={item.src}
+                      alt={item.alt}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+
               <p className="text-xs text-[#252824]/60 italic text-center">
-                Serre di coltivazione a Santa Venerina (Catania) &bull; Pendici dell'Etna
+                Tenuta e serre di coltivazione a Santa Venerina (Catania) &bull; Pendici dell'Etna
               </p>
             </div>
 

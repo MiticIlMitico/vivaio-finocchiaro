@@ -78,39 +78,45 @@ export default function DettaglioPiantaModal({ pianta, onClose, onOpenLightbox }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Immagine */}
-        <div className="relative aspect-[16/10] w-full bg-[#F2F3EB] flex-shrink-0">
-          {foto_url ? (
-            <img 
-              src={foto_url} 
-              alt={nome} 
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-[#B7BEA9] bg-[#F2F3EB]">
-              <span className="text-xs font-semibold text-[#25570A]/70 uppercase tracking-wider">Foto in arrivo</span>
+        {(() => {
+          const imgSource = varianteAttiva?.foto_url || foto_url;
+          return (
+            <div className="relative aspect-[16/10] w-full bg-[#F2F3EB] flex-shrink-0">
+              {imgSource ? (
+                <img 
+                  key={imgSource}
+                  src={imgSource} 
+                  alt={nome} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-[#B7BEA9] bg-[#F2F3EB]">
+                  <span className="text-xs font-semibold text-[#25570A]/70 uppercase tracking-wider">Foto in arrivo</span>
+                </div>
+              )}
+
+              {/* Chiudi */}
+              <button
+                onClick={onClose}
+                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition-colors touch-target z-10"
+                aria-label="Chiudi scheda"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Schermo intero */}
+              {imgSource && (
+                <button
+                  onClick={() => onOpenLightbox(imgSource, nome)}
+                  className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/80 text-white text-xs font-medium flex items-center gap-1.5 backdrop-blur-md transition-colors z-10"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>Ingrandisci</span>
+                </button>
+              )}
             </div>
-          )}
-
-          {/* Chiudi */}
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center backdrop-blur-md transition-colors touch-target z-10"
-            aria-label="Chiudi scheda"
-          >
-            <X className="w-4 h-4" />
-          </button>
-
-          {/* Schermo intero */}
-          {foto_url && (
-            <button
-              onClick={() => onOpenLightbox(foto_url, nome)}
-              className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/80 text-white text-xs font-medium flex items-center gap-1.5 backdrop-blur-md transition-colors z-10"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-              <span>Ingrandisci</span>
-            </button>
-          )}
-        </div>
+          );
+        })()}
 
         {/* Informazioni sotto la foto */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
