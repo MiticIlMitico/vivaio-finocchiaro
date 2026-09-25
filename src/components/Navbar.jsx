@@ -57,11 +57,14 @@ export default function Navbar() {
           title="Torna all'inizio - Campo dei Fiori"
           onClick={handleLogoClick}
         >
-          <img
-            src={isDarkNav ? "/brand/logo-horizontal-white.svg" : "/brand/logo-horizontal.svg"}
-            alt="Campo dei Fiori - Ornamental Plants Sicily"
-            className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 cursor-pointer"
-          />
+          <picture>
+            <source srcSet={isDarkNav ? "/brand/logo-horizontal-white.svg" : "/brand/logo-horizontal.svg"} type="image/svg+xml" />
+            <img
+              src={isDarkNav ? "/brand/logo-horizontal-white.webp" : "/brand/logo-horizontal.webp"}
+              alt="Campo dei Fiori - Ornamental Plants Sicily"
+              className="h-9 sm:h-11 w-auto object-contain transition-all duration-300 group-hover:scale-103 cursor-pointer"
+            />
+          </picture>
         </Link>
 
         {/* Menu Navigazione Desktop */}

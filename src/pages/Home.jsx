@@ -637,13 +637,16 @@ export default function Home() {
                 className="inline-block group focus:outline-none cursor-pointer"
                 title="Torna all'inizio - Campo dei Fiori"
               >
-                <img
-                  src="/brand/logo-horizontal-white.svg"
-                  alt="Campo dei Fiori - Ornamental Plants Sicily"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-103"
-                />
+                <picture>
+                  <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
+                  <img
+                    src="/brand/logo-horizontal-white.webp"
+                    alt="Campo dei Fiori - Ornamental Plants Sicily"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-103"
+                  />
+                </picture>
               </a>
               <p className="text-xs text-stone-400 leading-relaxed max-w-sm">
                 Coltivazione e vendita all'ingrosso riservata esclusivamente a garden center, grossisti e operatori professionali con Partita IVA.

@@ -369,12 +369,15 @@ export default function AdminLista() {
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
           {/* Brand con Link Diretto alla Home (Solo icona logo ufficiale) */}
           <Link to="/" className="flex items-center gap-3 min-w-0 group" title="Vai al Catalogo Pubblico">
-            <img
-              src="/brand/logo-mark.svg"
-              alt="Logo Campo dei Fiori"
-              decoding="async"
-              className="h-9 w-auto object-contain drop-shadow group-hover:scale-105 transition-transform"
-            />
+            <picture>
+              <source srcSet="/brand/logo-mark.svg" type="image/svg+xml" />
+              <img
+                src="/brand/logo-mark.webp"
+                alt="Logo Campo dei Fiori"
+                decoding="async"
+                className="h-9 w-auto object-contain drop-shadow group-hover:scale-105 transition-transform"
+              />
+            </picture>
             <div className="min-w-0">
               <h1 className="font-serif font-semibold text-base sm:text-lg text-white leading-tight truncate">
                 {AZIENDA.nome}
