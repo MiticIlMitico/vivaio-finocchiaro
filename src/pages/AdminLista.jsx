@@ -47,6 +47,14 @@ export default function AdminLista() {
   const [validoFino, setValidoFino] = useState('31 Agosto 2026');
   const [salvataggioValidoFino, setSalvataggioValidoFino] = useState(false);
 
+  // Visibilità giacenze ai clienti (flag con dialog di conferma)
+  const [mostraGiacenze, setMostraGiacenze] = useState(true);
+  const [confirmGiacenzeModal, setConfirmGiacenzeModal] = useState({
+    isOpen: false,
+    targetValue: true,
+    loading: false
+  });
+
   const navigate = useNavigate();
 
   // Apertura modale vasi per una specifica pianta
@@ -186,15 +194,19 @@ export default function AdminLista() {
       if (error) throw error;
       setPiante(data || []);
 
-      // 2. Impostazione valido_fino
+      // 2. Impostazioni: valido_fino e mostra_giacenze
       const { data: impData } = await supabase
         .from('impostazioni')
-        .select('valore')
-        .eq('chiave', 'valido_fino')
-        .single();
+        .select('chiave, valore');
 
-      if (impData?.valore) {
-        setValidoFino(impData.valore);
+      if (impData && Array.isArray(impData)) {
+        const vf = impData.find(i => i.chiave === 'valido_fino');
+        if (vf?.valore) setValidoFino(vf.valore);
+
+        const mg = impData.find(i => i.chiave === 'mostra_giacenze');
+        if (mg?.valore !== undefined) {
+          setMostraGiacenze(mg.valore === 'true');
+        }
       }
     } catch (err) {
       console.error('Errore nel caricamento dati admin:', err);
@@ -240,6 +252,46 @@ export default function AdminLista() {
       });
     } finally {
       setSalvataggioValidoFino(false);
+    }
+  };
+
+  // Gestione cambio visibilità giacenze con dialog di conferma
+  const handleRichiediToggleGiacenze = (targetVal) => {
+    setConfirmGiacenzeModal({
+      isOpen: true,
+      targetValue: targetVal,
+      loading: false
+    });
+  };
+
+  const handleConfermaToggleGiacenze = async () => {
+    setConfirmGiacenzeModal((prev) => ({ ...prev, loading: true }));
+    try {
+      const { error } = await supabase
+        .from('impostazioni')
+        .upsert({
+          chiave: 'mostra_giacenze',
+          valore: String(confirmGiacenzeModal.targetValue),
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      setMostraGiacenze(confirmGiacenzeModal.targetValue);
+      setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false });
+      setToast({
+        message: confirmGiacenzeModal.targetValue
+          ? 'Giacenze magazzino ora VISIBILI ai clienti nel catalogo.'
+          : 'Giacenze magazzino ora NASCOSTE ai clienti nel catalogo.',
+        type: 'success'
+      });
+    } catch (err) {
+      console.error('Errore aggiornamento visibilità giacenze:', err);
+      setToast({
+        message: 'Impossibile aggiornare la visibilità delle giacenze.',
+        type: 'error'
+      });
+      setConfirmGiacenzeModal((prev) => ({ ...prev, loading: false }));
     }
   };
 
@@ -471,6 +523,62 @@ export default function AdminLista() {
               <span>{salvataggioValidoFino ? 'Salvataggio...' : 'Salva'}</span>
             </button>
           </form>
+        </div>
+
+        {/* Box Impostazione Visibilità Giacenze ai Clienti con Spunta e Dialog di Conferma */}
+        <div className="mb-4 bg-white p-4 rounded-2xl border border-[#1C201C]/10 shadow-xs">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                mostraGiacenze ? 'bg-[#25570A]/10 text-[#25570A]' : 'bg-stone-100 text-stone-400'
+              }`}>
+                <Warehouse className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-bold text-xs sm:text-sm text-[#1C201C] leading-snug">
+                    Visibilità Giacenze ai Clienti
+                  </h3>
+                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                    mostraGiacenze 
+                      ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20' 
+                      : 'bg-stone-200/70 text-stone-600'
+                  }`}>
+                    {mostraGiacenze ? 'Attive · Visibili' : 'Disattivate · Nascoste'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#1C201C]/60 mt-0.5 leading-relaxed">
+                  Decidi se mostrare o nascondere il campo delle giacenze all'utente finale su ogni scheda pianta.
+                </p>
+              </div>
+            </div>
+
+            {/* Spunta / Switch con Touch Target generoso */}
+            <button
+              type="button"
+              onClick={() => handleRichiediToggleGiacenze(!mostraGiacenze)}
+              className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:ring-offset-2 touch-target ${
+                mostraGiacenze ? 'bg-[#25570A]' : 'bg-stone-300'
+              }`}
+              role="switch"
+              aria-checked={mostraGiacenze}
+              title={mostraGiacenze ? "Tocca per nascondere le giacenze ai clienti" : "Tocca per mostrare le giacenze ai clienti"}
+            >
+              <span className="sr-only">Attiva o disattiva visualizzazione giacenze ai clienti</span>
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-flex h-7 w-7 transform items-center justify-center rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  mostraGiacenze ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              >
+                {mostraGiacenze ? (
+                  <Check className="w-4 h-4 text-[#25570A] stroke-[3]" />
+                ) : (
+                  <X className="w-4 h-4 text-stone-400 stroke-[2.5]" />
+                )}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Barra di Ricerca con Tasto Cancella Rapido (X) & Filtro Categoria */}
@@ -929,6 +1037,85 @@ export default function AdminLista() {
                   <>
                     <Check className="w-4 h-4" />
                     <span>Salva Disponibilità</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dialog di Conferma Cambio Visibilità Giacenze */}
+      {confirmGiacenzeModal.isOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => !confirmGiacenzeModal.loading && setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false })}
+        >
+          <div 
+            className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3.5 mb-4">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
+                confirmGiacenzeModal.targetValue
+                  ? 'bg-[#25570A]/10 text-[#25570A]'
+                  : 'bg-[#D34816]/10 text-[#D34816]'
+              }`}>
+                {confirmGiacenzeModal.targetValue ? (
+                  <Eye className="w-6 h-6" />
+                ) : (
+                  <EyeOff className="w-6 h-6" />
+                )}
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1C201C] leading-snug">
+                  {confirmGiacenzeModal.targetValue 
+                    ? 'Mostrare le giacenze?' 
+                    : 'Nascondere le giacenze?'}
+                </h3>
+                <span className="text-[11px] text-stone-500 font-medium block">
+                  Catalogo pubblico per i clienti
+                </span>
+              </div>
+            </div>
+
+            <div className="text-xs text-stone-600 leading-relaxed mb-6 bg-[#FAF9F6] p-3.5 rounded-2xl border border-stone-200/60">
+              {confirmGiacenzeModal.targetValue ? (
+                <p>
+                  I clienti potranno vedere il campo <strong className="text-[#1C201C]">Giacenza magazzino</strong> e i quantitativi nella scheda di ogni pianta.
+                </p>
+              ) : (
+                <p>
+                  Il campo <strong className="text-[#1C201C]">Giacenza magazzino</strong> e le quantità numeriche verranno <strong className="text-[#D34816]">nascosti</strong> all'utente finale. I dati resteranno comunque salvati qui nel gestionale.
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                disabled={confirmGiacenzeModal.loading}
+                onClick={() => setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false })}
+                className="px-3.5 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-100 text-xs font-semibold transition-all touch-target active:scale-95"
+              >
+                Annulla
+              </button>
+              <button
+                type="button"
+                disabled={confirmGiacenzeModal.loading}
+                onClick={handleConfermaToggleGiacenze}
+                className={`px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-sm transition-all touch-target active:scale-95 flex items-center gap-1.5 ${
+                  confirmGiacenzeModal.targetValue
+                    ? 'bg-[#25570A] hover:bg-[#1E4608]'
+                    : 'bg-[#D34816] hover:bg-[#B83D12]'
+                }`}
+              >
+                {confirmGiacenzeModal.loading ? (
+                  <span>Salvataggio...</span>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4 stroke-[2.5]" />
+                    <span>{confirmGiacenzeModal.targetValue ? 'Sì, Mostra' : 'Sì, Nascondi'}</span>
                   </>
                 )}
               </button>

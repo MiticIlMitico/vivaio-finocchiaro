@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { AZIENDA } from '../content/azienda';
 
-export default function DettaglioPiantaModal({ pianta, validoFino, onClose, onOpenLightbox }) {
+export default function DettaglioPiantaModal({ pianta, validoFino, mostraGiacenze = true, onClose, onOpenLightbox }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -180,15 +180,17 @@ export default function DettaglioPiantaModal({ pianta, validoFino, onClose, onOp
           <div className="pt-2 border-t border-[#B7BEA9]/30">
             <div className="grid grid-cols-2 gap-2.5 text-xs">
               {/* Disponibilità Vaso Selezionato */}
-              <div className="bg-[#25570A]/10 p-3 rounded-xl border border-[#25570A]/20">
+              <div className={`p-3 rounded-xl border border-[#25570A]/20 bg-[#25570A]/10 ${!mostraGiacenze ? 'col-span-2' : ''}`}>
                 <span className="text-[#25570A] block text-[11px] font-bold flex items-center justify-between gap-1">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
-                    Disponibili {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
+                    Disponibilità {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
                   </span>
                 </span>
                 <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
-                  {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'Disponibile'}
+                  {mostraGiacenze
+                    ? (dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'Disponibile')
+                    : 'Pronto per il carico'}
                 </span>
                 {validoFino && (
                   <span className="text-[10px] text-[#25570A]/85 font-bold block mt-1">
@@ -197,16 +199,18 @@ export default function DettaglioPiantaModal({ pianta, validoFino, onClose, onOp
                 )}
               </div>
 
-              {/* Giacenza Magazzino */}
-              <div className="bg-[#F2F3EB] p-3 rounded-xl border border-[#B7BEA9]/40">
-                <span className="text-[#282B27]/60 block text-[11px] font-semibold flex items-center gap-1">
-                  <Warehouse className="w-3.5 h-3.5 text-[#25570A]" />
-                  Giacenza magazzino
-                </span>
-                <span className="font-bold text-[#282B27] text-base mt-0.5 block">
-                  {giacCorrente !== null ? `${Number(giacCorrente).toLocaleString('it-IT')} pz` : '-'}
-                </span>
-              </div>
+              {/* Giacenza Magazzino (visibile solo se flag attivo) */}
+              {mostraGiacenze && (
+                <div className="bg-[#F2F3EB] p-3 rounded-xl border border-[#B7BEA9]/40">
+                  <span className="text-[#282B27]/60 block text-[11px] font-semibold flex items-center gap-1">
+                    <Warehouse className="w-3.5 h-3.5 text-[#25570A]" />
+                    Giacenza magazzino
+                  </span>
+                  <span className="font-bold text-[#282B27] text-base mt-0.5 block">
+                    {giacCorrente !== null ? `${Number(giacCorrente).toLocaleString('it-IT')} pz` : '-'}
+                  </span>
+                </div>
+              )}
 
               <div className="bg-[#F2F3EB] p-3 rounded-xl border border-[#B7BEA9]/40">
                 <span className="text-[#282B27]/60 block text-[11px]">Diametro vaso</span>

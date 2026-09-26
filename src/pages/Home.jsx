@@ -28,6 +28,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [errore, setErrore] = useState(null);
   const [validoFino, setValidoFino] = useState('31 Agosto 2026');
+  const [mostraGiacenze, setMostraGiacenze] = useState(true);
 
   // Filtri catalogo
   const [ricerca, setRicerca] = useState('');
@@ -67,15 +68,19 @@ export default function Home() {
       if (error) throw error;
       setPiante(data || []);
 
-      // 2. Carica periodo di validità listino
+      // 2. Carica periodo di validità listino e visibilità giacenze
       const { data: impData } = await supabase
         .from('impostazioni')
-        .select('valore')
-        .eq('chiave', 'valido_fino')
-        .single();
+        .select('chiave, valore');
 
-      if (impData?.valore) {
-        setValidoFino(impData.valore);
+      if (impData && Array.isArray(impData)) {
+        const vf = impData.find(i => i.chiave === 'valido_fino');
+        if (vf?.valore) setValidoFino(vf.valore);
+
+        const mg = impData.find(i => i.chiave === 'mostra_giacenze');
+        if (mg?.valore !== undefined) {
+          setMostraGiacenze(mg.valore === 'true');
+        }
       }
     } catch (err) {
       console.error('Errore nel caricamento del catalogo:', err);
@@ -520,6 +525,7 @@ export default function Home() {
               <CardPianta
                 key={pianta.id}
                 pianta={pianta}
+                mostraGiacenze={mostraGiacenze}
                 onOpenLightbox={(src, title) => setLightboxData({ isOpen: true, src, title })}
                 onOpenDetail={(p) => setPiantaDettaglio(p)}
               />
@@ -1053,6 +1059,7 @@ export default function Home() {
         <DettaglioPiantaModal
           pianta={piantaDettaglio}
           validoFino={validoFino}
+          mostraGiacenze={mostraGiacenze}
           onClose={() => setPiantaDettaglio(null)}
           onOpenLightbox={(src, title) => setLightboxData({ isOpen: true, src, title })}
         />

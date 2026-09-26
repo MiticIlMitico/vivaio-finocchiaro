@@ -130,6 +130,11 @@ insert into public.impostazioni (chiave, valore)
 values ('valido_fino', '31 Agosto 2026')
 on conflict (chiave) do update set valore = excluded.valore;
 
+-- Valore iniziale visibilità giacenze all'utente finale (default: true)
+insert into public.impostazioni (chiave, valore)
+values ('mostra_giacenze', 'true')
+on conflict (chiave) do nothing;
+
 -- ---------- 4. Bucket Storage per le foto ----------
 
 insert into storage.buckets (id, name, public)

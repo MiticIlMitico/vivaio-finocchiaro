@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sprout, Warehouse, Eye, Layers, Ruler } from 'lucide-react';
 
-export default function CardPianta({ pianta, onOpenDetail }) {
+export default function CardPianta({ pianta, onOpenDetail, mostraGiacenze = true }) {
   const {
     nome,
     nome_comune,
@@ -160,14 +160,21 @@ export default function CardPianta({ pianta, onOpenDetail }) {
         <div className="mt-5 pt-3 border-t border-[#25570A]/10 flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/50 block tracking-wider leading-none mb-1">
-              Disponibili {elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}
+              Disponibilità {elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}
             </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-xl sm:text-2xl font-bold text-[#25570A] leading-none">
-                {dispCorrente !== null ? Number(dispCorrente).toLocaleString('it-IT') : '0'}
-              </span>
-              <span className="text-xs font-semibold text-[#25570A]/70">esemplari</span>
-            </div>
+            {mostraGiacenze ? (
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl sm:text-2xl font-bold text-[#25570A] leading-none">
+                  {dispCorrente !== null ? Number(dispCorrente).toLocaleString('it-IT') : '0'}
+                </span>
+                <span className="text-xs font-semibold text-[#25570A]/70">esemplari</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 pt-0.5">
+                <span className="w-2 h-2 rounded-full bg-[#6BB221] animate-pulse"></span>
+                <span className="text-sm font-bold text-[#25570A]">Pronto in serra</span>
+              </div>
+            )}
           </div>
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#25570A] bg-[#25570A]/5 group-hover:bg-[#25570A] group-hover:text-white transition-all duration-300">
