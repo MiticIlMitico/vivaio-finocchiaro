@@ -182,20 +182,29 @@ export default function Home() {
           
           <h1 className="sr-only">Campo dei Fiori — Floricoltura e Vivaio All'Ingrosso</h1>
 
-          {/* Logo Ufficiale White Grande al Centro */}
+          {/* Logo Ufficiale White Grande al Centro con Made in Sicily in basso a destra del logo */}
           <div className="mb-6 sm:mb-8 flex items-center justify-center w-full">
-            <picture>
-              <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
-              <img
-                src="/brand/logo-horizontal-white.webp"
-                alt="Campo dei Fiori — Ornamental Plants Sicily"
-                className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.02] transition-transform duration-500"
-                width="720"
-                height="136"
-                fetchPriority="high"
-                decoding="async"
-              />
-            </picture>
+            <div className="relative inline-block">
+              <picture>
+                <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
+                <img
+                  src="/brand/logo-horizontal-white.webp"
+                  alt="Campo dei Fiori — Ornamental Plants Sicily"
+                  className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.01] transition-transform duration-500"
+                  width="720"
+                  height="136"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
+
+              {/* Dicitura Made in Sicily in basso a destra del logo col font Cormorant Garamond italic */}
+              <div className="text-right mt-1 sm:mt-1.5 pr-1 sm:pr-2 select-none">
+                <span className="font-display italic font-semibold text-lg sm:text-2xl md:text-3xl text-white/95 tracking-wide drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+                  Made in Sicily
+                </span>
+              </div>
+            </div>
           </div>
 
           <p className="text-white/95 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8 drop-shadow-md">
@@ -232,13 +241,6 @@ export default function Home() {
             <span className="text-[10px] font-semibold">Scopri il vivaio</span>
             <ChevronDown className="w-4 h-4 animate-bounce" />
           </a>
-        </div>
-
-        {/* In basso a destra: Made in Sicily con il font giusto (Cormorant Garamond italic) */}
-        <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-10 md:bottom-10 md:right-12 z-10 text-right pointer-events-none select-none">
-          <p className="font-display italic font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-white/95 tracking-wide drop-shadow-[0_2px_18px_rgba(0,0,0,0.9)]">
-            Made in Sicily
-          </p>
         </div>
       </section>
 
