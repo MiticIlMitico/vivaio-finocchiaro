@@ -18,25 +18,23 @@ Documento riassuntivo con tutti i dati anagrafici, fiscali, logistici e recapiti
 
 ---
 
-## 📍 Sede Operativa e Punto di Carico
+## 📍 Sedi Aziendali
 
-* **Indirizzo:** Via Rondinella, 20/A
-* **CAP:** 95010
-* **Comune:** Santa Venerina
-* **Provincia:** CT (Catania) — Sicilia, pendici dell'Etna
-* **Punto di Carico:** Accessibile per bilici e furgoni allestiti per carico carrelli CC (Danish Container) e bancali/pianali.
+* **Sede Legale:** Via Rondinella, 20/A, 95010 Santa Venerina (CT)
+* **Sito Produttivo:** Pasteria (CT) — Serre e vivai di coltivazione
 
 ---
 
-## 📞 Recapiti Commerciali & Ordini
+## 📞 Recapiti & Reparti Operativi
 
-| Canale | Recapito | Destinazione d'uso |
-| :--- | :--- | :--- |
-| **Telefono Principale Acquisti** | **`+39 348 395 5637`** | Chiamate dirette & ordini all'ingrosso |
-| **WhatsApp Ufficiale** | **`+39 348 395 5637`** (wa.me/393483955637) | Invio ordini dal catalogo, foto lotti e disponibilità carrelli |
-| **Telefono Secondario** | *[In attesa di aggiunta]* | Predisposto nel sistema per un secondo referente |
-| **Email Aziendale** | `bk@campodeifiori-ct.com` | Comunicazioni commerciali e contabili |
-| **Indirizzo PEC** | `marco.adornetto.campodeifiori@pec.it` | Fatturazione elettronica e comunicazioni legali |
+| Reparto | Canale | Recapito | Destinazione d'uso |
+| :--- | :--- | :--- | :--- |
+| **Ufficio Vendite** | Telefono & WhatsApp | **`+39 348 395 5637`** | Ordini all'ingrosso, disponibilità piante e quotazioni |
+| **Ufficio Amministrazione** | Telefono & Email | **`+39 348 395 5637`** · `amministrazione@campodeifiori-ct.com` | Fatturazione elettronica, pagamenti e contabilità |
+| **Produzione Interna** | Telefono & Email | **`+39 348 395 5637`** · `produzione@campodeifiori-ct.com` | Gestione coltivazioni, serre e lotti botanici |
+| **Logistica & Spedizioni** | Telefono | **`+39 348 395 5637`** | Pianificazione trasporti, carichi e spedizioni |
+| **Email Generale** | Email | `bk@campodeifiori-ct.com` | Comunicazioni generali |
+| **Indirizzo PEC** | PEC | `marco.adornetto.campodeifiori@pec.it` | Comunicazioni legali e fiscali |
 
 ---
 

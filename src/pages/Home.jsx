@@ -14,7 +14,10 @@ import {
   AlertCircle,
   ChevronDown,
   ArrowDown,
-  Plus
+  Plus,
+  Mail,
+  Building2,
+  Truck
 } from 'lucide-react';
 
 export default function Home() {
@@ -521,44 +524,212 @@ export default function Home() {
 
 
 
-      {/* 5. SEZIONE CONTATTI COMMERCIALI */}
-      <section id="contatti" className="py-20 sm:py-28 px-5 sm:px-8 max-w-5xl mx-auto w-full">
+      {/* 5. SEZIONE CONTATTA IL VIVAIO */}
+      <section id="contatti" className="py-20 sm:py-28 px-5 sm:px-8 max-w-6xl mx-auto w-full">
         <SectionReveal>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
-              Ufficio Commerciale
+              Recapiti & Reparti
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-medium text-[#25570A]">
               Contatta il Vivaio
             </h2>
             <p className="text-xs sm:text-sm text-[#252824]/70 mt-2">
-              Richiesta quotazioni all'ingrosso, disponibilità lotti e visite in vivaio.
+              Richiesta quotazioni all'ingrosso, disponibilità lotti, amministrazione e logistica.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
-              <Phone className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Ufficio Vendite</span>
-              <span className="text-sm sm:text-base font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.telefono}</span>
+          {/* I 4 Quadratini / Caselle dei Reparti */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            
+            {/* 1. Ufficio Vendite */}
+            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
+                  <Phone className="w-5 h-5 text-[#25570A]" />
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Commerciale
+                </span>
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                  Ufficio Vendite
+                </h3>
+                <p className="text-xs text-[#252824]/60 mt-1 mb-4">
+                  Listino ingrosso e disponibilità piante
+                </p>
+              </div>
+              <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
+                <a 
+                  href={`tel:${AZIENDA.contatti.ufficioVendite.telefono.replace(/\s+/g, '')}`} 
+                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                  <span>{AZIENDA.contatti.ufficioVendite.telefono}</span>
+                </a>
+              </div>
             </div>
 
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e quotazioni all'ingrosso.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-6 rounded-3xl bg-[#D34816] hover:bg-[#B83E12] text-white text-center transition-all shadow-md block active:scale-98"
-            >
-              <MessageCircle className="w-5 h-5 text-white mx-auto mb-2 fill-white/20" />
-              <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 block">WhatsApp Diretto</span>
-              <span className="text-sm sm:text-base font-bold text-white block mt-1">Richiedi Disponibilità</span>
-            </a>
-
-            <div className="p-6 rounded-3xl bg-white border border-stone-200 text-center shadow-xs">
-              <MapPin className="w-5 h-5 text-[#25570A] mx-auto mb-2" />
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">Sede & Vivaio</span>
-              <span className="text-xs sm:text-sm font-bold text-[#25570A] block mt-1">{AZIENDA.contatti.indirizzo}</span>
+            {/* 2. Ufficio Amministrazione */}
+            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
+                  <Building2 className="w-5 h-5 text-[#25570A]" />
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Contabilità
+                </span>
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                  Ufficio Amministrazione
+                </h3>
+                <p className="text-xs text-[#252824]/60 mt-1 mb-4">
+                  Fatturazione elettronica e pagamenti
+                </p>
+              </div>
+              <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
+                <a 
+                  href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`} 
+                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                  <span>{AZIENDA.contatti.ufficioAmministrazione.telefono}</span>
+                </a>
+                <a 
+                  href={`mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`} 
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate"
+                >
+                  <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
+                  <span className="truncate">{AZIENDA.contatti.ufficioAmministrazione.email}</span>
+                </a>
+              </div>
             </div>
+
+            {/* 3. Produzione Interna */}
+            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
+                  <Sprout className="w-5 h-5 text-[#25570A]" />
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Coltivazioni
+                </span>
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                  Produzione Interna
+                </h3>
+                <p className="text-xs text-[#252824]/60 mt-1 mb-4">
+                  Gestione coltivazioni, serre e lotti
+                </p>
+              </div>
+              <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
+                <a 
+                  href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`} 
+                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                  <span>{AZIENDA.contatti.produzioneInterna.telefono}</span>
+                </a>
+                <a 
+                  href={`mailto:${AZIENDA.contatti.produzioneInterna.email}`} 
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate"
+                >
+                  <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
+                  <span className="truncate">{AZIENDA.contatti.produzioneInterna.email}</span>
+                </a>
+              </div>
+            </div>
+
+            {/* 4. Logistica & Spedizioni */}
+            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
+                  <Truck className="w-5 h-5 text-[#25570A]" />
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Trasporti
+                </span>
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                  Logistica & Spedizioni
+                </h3>
+                <p className="text-xs text-[#252824]/60 mt-1 mb-4">
+                  Pianificazione carichi e partenze
+                </p>
+              </div>
+              <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
+                <a 
+                  href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`} 
+                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                  <span>{AZIENDA.contatti.logisticaSpedizioni.telefono}</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Sedi Aziendali: Sede Legale & Sito Produttivo + Tasto WhatsApp */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            
+            {/* Sede Legale */}
+            <div className="md:col-span-4 p-5 sm:p-6 rounded-3xl bg-white border border-stone-200/80 flex items-start gap-4 shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <MapPin className="w-5 h-5 text-[#25570A]" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Sede Legale
+                </span>
+                <h4 className="text-sm font-bold text-[#25570A] mt-0.5">
+                  Santa Venerina (CT)
+                </h4>
+                <p className="text-xs text-[#252824]/70 mt-1">
+                  {AZIENDA.sedi.legale.indirizzo}
+                </p>
+              </div>
+            </div>
+
+            {/* Sito Produttivo */}
+            <div className="md:col-span-4 p-5 sm:p-6 rounded-3xl bg-white border border-stone-200/80 flex items-start gap-4 shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <MapPin className="w-5 h-5 text-[#25570A]" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
+                  Sito Produttivo
+                </span>
+                <h4 className="text-sm font-bold text-[#25570A] mt-0.5">
+                  Pasteria (CT)
+                </h4>
+                <p className="text-xs text-[#252824]/70 mt-1">
+                  {AZIENDA.sedi.produzione.indirizzo} &bull; Serre e vivai di coltivazione
+                </p>
+              </div>
+            </div>
+
+            {/* WhatsApp Diretto */}
+            <div className="md:col-span-4">
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni e disponibilità piante all'ingrosso.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-full p-5 sm:p-6 rounded-3xl bg-[#D34816] hover:bg-[#B83E12] text-white flex items-center justify-between transition-all shadow-md active:scale-98 group"
+              >
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-white/80 block">
+                    Canale Diretto
+                  </span>
+                  <span className="text-base font-bold text-white block mt-0.5">
+                    WhatsApp Vendite
+                  </span>
+                  <span className="text-xs text-white/80 block mt-0.5">
+                    Risposta rapida ordini e lotti
+                  </span>
+                </div>
+                <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MessageCircle className="w-6 h-6 text-white fill-white/20" />
+                </div>
+              </a>
+            </div>
+
           </div>
         </SectionReveal>
       </section>
@@ -602,7 +773,8 @@ export default function Home() {
                 Dati Societari
               </span>
               <p><strong className="text-white font-semibold">Ragione Sociale:</strong> {AZIENDA.ragioneSociale}</p>
-              <p><strong className="text-white font-semibold">Sede Operativa:</strong> {AZIENDA.contatti.via}, {AZIENDA.contatti.cap} {AZIENDA.contatti.comune} ({AZIENDA.contatti.provincia})</p>
+              <p><strong className="text-white font-semibold">Sede Legale:</strong> {AZIENDA.sedi.legale.indirizzo}</p>
+              <p><strong className="text-white font-semibold">Sito Produttivo:</strong> {AZIENDA.sedi.produzione.indirizzo}</p>
               <p><strong className="text-white font-semibold">Partita IVA:</strong> {AZIENDA.contatti.piva}</p>
               <p><strong className="text-white font-semibold">PEC:</strong> {AZIENDA.contatti.pec}</p>
             </div>
@@ -612,9 +784,9 @@ export default function Home() {
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#6BB221] block mb-2">
                 Recapiti Diretti
               </span>
-              <p><strong className="text-white font-semibold">Ufficio Vendite:</strong> {AZIENDA.contatti.telefono}</p>
+              <p><strong className="text-white font-semibold">Ufficio Vendite:</strong> {AZIENDA.contatti.ufficioVendite.telefono}</p>
+              <p><strong className="text-white font-semibold">Amministrazione:</strong> {AZIENDA.contatti.ufficioAmministrazione.email}</p>
               <p><strong className="text-white font-semibold">Email:</strong> {AZIENDA.contatti.email}</p>
-              <p><strong className="text-white font-semibold">Orari Carico:</strong> {AZIENDA.contatti.orari}</p>
             </div>
           </div>
 

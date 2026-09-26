@@ -30,28 +30,63 @@ export const AZIENDA = {
       "Contatto commerciale diretto per ordini e quotazioni riservate"
     ]
   },
+  sedi: {
+    legale: {
+      titolo: "Sede Legale",
+      indirizzo: "Via Rondinella, 20/A, 95010 Santa Venerina (CT)",
+      via: "Via Rondinella, 20/A",
+      cap: "95010",
+      comune: "Santa Venerina",
+      provincia: "CT"
+    },
+    produzione: {
+      titolo: "Sito Produttivo",
+      indirizzo: "Pasteria (CT)",
+      comune: "Pasteria",
+      provincia: "CT"
+    }
+  },
   contatti: {
-    // Numero WhatsApp principale per ordini diretti (senza spazi né simboli)
+    // Numero WhatsApp principale per ordini diretti
     whatsapp: "393483955637",
     // Numero telefonico principale per acquisti
     telefono: "+39 348 395 5637",
-    // Secondo contatto (predisposto per essere valorizzato appena disponibile)
-    telefonoSecondario: "",
-    // Lista contatti completa per eventuale visualizzazione multipla
-    recapitiTelefonici: [
-      { etichetta: "Ufficio Acquisti & Ordini", numero: "+39 348 395 5637", whatsapp: "393483955637", predefinito: true },
-      // { etichetta: "Referente Commerciale 2", numero: "+39 ...", whatsapp: "39...", predefinito: false }
-    ],
     email: "bk@campodeifiori-ct.com",
     pec: "marco.adornetto.campodeifiori@pec.it",
+    sedeLegale: "Via Rondinella, 20/A, 95010 Santa Venerina (CT)",
+    sitoProduttivo: "Pasteria (CT)",
     indirizzo: "Via Rondinella, 20/A, 95010 Santa Venerina (CT)",
     via: "Via Rondinella, 20/A",
     cap: "95010",
     comune: "Santa Venerina",
     provincia: "CT",
-    orari: "Lun - Ven: 07:00 - 18:00 | Sab: 07:00 - 13:00",
     piva: "02857220871",
     codiceFiscale: "02857220871",
-    codiceAteco: "01.19"
+    codiceAteco: "01.19",
+
+    // Reparti Aziendali
+    ufficioVendite: {
+      titolo: "Ufficio Vendite",
+      descrizione: "Listino ingrosso, preventivi e disponibilità lotti",
+      telefono: "+39 348 395 5637",
+      whatsapp: "393483955637"
+    },
+    ufficioAmministrazione: {
+      titolo: "Ufficio Amministrazione",
+      descrizione: "Fatturazione elettronica, contabilità e pagamenti",
+      telefono: "+39 348 395 5637",
+      email: "amministrazione@campodeifiori-ct.com"
+    },
+    produzioneInterna: {
+      titolo: "Produzione Interna",
+      descrizione: "Gestione serre, coltivazioni e sviluppo botanico",
+      telefono: "+39 348 395 5637",
+      email: "produzione@campodeifiori-ct.com"
+    },
+    logisticaSpedizioni: {
+      titolo: "Logistica & Spedizioni",
+      descrizione: "Pianificazione trasporti e carichi",
+      telefono: "+39 348 395 5637"
+    }
   }
 };
