@@ -21,7 +21,7 @@ Documento riassuntivo con tutti i dati anagrafici, fiscali, logistici e recapiti
 ## 📍 Sedi Aziendali
 
 * **Sede Legale:** Via Rondinella, 20/A, 95010 Santa Venerina (CT)
-* **Sito Produttivo:** Pasteria (CT) — Serre e vivai di coltivazione
+* **Sito Produttivo:** Via Calatabiano Pasteria, 16, Pasteria (CT) — Serre e vivai di coltivazione
 
 ---
 
@@ -30,9 +30,9 @@ Documento riassuntivo con tutti i dati anagrafici, fiscali, logistici e recapiti
 | Reparto | Canale | Recapito | Destinazione d'uso |
 | :--- | :--- | :--- | :--- |
 | **Ufficio Vendite** | Telefono & WhatsApp | **`+39 348 395 5637`** | Ordini all'ingrosso, disponibilità piante e quotazioni |
-| **Ufficio Amministrazione** | Telefono & Email | **`+39 348 395 5637`** · `amministrazione@campodeifiori-ct.com` | Fatturazione elettronica, pagamenti e contabilità |
-| **Produzione Interna** | Telefono & Email | **`+39 348 395 5637`** · `produzione@campodeifiori-ct.com` | Gestione coltivazioni, serre e lotti botanici |
-| **Logistica & Spedizioni** | Telefono | **`+39 348 395 5637`** | Pianificazione trasporti, carichi e spedizioni |
+| **Ufficio Amministrazione** | Telefono Fisso, Mobile & Email | **`095 953477`** · **`329 391 5927`** · `bk@campodeifiori-ct.com` | Fatturazione elettronica, pagamenti e contabilità |
+| **Produzione Interna** | Telefono & Email | **`348 040 5450`** · `postmaster@campodeifiori-ct.com` | Gestione coltivazioni, serre e lotti botanici |
+| **Logistica & Spedizioni** | Telefono | **`346 696 5344`** | Pianificazione trasporti, carichi e spedizioni |
 | **Email Generale** | Email | `bk@campodeifiori-ct.com` | Comunicazioni generali |
 | **Indirizzo PEC** | PEC | `marco.adornetto.campodeifiori@pec.it` | Comunicazioni legali e fiscali |
 

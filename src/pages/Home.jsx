@@ -600,20 +600,22 @@ export default function Home() {
             </a>
 
             {/* 2. Ufficio Amministrazione */}
-            <a
-              href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
-              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
-              title="Tocca per chiamare l'Amministrazione"
+            <div
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
                     <Building2 className="w-5 h-5 transition-transform group-hover:scale-110" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                  <a
+                    href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
+                    className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1"
+                    title="Chiama telefono fisso amministrazione"
+                  >
                     <span>Chiama</span>
                     <ArrowRight className="w-3 h-3" />
-                  </span>
+                  </a>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Contabilità
@@ -626,39 +628,56 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
-                  <span>{AZIENDA.contatti.ufficioAmministrazione.telefono}</span>
-                </span>
-                <span 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = `mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`;
-                  }}
-                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline"
+                <a
+                  href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
+                  className="font-bold text-[#25570A] hover:underline flex items-center justify-between group/t1 py-0.5"
+                  title="Chiama linea fissa amministrazione"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                    <span>{AZIENDA.contatti.ufficioAmministrazione.telefono}</span>
+                  </span>
+                  <span className="text-[10px] font-semibold text-stone-400 group-hover/t1:text-[#25570A]">Fisso</span>
+                </a>
+                <a
+                  href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono2.replace(/\s+/g, '')}`}
+                  className="font-bold text-[#25570A] hover:underline flex items-center justify-between group/t2 py-0.5"
+                  title="Chiama cellulare amministrazione"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
+                    <span>{AZIENDA.contatti.ufficioAmministrazione.telefono2}</span>
+                  </span>
+                  <span className="text-[10px] font-semibold text-stone-400 group-hover/t2:text-[#25570A]">Cellulare</span>
+                </a>
+                <a 
+                  href={`mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`}
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline pt-0.5"
+                  title="Invia email all'amministrazione"
                 >
                   <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
                   <span className="truncate">{AZIENDA.contatti.ufficioAmministrazione.email}</span>
-                </span>
+                </a>
               </div>
-            </a>
+            </div>
 
             {/* 3. Produzione Interna */}
-            <a
-              href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
-              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
-              title="Tocca per chiamare la Produzione Interna"
+            <div
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
                     <Sprout className="w-5 h-5 transition-transform group-hover:scale-110" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                  <a
+                    href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
+                    className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1"
+                    title="Chiama Produzione Interna"
+                  >
                     <span>Chiama</span>
                     <ArrowRight className="w-3 h-3" />
-                  </span>
+                  </a>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Coltivazioni
@@ -671,23 +690,24 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
+                <a
+                  href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
+                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5 py-0.5"
+                  title="Chiama telefono produzione"
+                >
                   <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
                   <span>{AZIENDA.contatti.produzioneInterna.telefono}</span>
-                </span>
-                <span 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = `mailto:${AZIENDA.contatti.produzioneInterna.email}`;
-                  }}
-                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline"
+                </a>
+                <a 
+                  href={`mailto:${AZIENDA.contatti.produzioneInterna.email}`}
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline pt-0.5"
+                  title="Invia email alla produzione"
                 >
                   <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
                   <span className="truncate">{AZIENDA.contatti.produzioneInterna.email}</span>
-                </span>
+                </a>
               </div>
-            </a>
+            </div>
 
             {/* 4. Logistica & Spedizioni */}
             <a
@@ -800,7 +820,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-stone-800 items-start">
             
             {/* Logo ufficiale con scritta inclusa in versione bianca per fondo scuro */}
-            <div className="md:col-span-5 space-y-4">
+            <div className="md:col-span-4 space-y-4">
               <a
                 href="#hero"
                 onClick={(e) => {
@@ -826,25 +846,83 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Dati Fiscali */}
-            <div className="md:col-span-4 space-y-2 text-xs text-stone-400">
+            {/* Dati Societari & Sedi */}
+            <div className="md:col-span-3 space-y-2 text-xs text-stone-400">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#6BB221] block mb-2">
                 Dati Societari
               </span>
-              <p><strong className="text-white font-semibold">Ragione Sociale:</strong> {AZIENDA.ragioneSociale}</p>
-              <p><strong className="text-white font-semibold">Sede Legale:</strong> {AZIENDA.sedi.legale.indirizzo}</p>
-              <p><strong className="text-white font-semibold">Sito Produttivo:</strong> {AZIENDA.sedi.produzione.indirizzo}</p>
+              <p><strong className="text-white font-semibold">Ragione Sociale:</strong><br />{AZIENDA.ragioneSociale}</p>
+              <p><strong className="text-white font-semibold">Sede Legale:</strong><br />{AZIENDA.sedi.legale.indirizzo}</p>
+              <p><strong className="text-white font-semibold">Sito Produttivo:</strong><br />{AZIENDA.sedi.produzione.indirizzo}</p>
               <p><strong className="text-white font-semibold">Partita IVA:</strong> {AZIENDA.contatti.piva}</p>
-              <p><strong className="text-white font-semibold">PEC:</strong> {AZIENDA.contatti.pec}</p>
+              <p><strong className="text-white font-semibold">PEC:</strong><br /><span className="break-all">{AZIENDA.contatti.pec}</span></p>
             </div>
 
-            {/* Recapiti Diretti */}
-            <div className="md:col-span-3 space-y-2 text-xs text-stone-400">
+            {/* Recapiti Reparti Diretti */}
+            <div className="md:col-span-5 space-y-3 text-xs text-stone-400">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#6BB221] block mb-2">
-                Recapiti Diretti
+                Recapiti Reparti
               </span>
-              <p><strong className="text-white font-semibold">Ufficio Vendite:</strong> {AZIENDA.contatti.ufficioVendite.telefono}</p>
-              <p><strong className="text-white font-semibold">Email:</strong> {AZIENDA.contatti.email}</p>
+              
+              <div className="space-y-0.5">
+                <span className="text-white font-semibold block text-[11px]">Ufficio Vendite:</span>
+                <p className="flex flex-wrap items-center gap-x-2">
+                  <a href={`tel:${AZIENDA.contatti.ufficioVendite.telefono.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">
+                    {AZIENDA.contatti.ufficioVendite.telefono}
+                  </a>
+                  <span className="text-stone-600">&bull;</span>
+                  <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="text-[#25D366] hover:underline">
+                    WhatsApp
+                  </a>
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-white font-semibold block text-[11px]">Ufficio Amministrazione:</span>
+                <p className="flex flex-wrap items-center gap-x-2">
+                  <a href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`} className="hover:text-white transition-colors" title="Telefono Fisso">
+                    Tel. {AZIENDA.contatti.ufficioAmministrazione.telefono}
+                  </a>
+                  <span className="text-stone-600">&bull;</span>
+                  <a href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono2.replace(/\s+/g, '')}`} className="hover:text-white transition-colors" title="Cellulare">
+                    Cell. {AZIENDA.contatti.ufficioAmministrazione.telefono2}
+                  </a>
+                </p>
+                <p>
+                  <a href={`mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`} className="text-stone-300 hover:text-white transition-colors">
+                    {AZIENDA.contatti.ufficioAmministrazione.email}
+                  </a>
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-white font-semibold block text-[11px]">Produzione Interna:</span>
+                <p className="flex flex-wrap items-center gap-x-2">
+                  <a href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">
+                    Tel. {AZIENDA.contatti.produzioneInterna.telefono}
+                  </a>
+                  <span className="text-stone-600">&bull;</span>
+                  <a href={`mailto:${AZIENDA.contatti.produzioneInterna.email}`} className="text-stone-300 hover:text-white transition-colors">
+                    {AZIENDA.contatti.produzioneInterna.email}
+                  </a>
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                <span className="text-white font-semibold block text-[11px]">Logistica &amp; Spedizioni:</span>
+                <p>
+                  <a href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">
+                    Tel. {AZIENDA.contatti.logisticaSpedizioni.telefono}
+                  </a>
+                </p>
+              </div>
+
+              <div className="pt-1.5 border-t border-stone-800 text-[11px]">
+                <span className="text-stone-400">Email Generale: </span>
+                <a href={`mailto:${AZIENDA.contatti.email}`} className="text-stone-300 hover:text-white transition-colors">
+                  {AZIENDA.contatti.email}
+                </a>
+              </div>
             </div>
           </div>
 
@@ -869,7 +947,7 @@ export default function Home() {
           />
         )}
 
-        {/* I 4 Bottoni a Ventaglio che si aprono verso l'alto */}
+        {/* I Bottoni a Ventaglio che si aprono verso l'alto */}
         {fabMenuOpen && (
           <div className="relative z-50 flex flex-col items-end gap-3 mb-3 pointer-events-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
             
@@ -890,25 +968,40 @@ export default function Home() {
               </a>
             </div>
 
-            {/* 2. Ufficio Amministrazione */}
-            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '100ms' }}>
+            {/* 2. Ufficio Amministrazione Fisso */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '80ms' }}>
               <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
-                2. Amministrazione
+                2. Amministrazione ({AZIENDA.contatti.ufficioAmministrazione.telefono})
               </span>
               <a
                 href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
                 onClick={() => setFabMenuOpen(false)}
                 className="w-12 h-12 rounded-full bg-[#25570A] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
-                aria-label="Chiama Ufficio Amministrazione"
+                aria-label="Chiama Ufficio Amministrazione Fisso"
+              >
+                <Phone className="w-5 h-5" />
+              </a>
+            </div>
+
+            {/* 2b. Ufficio Amministrazione Mobile */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '110ms' }}>
+              <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
+                2. Amministrazione ({AZIENDA.contatti.ufficioAmministrazione.telefono2})
+              </span>
+              <a
+                href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono2.replace(/\s+/g, '')}`}
+                onClick={() => setFabMenuOpen(false)}
+                className="w-12 h-12 rounded-full bg-[#25570A] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+                aria-label="Chiama Ufficio Amministrazione Cellulare"
               >
                 <Building2 className="w-5 h-5" />
               </a>
             </div>
 
             {/* 3. Produzione Interna */}
-            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '150ms' }}>
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '140ms' }}>
               <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
-                3. Produzione Interna
+                3. Produzione ({AZIENDA.contatti.produzioneInterna.telefono})
               </span>
               <a
                 href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
@@ -921,9 +1014,9 @@ export default function Home() {
             </div>
 
             {/* 4. Logistica & Spedizioni */}
-            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '200ms' }}>
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '170ms' }}>
               <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
-                4. Logistica & Spedizioni
+                4. Logistica ({AZIENDA.contatti.logisticaSpedizioni.telefono})
               </span>
               <a
                 href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`}

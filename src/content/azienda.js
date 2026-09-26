@@ -41,7 +41,8 @@ export const AZIENDA = {
     },
     produzione: {
       titolo: "Sito Produttivo",
-      indirizzo: "Pasteria (CT)",
+      indirizzo: "Via Calatabiano Pasteria, 16, Pasteria (CT)",
+      via: "Via Calatabiano Pasteria, 16",
       comune: "Pasteria",
       provincia: "CT"
     }
@@ -54,7 +55,7 @@ export const AZIENDA = {
     email: "bk@campodeifiori-ct.com",
     pec: "marco.adornetto.campodeifiori@pec.it",
     sedeLegale: "Via Rondinella, 20/A, 95010 Santa Venerina (CT)",
-    sitoProduttivo: "Pasteria (CT)",
+    sitoProduttivo: "Via Calatabiano Pasteria, 16, Pasteria (CT)",
     indirizzo: "Via Rondinella, 20/A, 95010 Santa Venerina (CT)",
     via: "Via Rondinella, 20/A",
     cap: "95010",
@@ -74,19 +75,20 @@ export const AZIENDA = {
     ufficioAmministrazione: {
       titolo: "Ufficio Amministrazione",
       descrizione: "Fatturazione elettronica, contabilità e pagamenti",
-      telefono: "+39 348 395 5637",
-      email: "amministrazione@campodeifiori-ct.com"
+      telefono: "095 953477",
+      telefono2: "329 391 5927",
+      email: "bk@campodeifiori-ct.com"
     },
     produzioneInterna: {
       titolo: "Produzione Interna",
       descrizione: "Gestione serre, coltivazioni e sviluppo botanico",
-      telefono: "+39 348 395 5637",
-      email: "produzione@campodeifiori-ct.com"
+      telefono: "348 040 5450",
+      email: "postmaster@campodeifiori-ct.com"
     },
     logisticaSpedizioni: {
       titolo: "Logistica & Spedizioni",
       descrizione: "Pianificazione trasporti e carichi",
-      telefono: "+39 348 395 5637"
+      telefono: "346 696 5344"
     }
   }
 };
