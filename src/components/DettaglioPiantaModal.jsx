@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { AZIENDA } from '../content/azienda';
 
-export default function DettaglioPiantaModal({ pianta, onClose, onOpenLightbox }) {
+export default function DettaglioPiantaModal({ pianta, validoFino, onClose, onOpenLightbox }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -181,13 +181,20 @@ export default function DettaglioPiantaModal({ pianta, onClose, onOpenLightbox }
             <div className="grid grid-cols-2 gap-2.5 text-xs">
               {/* Disponibilità Vaso Selezionato */}
               <div className="bg-[#25570A]/10 p-3 rounded-xl border border-[#25570A]/20">
-                <span className="text-[#25570A] block text-[11px] font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
-                  Disponibili {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
+                <span className="text-[#25570A] block text-[11px] font-bold flex items-center justify-between gap-1">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
+                    Disponibili {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
+                  </span>
                 </span>
                 <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
                   {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'Disponibile'}
                 </span>
+                {validoFino && (
+                  <span className="text-[10px] text-[#25570A]/85 font-bold block mt-1">
+                    Valide fino al {validoFino}
+                  </span>
+                )}
               </div>
 
               {/* Giacenza Magazzino */}
@@ -270,9 +277,16 @@ export default function DettaglioPiantaModal({ pianta, onClose, onOpenLightbox }
             <span className="text-[10px] uppercase font-bold text-[#282B27]/60 block">
               Disponibili {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
             </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-[#25570A]">
-              {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
-            </span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl sm:text-2xl font-extrabold text-[#25570A]">
+                {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
+              </span>
+              {validoFino && (
+                <span className="text-[11px] font-bold text-[#25570A] bg-[#25570A]/10 px-2 py-0.5 rounded-full">
+                  Fino al {validoFino}
+                </span>
+              )}
+            </div>
           </div>
 
           <a

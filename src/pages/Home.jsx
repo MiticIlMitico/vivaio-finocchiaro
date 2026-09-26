@@ -17,7 +17,8 @@ import {
   Plus,
   Mail,
   Building2,
-  Truck
+  Truck,
+  Calendar
 } from 'lucide-react';
 
 export default function Home() {
@@ -171,6 +172,12 @@ export default function Home() {
         {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
+          {/* Badge Validità Disponibilità in Hero */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-semibold mb-6 shadow-lg">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#6BB221] animate-pulse"></span>
+            <span>Disponibilità lotti verificate: <strong className="text-white font-extrabold underline decoration-[#6BB221] decoration-2 underline-offset-2">valide fino al {validoFino}</strong></span>
+          </div>
+
           <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5">
             Coltivato in Sicilia.<br />
             <span className="font-semibold italic text-[#FAF9F6]">Pronto per il mondo.</span>
@@ -323,18 +330,36 @@ export default function Home() {
       {/* 3. SEZIONE CATALOGO & LISTINO ALL'INGROSSO */}
       <section id="catalogo" className="py-20 sm:py-28 px-4 sm:px-8 max-w-7xl mx-auto w-full">
         
-        {/* Intestazione Catalogo */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-stone-200">
+        {/* Intestazione Catalogo con Validità Disponibilità in Grande Risalto */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8 pb-6 border-b border-stone-200">
           <div>
             <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
-              Disponibilità Magazzino
+              Giacenze & Magazzino
             </span>
             <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] tracking-tight">
               Listino Piante
             </h2>
           </div>
-          <div className="text-xs font-semibold text-[#252824]/70">
-            Disponibilità valide fino al <strong className="text-[#25570A] font-bold">{validoFino}</strong>
+
+          {/* Banner Evidente Validità Disponibilità */}
+          <div className="inline-flex items-center gap-3.5 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#25570A]/10 via-[#6BB221]/15 to-[#25570A]/5 border-2 border-[#25570A]/30 shadow-xs">
+            <div className="w-11 h-11 rounded-xl bg-[#25570A] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+              <Calendar className="w-6 h-6 text-[#FAF9F6]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#252824]/60 block">
+                  Periodo di Validità
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#25570A] text-white">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#6BB221] animate-pulse"></span>
+                  Attivo
+                </span>
+              </div>
+              <p className="text-base sm:text-lg font-black text-[#25570A] mt-0.5 tracking-tight">
+                Disponibili fino al <span className="underline decoration-[#6BB221] decoration-2 underline-offset-2">{validoFino}</span>
+              </p>
+            </div>
           </div>
         </div>
 
@@ -817,6 +842,7 @@ export default function Home() {
       {piantaDettaglio && (
         <DettaglioPiantaModal
           pianta={piantaDettaglio}
+          validoFino={validoFino}
           onClose={() => setPiantaDettaglio(null)}
           onOpenLightbox={(src, title) => setLightboxData({ isOpen: true, src, title })}
         />
