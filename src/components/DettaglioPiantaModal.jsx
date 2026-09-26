@@ -235,9 +235,12 @@ export default function DettaglioPiantaModal({ pianta, onClose, onOpenLightbox }
 
               {altezza_cm && (
                 <div className="bg-[#F2F3EB] p-3 rounded-xl border border-[#B7BEA9]/40">
-                  <span className="text-[#282B27]/60 block text-[11px]">Altezza pianta</span>
+                  <span className="text-[#282B27]/60 block text-[11px] flex items-center gap-1">
+                    <Ruler className="w-3.5 h-3.5 text-[#25570A]" />
+                    Altezza pianta
+                  </span>
                   <span className="font-bold text-[#282B27] text-sm mt-0.5 block">
-                    {altezza_cm} cm
+                    {String(altezza_cm).includes('cm') ? altezza_cm : `${altezza_cm} cm`}
                   </span>
                 </div>
               )}

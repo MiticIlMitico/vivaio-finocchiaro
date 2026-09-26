@@ -288,14 +288,11 @@ export default function Home() {
 
               <div className="space-y-4 text-[#252824]/80 text-sm sm:text-base leading-relaxed">
                 <p>
-                  Guidata da <strong>Marco Adornetto</strong> a Santa Venerina (Catania), <em>Campo dei Fiori</em> unisce la naturale fertilità della terra vulcanica con metodologie vivaistiche all'avanguardia.
-                </p>
-                <p>
                   Il microclima delle pendici dell'Etna offre una combinazione unica di soleggiamento costante ed escursione termica equilibrata: le piante sviluppano radici solide, chiome vigorose e colorazioni intense, perfette per una tenuta impeccabile durante il trasporto refrigerato e nei garden center.
                 </p>
               </div>
 
-              {/* I 3 Punti Guida di Produzione */}
+              {/* Punti Guida di Produzione */}
               <div className="pt-6 border-t border-stone-200 space-y-5">
                 <div className="flex items-start gap-4">
                   <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">01</span>
@@ -310,14 +307,6 @@ export default function Home() {
                   <div>
                     <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Lotti Calibrati e Uniformi</h3>
                     <p className="text-xs text-[#252824]/70 mt-0.5">Forniture uniformi per diametro vaso, altezza e sviluppo fogliare.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <span className="font-display font-bold text-xl text-[#25570A] pt-0.5">03</span>
-                  <div>
-                    <h3 className="font-semibold text-sm sm:text-base text-[#252824]">Logistica Roll CC Danesi</h3>
-                    <p className="text-xs text-[#252824]/70 mt-0.5">Carichi rapidi e protetti su carrelli standard per consegne in tutta Italia ed Europa.</p>
                   </div>
                 </div>
               </div>
@@ -338,7 +327,7 @@ export default function Home() {
               Disponibilità Magazzino
             </span>
             <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] tracking-tight">
-              Listino Piante & Varietà
+              Listino Piante
             </h2>
           </div>
           <div className="text-xs font-semibold text-[#252824]/70">
@@ -529,53 +518,7 @@ export default function Home() {
       </section>
 
 
-      {/* 4. SEZIONE LOGISTICA CC & FORNITURE PROFESSIONALI */}
-      <section id="logistica" className="bg-[#1C201C] text-white py-20 sm:py-28 px-5 sm:px-8">
-        <SectionReveal>
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              <div className="lg:col-span-6 space-y-5">
-                <span className="text-[#6BB221] text-xs font-bold tracking-[0.25em] uppercase block">
-                  Standard Logistico
-                </span>
-                <h2 className="font-display text-3xl sm:text-5xl font-medium tracking-tight leading-[1.15]">
-                  Carichi veloci e protetti su roll carrelli CC danesi.
-                </h2>
-                <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
-                  Tutte le spedizioni di <em>Campo dei Fiori</em> sono allestite secondo i rigorosi standard europei di logistica vivaistica. Le piante vengono preparate con cura su carrelli roll CC e pianali dedicati per garantire ventilazione ottimale e protezione totale della vegetazione.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-6 pt-4 border-t border-stone-700">
-                  <div>
-                    <span className="font-display text-3xl font-bold text-white block">100%</span>
-                    <span className="text-xs text-stone-400 mt-1 block">Passaporto Fitosanitario UE</span>
-                  </div>
-                  <div>
-                    <span className="font-display text-3xl font-bold text-white block">Settimanali</span>
-                    <span className="text-xs text-stone-400 mt-1 block">Carichi diretti e puntuali</span>
-                  </div>
-                </div>
-              </div>
 
-              <div className="lg:col-span-6">
-                <div className="rounded-3xl overflow-hidden shadow-2xl border border-stone-700 aspect-[16/10]">
-                  <picture>
-                    <source media="(max-width: 768px)" srcSet="/brand/brand-action-mobile.webp" type="image/webp" />
-                    <source srcSet="/brand/brand-action.webp" type="image/webp" />
-                    <img
-                      src="/brand/brand-action.jpg"
-                      alt="Carrelli roll CC e imballaggi per garden center"
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                  </picture>
-                </div>
-              </div>
-            </div>
-          </div>
-        </SectionReveal>
-      </section>
 
 
       {/* 5. SEZIONE CONTATTI COMMERCIALI */}

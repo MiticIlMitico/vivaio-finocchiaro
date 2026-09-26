@@ -89,16 +89,7 @@ export default function Navbar() {
           >
             Listino Piante
           </a>
-          <a 
-            href="#logistica" 
-            className={`transition-colors ${
-              isDarkNav 
-                ? 'text-white/85 hover:text-white' 
-                : 'text-[#252824]/75 hover:text-[#25570A]'
-            }`}
-          >
-            Logistica CC
-          </a>
+
           <a 
             href="#contatti" 
             className={`transition-colors ${
@@ -166,14 +157,7 @@ export default function Navbar() {
               <span>Listino Piante</span>
               <ArrowRight className="w-4 h-4 text-[#252824]/40" />
             </a>
-            <a
-              href="#logistica"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider text-[#252824] hover:bg-stone-100 hover:text-[#25570A] transition-colors flex items-center justify-between"
-            >
-              <span>Logistica CC</span>
-              <ArrowRight className="w-4 h-4 text-[#252824]/40" />
-            </a>
+
             <a
               href="#contatti"
               onClick={() => setMobileMenuOpen(false)}

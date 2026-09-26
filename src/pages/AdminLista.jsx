@@ -19,7 +19,8 @@ import {
   Warehouse,
   Layers,
   X,
-  Check
+  Check,
+  Ruler
 } from 'lucide-react';
 import Toast from '../components/Toast';
 
@@ -632,6 +633,16 @@ export default function AdminLista() {
                         <p className="text-xs text-[#1C201C]/60 truncate mt-0.5">
                           {pianta.nome_comune}
                         </p>
+                      )}
+
+                      {/* Badge Altezza Pianta */}
+                      {pianta.altezza_cm && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#25570A] bg-[#25570A]/8 px-2 py-0.5 rounded-md">
+                            <Ruler className="w-3 h-3 text-[#25570A]/70" />
+                            <span>H {String(pianta.altezza_cm).includes('cm') ? pianta.altezza_cm : `${pianta.altezza_cm} cm`}</span>
+                          </span>
+                        </div>
                       )}
 
                       {/* Pill Vasi / Disponibilità Interattiva con un tocco */}

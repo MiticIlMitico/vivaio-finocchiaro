@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sprout, Warehouse, Eye, Layers } from 'lucide-react';
+import { Sprout, Warehouse, Eye, Layers, Ruler } from 'lucide-react';
 
 export default function CardPianta({ pianta, onOpenDetail }) {
   const {
@@ -7,6 +7,7 @@ export default function CardPianta({ pianta, onOpenDetail }) {
     nome_comune,
     categoria,
     vaso_cm,
+    altezza_cm,
     giacenza,
     disponibile,
     varianti,
@@ -137,6 +138,19 @@ export default function CardPianta({ pianta, onOpenDetail }) {
             ) : (
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F2F3EB] text-[#282B27] text-xs font-semibold">
                 <span>{vasoCorrente ? `Ø ${vasoCorrente} cm` : 'Calibro standard'}</span>
+              </div>
+            )}
+
+            {/* Altezza Pianta */}
+            {altezza_cm && (
+              <div className="mt-2.5 flex items-center justify-between text-xs pt-2 border-t border-[#25570A]/5">
+                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#282B27]/50">
+                  Altezza pianta
+                </span>
+                <span className="inline-flex items-center gap-1 font-semibold text-[#25570A] bg-[#25570A]/8 px-2 py-0.5 rounded-md text-xs">
+                  <Ruler className="w-3 h-3 text-[#25570A]/70" />
+                  <span>{String(altezza_cm).includes('cm') ? altezza_cm : `${altezza_cm} cm`}</span>
+                </span>
               </div>
             )}
           </div>

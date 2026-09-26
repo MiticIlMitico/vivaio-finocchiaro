@@ -13,7 +13,7 @@ export const AZIENDA = {
   chiSiamo: {
     titolo: "Dalla terra vulcanica dell'Etna ai mercati di tutta Europa",
     sottotitolo: "Coltivato in Sicilia. Pronto per il mondo.",
-    testo1: "Guidata da Marco Adornetto a Santa Venerina (Catania), Campo dei Fiori unisce la millenaria fertilità della terra vulcanica con metodologie vivaistiche all'avanguardia. Le nostre serre e coltivazioni all'aperto beneficiano di un microclima unico, baciato dal sole della Sicilia.",
+    testo1: "A Santa Venerina (Catania), le nostre serre e coltivazioni all'aperto beneficiano della fertile terra vulcanica dell'Etna e di un microclima unico, baciato dal sole della Sicilia.",
     testo2: "Ogni pianta viene seguita con cura artigianale e rigore industriale: garantiamo lotti perfettamente uniformi, apparati radicali solidi e standard fitosanitari d'eccellenza, pronti per essere spediti in carrelli roll CC danesi su scala nazionale ed europea.",
     valori: [
       { id: "natura", titolo: "Natura", descrizione: "Rispetto profondo dei ritmi botanici e della biodiversità." },

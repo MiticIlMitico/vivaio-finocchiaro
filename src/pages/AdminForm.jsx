@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CampoFoto from '../components/CampoFoto';
 import Toast from '../components/Toast';
-import { ArrowLeft, Save, Loader2, Plus, Sprout, AlertCircle, Layers, Trash2, CheckCircle2, Eye, EyeOff, Package } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Plus, Sprout, AlertCircle, Layers, Trash2, CheckCircle2, Eye, EyeOff, Package, Ruler } from 'lucide-react';
 
 export default function AdminForm() {
   const { id } = useParams();
@@ -422,6 +422,39 @@ export default function AdminForm() {
                 className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white transition-all"
               />
             </div>
+
+            {/* Altezza Pianta - Campo Effettivo Visibile */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 flex items-center gap-1.5">
+                  <Ruler className="w-3.5 h-3.5 text-[#25570A]" />
+                  <span>Altezza pianta (cm)</span>
+                </label>
+                <span className="text-[10px] text-[#25570A] font-semibold bg-[#25570A]/10 px-2 py-0.5 rounded-full">
+                  Visibile sul catalogo
+                </span>
+              </div>
+              <input
+                type="text"
+                value={formData.altezza_cm}
+                onChange={(e) => handleChange('altezza_cm', e.target.value)}
+                placeholder="es. 25/35 oppure 40"
+                className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white transition-all"
+              />
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                <span className="text-[10px] text-[#1C201C]/50 font-medium">Scelta rapida:</span>
+                {['20/30', '25/35', '35/45', '40/60', '60/80', '80/100'].map(val => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => handleChange('altezza_cm', val)}
+                    className="px-2 py-1 rounded-lg text-[10px] font-bold bg-[#FAF9F6] border border-[#1C201C]/10 text-[#1C201C]/70 hover:bg-[#25570A]/10 hover:text-[#25570A] transition-colors active:scale-95"
+                  >
+                    {val} cm
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <hr className="border-[#1C201C]/10" />
@@ -639,19 +672,7 @@ export default function AdminForm() {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Altezza */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
-                  Altezza media (cm)
-                </label>
-                <input
-                  type="text"
-                  value={formData.altezza_cm}
-                  onChange={(e) => handleChange('altezza_cm', e.target.value)}
-                  placeholder="es. 40/60"
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
-                />
-              </div>
+
 
               {/* Prezzo interno (Facoltativo) */}
               <div>
