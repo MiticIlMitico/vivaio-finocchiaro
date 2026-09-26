@@ -175,11 +175,6 @@ export default function Home() {
         {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
-          {/* Badge Validità Disponibilità in Hero */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-semibold mb-6 shadow-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#6BB221] animate-pulse"></span>
-            <span>Disponibilità lotti verificate: <strong className="text-white font-extrabold underline decoration-[#6BB221] decoration-2 underline-offset-2">valide fino al {validoFino}</strong></span>
-          </div>
 
           <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5">
             Coltivato in Sicilia.<br />
@@ -849,7 +844,6 @@ export default function Home() {
                 Recapiti Diretti
               </span>
               <p><strong className="text-white font-semibold">Ufficio Vendite:</strong> {AZIENDA.contatti.ufficioVendite.telefono}</p>
-              <p><strong className="text-white font-semibold">Amministrazione:</strong> {AZIENDA.contatti.ufficioAmministrazione.email}</p>
               <p><strong className="text-white font-semibold">Email:</strong> {AZIENDA.contatti.email}</p>
             </div>
           </div>
