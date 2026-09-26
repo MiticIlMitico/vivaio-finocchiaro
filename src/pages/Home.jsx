@@ -18,7 +18,9 @@ import {
   Mail,
   Building2,
   Truck,
-  Calendar
+  Calendar,
+  X,
+  ArrowRight
 } from 'lucide-react';
 
 export default function Home() {
@@ -35,9 +37,10 @@ export default function Home() {
   // Paginazione progressiva (6 piante alla volta)
   const [visibiliCount, setVisibiliCount] = useState(6);
 
-  // Modali
+  // Modali e Menu Mobile
   const [piantaDettaglio, setPiantaDettaglio] = useState(null);
   const [lightboxData, setLightboxData] = useState({ isOpen: false, src: '', title: '' });
+  const [fabMenuOpen, setFabMenuOpen] = useState(false);
 
   // Galleria Paesaggi Vivaio
   const fotoPaesaggi = [
@@ -564,19 +567,29 @@ export default function Home() {
             </p>
           </div>
 
-          {/* I 4 Quadratini / Caselle dei Reparti */}
+          {/* I 4 Quadratini / Caselle dei Reparti (interamente cliccabili) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             
             {/* 1. Ufficio Vendite */}
-            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+            <a
+              href={`tel:${AZIENDA.contatti.ufficioVendite.telefono.replace(/\s+/g, '')}`}
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
+              title="Tocca per chiamare l'Ufficio Vendite"
+            >
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
-                  <Phone className="w-5 h-5 text-[#25570A]" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
+                    <Phone className="w-5 h-5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                    <span>Chiama</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Commerciale
                 </span>
-                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5 group-hover:text-[#1A3E07]">
                   Ufficio Vendite
                 </h3>
                 <p className="text-xs text-[#252824]/60 mt-1 mb-4">
@@ -584,26 +597,33 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <a 
-                  href={`tel:${AZIENDA.contatti.ufficioVendite.telefono.replace(/\s+/g, '')}`} 
-                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
-                >
+                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
                   <span>{AZIENDA.contatti.ufficioVendite.telefono}</span>
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
             {/* 2. Ufficio Amministrazione */}
-            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+            <a
+              href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
+              title="Tocca per chiamare l'Amministrazione"
+            >
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
-                  <Building2 className="w-5 h-5 text-[#25570A]" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
+                    <Building2 className="w-5 h-5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                    <span>Chiama</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Contabilità
                 </span>
-                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5 group-hover:text-[#1A3E07]">
                   Ufficio Amministrazione
                 </h3>
                 <p className="text-xs text-[#252824]/60 mt-1 mb-4">
@@ -611,33 +631,44 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <a 
-                  href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`} 
-                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
-                >
+                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
                   <span>{AZIENDA.contatti.ufficioAmministrazione.telefono}</span>
-                </a>
-                <a 
-                  href={`mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`} 
-                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate"
+                </span>
+                <span 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = `mailto:${AZIENDA.contatti.ufficioAmministrazione.email}`;
+                  }}
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline"
                 >
                   <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
                   <span className="truncate">{AZIENDA.contatti.ufficioAmministrazione.email}</span>
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
             {/* 3. Produzione Interna */}
-            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+            <a
+              href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
+              title="Tocca per chiamare la Produzione Interna"
+            >
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
-                  <Sprout className="w-5 h-5 text-[#25570A]" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
+                    <Sprout className="w-5 h-5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                    <span>Chiama</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Coltivazioni
                 </span>
-                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5 group-hover:text-[#1A3E07]">
                   Produzione Interna
                 </h3>
                 <p className="text-xs text-[#252824]/60 mt-1 mb-4">
@@ -645,33 +676,44 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <a 
-                  href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`} 
-                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
-                >
+                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
                   <span>{AZIENDA.contatti.produzioneInterna.telefono}</span>
-                </a>
-                <a 
-                  href={`mailto:${AZIENDA.contatti.produzioneInterna.email}`} 
-                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate"
+                </span>
+                <span 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = `mailto:${AZIENDA.contatti.produzioneInterna.email}`;
+                  }}
+                  className="text-stone-600 hover:text-[#25570A] flex items-center gap-1.5 truncate hover:underline"
                 >
                   <Mail className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />
                   <span className="truncate">{AZIENDA.contatti.produzioneInterna.email}</span>
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
             {/* 4. Logistica & Spedizioni */}
-            <div className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A]/30 transition-all shadow-xs flex flex-col justify-between">
+            <a
+              href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`}
+              className="p-6 rounded-3xl bg-white border border-stone-200/80 hover:border-[#25570A] hover:shadow-lg transition-all shadow-xs flex flex-col justify-between group cursor-pointer active:scale-98"
+              title="Tocca per chiamare Logistica & Spedizioni"
+            >
               <div>
-                <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 flex items-center justify-center mb-3">
-                  <Truck className="w-5 h-5 text-[#25570A]" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#25570A]/8 group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center justify-center text-[#25570A]">
+                    <Truck className="w-5 h-5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25570A] bg-[#25570A]/8 px-2.5 py-1 rounded-full group-hover:bg-[#25570A] group-hover:text-white transition-colors flex items-center gap-1">
+                    <span>Chiama</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#252824]/50 block">
                   Trasporti
                 </span>
-                <h3 className="text-base font-bold text-[#25570A] mt-0.5">
+                <h3 className="text-base font-bold text-[#25570A] mt-0.5 group-hover:text-[#1A3E07]">
                   Logistica & Spedizioni
                 </h3>
                 <p className="text-xs text-[#252824]/60 mt-1 mb-4">
@@ -679,15 +721,12 @@ export default function Home() {
                 </p>
               </div>
               <div className="space-y-1.5 pt-3 border-t border-stone-100 text-xs">
-                <a 
-                  href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`} 
-                  className="font-bold text-[#25570A] hover:underline flex items-center gap-1.5"
-                >
+                <span className="font-bold text-[#25570A] flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-[#25570A]/70" />
                   <span>{AZIENDA.contatti.logisticaSpedizioni.telefono}</span>
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
           </div>
 
@@ -825,17 +864,101 @@ export default function Home() {
       </footer>
 
 
-      {/* FAB WHATSAPP MOBILE */}
-      <div className="fixed bottom-5 right-5 z-40 sm:hidden">
-        <a
-          href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei richiedere informazioni sulle disponibilità piante.`)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-14 h-14 rounded-full bg-[#D34816] text-white shadow-xl shadow-black/40 flex items-center justify-center active:scale-95 transition-transform touch-target"
-          aria-label="Contatta su WhatsApp"
+      {/* FAB MULTI-REPARTO MOBILE A VENTAGLIO (Speed Dial) */}
+      <div className="fixed bottom-5 right-5 z-40 sm:hidden flex flex-col items-end pointer-events-none">
+        {/* Backdrop quando aperto */}
+        {fabMenuOpen && (
+          <div 
+            onClick={() => setFabMenuOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 pointer-events-auto animate-in fade-in duration-200"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* I 4 Bottoni a Ventaglio che si aprono verso l'alto */}
+        {fabMenuOpen && (
+          <div className="relative z-50 flex flex-col items-end gap-3 mb-3 pointer-events-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
+            
+            {/* 1. Ufficio Vendite */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '50ms' }}>
+              <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
+                1. Ufficio Vendite
+              </span>
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Salve, vorrei mettermi in contatto con l'Ufficio Vendite di Campo dei Fiori.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setFabMenuOpen(false)}
+                className="w-12 h-12 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+                aria-label="Contatta Ufficio Vendite su WhatsApp"
+              >
+                <MessageCircle className="w-5 h-5 fill-white/20" />
+              </a>
+            </div>
+
+            {/* 2. Ufficio Amministrazione */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '100ms' }}>
+              <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
+                2. Amministrazione
+              </span>
+              <a
+                href={`tel:${AZIENDA.contatti.ufficioAmministrazione.telefono.replace(/\s+/g, '')}`}
+                onClick={() => setFabMenuOpen(false)}
+                className="w-12 h-12 rounded-full bg-[#25570A] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+                aria-label="Chiama Ufficio Amministrazione"
+              >
+                <Building2 className="w-5 h-5" />
+              </a>
+            </div>
+
+            {/* 3. Produzione Interna */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '150ms' }}>
+              <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
+                3. Produzione Interna
+              </span>
+              <a
+                href={`tel:${AZIENDA.contatti.produzioneInterna.telefono.replace(/\s+/g, '')}`}
+                onClick={() => setFabMenuOpen(false)}
+                className="w-12 h-12 rounded-full bg-[#3B821A] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+                aria-label="Chiama Produzione Interna"
+              >
+                <Sprout className="w-5 h-5" />
+              </a>
+            </div>
+
+            {/* 4. Logistica & Spedizioni */}
+            <div className="flex items-center gap-2.5 animate-in slide-in-from-bottom-2 fade-in duration-200 fill-mode-both" style={{ animationDelay: '200ms' }}>
+              <span className="bg-white/95 backdrop-blur-md text-[#25570A] text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-stone-200">
+                4. Logistica & Spedizioni
+              </span>
+              <a
+                href={`tel:${AZIENDA.contatti.logisticaSpedizioni.telefono.replace(/\s+/g, '')}`}
+                onClick={() => setFabMenuOpen(false)}
+                className="w-12 h-12 rounded-full bg-[#1A3E07] text-white shadow-lg flex items-center justify-center active:scale-90 transition-transform"
+                aria-label="Chiama Logistica e Spedizioni"
+              >
+                <Truck className="w-5 h-5" />
+              </a>
+            </div>
+
+          </div>
+        )}
+
+        {/* Pulsante Principale FAB */}
+        <button
+          type="button"
+          onClick={() => setFabMenuOpen(!fabMenuOpen)}
+          className={`relative z-50 w-14 h-14 rounded-full text-white shadow-xl shadow-black/40 flex items-center justify-center active:scale-95 transition-all duration-300 pointer-events-auto touch-target ${
+            fabMenuOpen ? 'bg-stone-900 rotate-90 scale-95' : 'bg-[#D34816] hover:bg-[#B83E12]'
+          }`}
+          aria-label={fabMenuOpen ? "Chiudi menu contatti" : "Apri opzioni contatti vivaio"}
         >
-          <MessageCircle className="w-7 h-7 fill-white/20" />
-        </a>
+          {fabMenuOpen ? (
+            <X className="w-6 h-6 transition-transform" />
+          ) : (
+            <MessageCircle className="w-7 h-7 fill-white/20 transition-transform" />
+          )}
+        </button>
       </div>
 
       {/* MODALE DETTAGLIO PIANTA */}
