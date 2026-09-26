@@ -29,7 +29,11 @@ export default function Navbar() {
 
   const whatsappNumber = AZIENDA.contatti.whatsapp.replace(/\D/g, '');
 
+  const isHome = location.pathname === '/';
   const isDarkNav = !scrolled && !mobileMenuOpen;
+
+  // Sulla Home il logo nella navbar compare solo quando si scrolla e la navbar diventa bianca
+  const showNavLogo = !isHome || scrolled || mobileMenuOpen;
 
   // Cliccando sul logo si torna alla Hero in cima alla pagina
   const handleLogoClick = (e) => {
@@ -50,12 +54,18 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 sm:h-20 flex items-center justify-between">
         
-        {/* Brand Logo Ufficiale con Scritta - Clic per tornare alla Hero */}
+        {/* Brand Logo Ufficiale con Scritta - Visibile solo quando la navbar diventa bianca o fuori dalla home */}
         <Link 
           to="/" 
-          className="flex items-center group py-1.5 focus:outline-none" 
+          className={`flex items-center group py-1.5 focus:outline-none transition-all duration-300 ${
+            showNavLogo 
+              ? 'opacity-100 translate-y-0 pointer-events-auto' 
+              : 'opacity-0 -translate-y-1 pointer-events-none'
+          }`} 
           title="Torna all'inizio - Campo dei Fiori"
           onClick={handleLogoClick}
+          aria-hidden={!showNavLogo}
+          tabIndex={showNavLogo ? 0 : -1}
         >
           <picture>
             <source srcSet={isDarkNav ? "/brand/logo-horizontal-white.svg" : "/brand/logo-horizontal.svg"} type="image/svg+xml" />
