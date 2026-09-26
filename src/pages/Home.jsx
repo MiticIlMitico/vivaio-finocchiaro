@@ -182,16 +182,16 @@ export default function Home() {
           
           <h1 className="sr-only">Campo dei Fiori — Floricoltura e Vivaio All'Ingrosso</h1>
 
-          {/* Logo Ufficiale White Grande al Centro */}
+          {/* Logo Ufficiale Verticale Grande al Centro */}
           <div className="mb-6 sm:mb-8 flex items-center justify-center w-full">
             <picture>
-              <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
+              <source srcSet="/brand/logo-vertical.svg" type="image/svg+xml" />
               <img
-                src="/brand/logo-horizontal-white.webp"
+                src="/brand/logo-vertical.webp"
                 alt="Campo dei Fiori — Ornamental Plants Sicily"
-                className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.01] transition-transform duration-500"
-                width="720"
-                height="136"
+                className="w-[82vw] max-w-[280px] sm:max-w-[340px] md:max-w-[420px] lg:max-w-[460px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.02] transition-transform duration-500"
+                width="460"
+                height="282"
                 fetchPriority="high"
                 decoding="async"
               />
