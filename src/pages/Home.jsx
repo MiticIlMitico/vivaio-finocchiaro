@@ -182,29 +182,20 @@ export default function Home() {
           
           <h1 className="sr-only">Campo dei Fiori — Floricoltura e Vivaio All'Ingrosso</h1>
 
-          {/* Logo Ufficiale White Grande al Centro con Made in Sicily in basso a destra del logo */}
+          {/* Logo Ufficiale White Grande al Centro */}
           <div className="mb-6 sm:mb-8 flex items-center justify-center w-full">
-            <div className="relative inline-block">
-              <picture>
-                <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
-                <img
-                  src="/brand/logo-horizontal-white.webp"
-                  alt="Campo dei Fiori — Ornamental Plants Sicily"
-                  className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.01] transition-transform duration-500"
-                  width="720"
-                  height="136"
-                  fetchPriority="high"
-                  decoding="async"
-                />
-              </picture>
-
-              {/* Dicitura Made in Sicily in basso a destra del logo col font Cormorant Garamond italic */}
-              <div className="text-right mt-1 sm:mt-1.5 pr-1 sm:pr-2 select-none">
-                <span className="font-display italic font-semibold text-lg sm:text-2xl md:text-3xl text-white/95 tracking-wide drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
-                  Made in Sicily
-                </span>
-              </div>
-            </div>
+            <picture>
+              <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
+              <img
+                src="/brand/logo-horizontal-white.webp"
+                alt="Campo dei Fiori — Ornamental Plants Sicily"
+                className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.01] transition-transform duration-500"
+                width="720"
+                height="136"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </picture>
           </div>
 
           <p className="text-white/95 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8 drop-shadow-md">
