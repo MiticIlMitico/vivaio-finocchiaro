@@ -9,7 +9,7 @@ export const AZIENDA = {
   claim: "Coltivato in Sicilia. Pronto per il mondo.",
   payoff: "Natura mediterranea. Cura professionale.",
   descrizioneBreve: "Floricoltura specializzata alle pendici dell'Etna. Coltiviamo e forniamo all'ingrosso piante mediterranee e ornamentali di alta qualità per garden center, grossisti e professionisti del verde.",
-  logo: "/brand/logo-transparent.webp",
+  logo: "/brand/logo-horizontal.svg",
   chiSiamo: {
     titolo: "Dalla terra vulcanica dell'Etna ai mercati di tutta Europa",
     sottotitolo: "Coltivato in Sicilia. Pronto per il mondo.",
