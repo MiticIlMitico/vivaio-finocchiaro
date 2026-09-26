@@ -177,16 +177,28 @@ export default function Home() {
         {/* Spaziatore superiore calibrato sull'altezza della Navbar fissa */}
         <div className="w-full h-20 sm:h-24 flex-shrink-0" />
 
-        {/* Contenuto Centrale della Hero - Perfettamente Centrato in Verticale */}
+        {/* Contenuto Centrale della Hero - Focus Assoluto sul Logo Ufficiale White Grande */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
           
+          <h1 className="sr-only">Campo dei Fiori — Floricoltura e Vivaio All'Ingrosso</h1>
 
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] mb-5">
-            Coltivato in Sicilia.<br />
-            <span className="font-semibold italic text-[#FAF9F6]">Pronto per il mondo.</span>
-          </h1>
+          {/* Logo Ufficiale White Grande al Centro */}
+          <div className="mb-6 sm:mb-8 flex items-center justify-center w-full">
+            <picture>
+              <source srcSet="/brand/logo-horizontal-white.svg" type="image/svg+xml" />
+              <img
+                src="/brand/logo-horizontal-white.webp"
+                alt="Campo dei Fiori — Ornamental Plants Sicily"
+                className="w-[88vw] max-w-[340px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[720px] h-auto object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] transform hover:scale-[1.02] transition-transform duration-500"
+                width="720"
+                height="136"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </picture>
+          </div>
 
-          <p className="text-white/95 text-sm sm:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8">
+          <p className="text-white/95 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8 drop-shadow-md">
             Forniture e catalogo piante all'ingrosso per garden center, grossisti e professionisti del verde.
           </p>
 
@@ -210,7 +222,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Indicatore discreto di scorrimento a fondo schermata (contenuto esattamente nel 100vh) */}
+        {/* Indicatore discreto di scorrimento a fondo schermata */}
         <div className="relative z-10 h-16 sm:h-20 flex-shrink-0 flex items-center justify-center pb-2">
           <a
             href="#storia"
@@ -220,6 +232,13 @@ export default function Home() {
             <span className="text-[10px] font-semibold">Scopri il vivaio</span>
             <ChevronDown className="w-4 h-4 animate-bounce" />
           </a>
+        </div>
+
+        {/* In basso a destra: Made in Sicily con il font giusto (Cormorant Garamond italic) */}
+        <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-10 md:bottom-10 md:right-12 z-10 text-right pointer-events-none select-none">
+          <p className="font-display italic font-semibold text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-white/95 tracking-wide drop-shadow-[0_2px_18px_rgba(0,0,0,0.9)]">
+            Made in Sicily
+          </p>
         </div>
       </section>
 
