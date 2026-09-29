@@ -275,7 +275,7 @@ export default function AdminForm() {
     <div className="min-h-screen bg-[#FAF9F6] pb-24 sm:pb-16 text-[#1C201C] font-sans antialiased">
       {/* Header Form */}
       <header className="sticky top-0 z-30 bg-[#1C201C] text-white shadow-md border-b border-white/10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
           <Link
             to="/admin"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/90 border border-white/15 text-xs font-bold touch-target transition-all active:scale-95"
@@ -304,7 +304,7 @@ export default function AdminForm() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
         {errore && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3 text-xs text-red-900">
             <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -582,8 +582,9 @@ export default function AdminForm() {
             ) : (
               /* SE FORMATO SINGOLO STANDARD */
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
+                {/* 1. Diametro Vaso */}
+                <div className="p-4 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-2">
                     Diametro vaso (cm)
                   </label>
                   <input
@@ -592,14 +593,18 @@ export default function AdminForm() {
                     value={formData.vaso_cm}
                     onChange={(e) => handleChange('vaso_cm', e.target.value)}
                     placeholder="es. 14, 16, 20"
-                    className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
+                    className="w-full px-3.5 py-2.5 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-base font-bold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                   />
+                  <span className="text-[10px] text-stone-500 block mt-1.5">
+                    Calibro primario della pianta
+                  </span>
                 </div>
 
-                <div className="bg-[#25570A]/5 p-3.5 rounded-2xl border border-[#25570A]/20">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#25570A] mb-1.5 flex items-center justify-between">
+                {/* 2. Disponibilità Vendita */}
+                <div className="p-4 bg-[#25570A]/5 rounded-2xl border-2 border-[#25570A]/30 shadow-xs">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-[#25570A] mb-2 flex items-center justify-between">
                     <span>Disponibilità Vendita (pz)</span>
-                    <span className="text-[10px] text-[#25570A]/70 lowercase font-medium">visibile</span>
+                    <span className="text-[10px] text-[#25570A]/80 font-bold lowercase bg-[#25570A]/10 px-1.5 py-0.5 rounded">per clienti</span>
                   </label>
                   <input
                     type="text"
@@ -607,48 +612,34 @@ export default function AdminForm() {
                     value={formData.disponibile}
                     onChange={(e) => handleChange('disponibile', e.target.value)}
                     placeholder="es. 4000"
-                    className="w-full px-3.5 py-2.5 bg-white border border-[#25570A]/40 rounded-xl text-base font-bold text-[#25570A] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                    className="w-full px-3.5 py-2 bg-white border border-[#25570A]/40 rounded-xl text-base font-bold text-[#25570A] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                   />
                   {/* Tasti Rapidi Pollice */}
-                  <div className="flex items-center justify-between gap-1 pt-1.5 mt-1 border-t border-[#25570A]/10">
+                  <div className="flex items-center justify-between gap-1 pt-2 mt-2 border-t border-[#25570A]/10">
                     <span className="text-[10px] text-[#25570A]/70 font-bold uppercase">Rapido:</span>
                     <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleModificaRapida('disponibile', -10)}
-                        className="px-2 py-0.5 bg-white border border-[#25570A]/20 hover:bg-[#25570A]/10 text-[11px] font-bold text-[#1C201C] rounded-md active:scale-95 touch-target"
-                      >
-                        -10
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleModificaRapida('disponibile', 10)}
-                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
-                      >
-                        +10
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleModificaRapida('disponibile', 50)}
-                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
-                      >
-                        +50
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleModificaRapida('disponibile', 100)}
-                        className="px-2 py-0.5 bg-[#25570A]/10 border border-[#25570A]/20 hover:bg-[#25570A]/20 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
-                      >
-                        +100
-                      </button>
+                      {[-10, 10, 50, 100].map((delta) => (
+                        <button
+                          key={delta}
+                          type="button"
+                          onClick={() => handleModificaRapida('disponibile', delta)}
+                          className="px-2 py-0.5 bg-white border border-[#25570A]/20 hover:bg-[#25570A]/10 text-[11px] font-bold text-[#25570A] rounded-md active:scale-95 touch-target"
+                        >
+                          {delta > 0 ? `+${delta}` : delta}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#1C201C]/10">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/70 mb-1.5 flex items-center justify-between">
-                    <span>Giacenza Magazzino (pz)</span>
-                    <span className="text-[10px] text-[#1C201C]/40 lowercase font-medium">gestionale</span>
+                {/* 3. Giacenza Magazzino */}
+                <div className="p-4 bg-amber-50/70 rounded-2xl border-2 border-amber-300 shadow-xs">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-amber-900 mb-2 flex items-center justify-between">
+                    <span className="flex items-center gap-1">
+                      <Warehouse className="w-3.5 h-3.5 text-amber-700" />
+                      <span>Giacenza Magazzino (pz)</span>
+                    </span>
+                    <span className="text-[10px] text-amber-700/80 font-bold lowercase bg-amber-100 px-1.5 py-0.5 rounded">gestionale</span>
                   </label>
                   <input
                     type="text"
@@ -656,8 +647,24 @@ export default function AdminForm() {
                     value={formData.giacenza}
                     onChange={(e) => handleChange('giacenza', e.target.value)}
                     placeholder="es. 4000"
-                    className="w-full px-3 py-2 bg-white border border-[#1C201C]/15 rounded-xl text-base font-bold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                    className="w-full px-3.5 py-2 bg-white border border-amber-300 rounded-xl text-base font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
+                  {/* Tasti Rapidi Pollice */}
+                  <div className="flex items-center justify-between gap-1 pt-2 mt-2 border-t border-amber-200">
+                    <span className="text-[10px] text-amber-800 font-bold uppercase">Rapido:</span>
+                    <div className="flex items-center gap-1">
+                      {[-10, 10, 50, 100].map((delta) => (
+                        <button
+                          key={delta}
+                          type="button"
+                          onClick={() => handleModificaRapida('giacenza', delta)}
+                          className="px-2 py-0.5 bg-white border border-amber-200 hover:bg-amber-100 text-[11px] font-bold text-amber-900 rounded-md active:scale-95 touch-target"
+                        >
+                          {delta > 0 ? `+${delta}` : delta}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -667,57 +674,19 @@ export default function AdminForm() {
 
           {/* Dati Commerciali & Logistica Ingrosso */}
           <div className="space-y-4">
-            <h2 className="font-serif font-bold text-base sm:text-lg text-[#1C201C]">
-              Logistica & Imballaggi Ingrosso
-            </h2>
+            <div>
+              <h2 className="font-serif font-bold text-base sm:text-lg text-[#1C201C] flex items-center gap-2">
+                <Package className="w-5 h-5 text-[#25570A]" />
+                <span>Logistica & Imballaggi Ingrosso</span>
+              </h2>
+              <p className="text-xs text-[#1C201C]/60 mt-0.5">
+                Specifiche di spedizione in carrelli danesi roll CC e pianali per clienti all'ingrosso.
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-
-              {/* Prezzo interno (Facoltativo) */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/50 mb-1.5">
-                  Prezzo interno (€ - Facoltativo)
-                </label>
-                <input
-                  type="text"
-                  value={formData.prezzo}
-                  onChange={(e) => handleChange('prezzo', e.target.value)}
-                  placeholder="Non mostrato ai clienti"
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6]/50 border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C]/70 focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
-                />
-              </div>
-
-              {/* Pezzi per pianale */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
-                  Pezzi per pianale
-                </label>
-                <input
-                  type="text"
-                  value={formData.pz_pianale}
-                  onChange={(e) => handleChange('pz_pianale', e.target.value)}
-                  placeholder="es. 14 o 21/33"
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
-                />
-              </div>
-
-              {/* Pezzi per carrello */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
-                  Pezzi per carrello CC
-                </label>
-                <input
-                  type="text"
-                  value={formData.pz_carrello}
-                  onChange={(e) => handleChange('pz_carrello', e.target.value)}
-                  placeholder="es. 70 o 100"
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
-                />
-              </div>
-
-              {/* Disponibilità carrelli */}
-              <div className="sm:col-span-2">
+              {/* Carrelli disponibili */}
+              <div className="p-3.5 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
                   Carrelli disponibili (volume settimanale)
                 </label>
@@ -726,7 +695,64 @@ export default function AdminForm() {
                   value={formData.disponibilita_carrelli}
                   onChange={(e) => handleChange('disponibilita_carrelli', e.target.value)}
                   placeholder="es. 6 CC o 12 carrelli"
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:bg-white"
+                  className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                />
+              </div>
+
+              {/* Pezzi per carrello */}
+              <div className="p-3.5 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
+                  Pezzi per carrello CC
+                </label>
+                <input
+                  type="text"
+                  value={formData.pz_carrello}
+                  onChange={(e) => handleChange('pz_carrello', e.target.value)}
+                  placeholder="es. 70 o 100"
+                  className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                />
+              </div>
+
+              {/* Pezzi per pianale */}
+              <div className="p-3.5 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
+                  Pezzi per pianale
+                </label>
+                <input
+                  type="text"
+                  value={formData.pz_pianale}
+                  onChange={(e) => handleChange('pz_pianale', e.target.value)}
+                  placeholder="es. 14 o 21/33"
+                  className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                />
+              </div>
+
+              {/* Peso indicativo */}
+              <div className="p-3.5 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/80 mb-1.5">
+                  Peso indicativo (kg)
+                </label>
+                <input
+                  type="text"
+                  value={formData.peso_kg}
+                  onChange={(e) => handleChange('peso_kg', e.target.value)}
+                  placeholder="es. 1.2 o 2.5"
+                  className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
+                />
+              </div>
+
+              {/* Prezzo interno (Facoltativo) */}
+              <div className="sm:col-span-2 p-3.5 bg-white rounded-2xl border border-[#1C201C]/15 shadow-xs">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#1C201C]/60 mb-1.5 flex items-center justify-between">
+                  <span>Prezzo unitario (€ - Facoltativo)</span>
+                  <span className="text-[10px] text-stone-400 font-normal">mostrato solo se il flag prezzi è attivo</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.prezzo}
+                  onChange={(e) => handleChange('prezzo', e.target.value)}
+                  placeholder="es. 4.50"
+                  className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] focus:outline-none focus:ring-2 focus:ring-[#25570A]"
                 />
               </div>
             </div>

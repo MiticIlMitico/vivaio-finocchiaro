@@ -146,13 +146,13 @@ export default function AdminVisibilitaMockup() {
     );
   }) || null;
 
-  // Dati pianta fittizia per il mockup
+  // Dati pianta dimostrativa neutra per l'anteprima card
   const piantaMockup = {
     id: 'mockup-preview',
-    nome: 'Astrophytum Ornatum',
-    nome_comune: 'Cappello del Vescovo stellato',
-    categoria: 'Cactacee & Opuntia',
-    tipologia: 'Succulenta globosa da collezione, resistente al sole',
+    nome: 'Nome Pianta (Esempio)',
+    nome_comune: 'Nome comune di prova',
+    categoria: 'Categoria Catalogo',
+    tipologia: 'Tipologia dimostrativa',
     vaso_cm: '14',
     altezza_cm: '25-30',
     peso_kg: '1.2',
@@ -162,7 +162,7 @@ export default function AdminVisibilitaMockup() {
     disponibile: '4000',
     giacenza: '4000',
     prezzo: '€ 4,50',
-    note: 'Lotto uniforme di prima scelta, coltivato alle pendici dell\'Etna. Fioritura estiva.',
+    note: 'Note di fornitura e coltivazione dimostrative per verificare la grafica.',
     visibile: true,
     foto_url: '/brand/paesaggio-1.jpg'
   };
@@ -358,6 +358,15 @@ export default function AdminVisibilitaMockup() {
         {vistaAttiva === 'editor' && (
           <div className="bg-white p-5 sm:p-8 rounded-3xl border border-[#1C201C]/10 shadow-xs space-y-7 animate-in fade-in duration-200">
             
+            {/* Banner di avviso: Scheda dimostrativa vuota */}
+            <div className="p-4 bg-amber-50/80 border border-amber-200 rounded-2xl flex items-start gap-3 text-xs text-amber-950">
+              <Info className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+              <div className="leading-relaxed">
+                <strong className="block text-amber-900 font-bold mb-0.5">Scheda dimostrativa priva di dati reali</strong>
+                Questa è una simulazione neutra della scheda: i campi non contengono dati reali di piante per evitare confusione. I <strong>flag a destra</strong> determinano quali sezioni compariranno o saranno nascoste nel catalogo per <em>tutte</em> le piante.
+              </div>
+            </div>
+
             {/* SEZIONE FOTO DELLA PIANTA */}
             <div className={`transition-opacity duration-300 ${!campiVisibili.foto ? 'opacity-60' : 'opacity-100'}`}>
               <div className="flex items-center justify-between gap-2 mb-2">
@@ -394,7 +403,7 @@ export default function AdminVisibilitaMockup() {
                 <h2 className="font-serif font-bold text-base sm:text-lg text-[#1C201C]">
                   Informazioni Botaniche
                 </h2>
-                <span className="text-[11px] text-stone-500 font-medium">Tocca il flag per nascondere/mostrare</span>
+                <span className="text-[11px] text-stone-500 font-medium">Tocca il flag a destra per nascondere/mostrare</span>
               </div>
 
               {/* Nome Botanico (Sempre visibile per identificare la pianta) */}
@@ -410,8 +419,8 @@ export default function AdminVisibilitaMockup() {
                 <input
                   type="text"
                   readOnly
-                  value={piantaMockup.nome}
-                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed select-none"
+                  placeholder="Nome botanico (es. Crassula ovata, Euphorbia...)"
+                  className="w-full px-3.5 py-3 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm italic text-stone-500 cursor-not-allowed select-none placeholder:text-stone-400 placeholder:italic"
                 />
               </div>
 
@@ -426,11 +435,11 @@ export default function AdminVisibilitaMockup() {
                 <input
                   type="text"
                   readOnly
-                  value={piantaMockup.nome_comune}
-                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none ${
+                  placeholder="Nome volgare (es. Albero di giada, Fico d'India...)"
+                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none placeholder:italic ${
                     campiVisibili.nome_comune 
-                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 text-[#1C201C]' 
-                      : 'bg-stone-100 border-dashed border-stone-300 text-stone-400'
+                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 placeholder:text-stone-400' 
+                      : 'bg-stone-100 border-dashed border-stone-300 placeholder:text-stone-300'
                   }`}
                 />
               </div>
@@ -446,11 +455,11 @@ export default function AdminVisibilitaMockup() {
                 <input
                   type="text"
                   readOnly
-                  value={piantaMockup.categoria}
-                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none ${
+                  placeholder="Categoria (es. Cactacee & Opuntia, Piante Mediterranee...)"
+                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none placeholder:italic ${
                     campiVisibili.categoria 
-                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 text-[#1C201C]' 
-                      : 'bg-stone-100 border-dashed border-stone-300 text-stone-400'
+                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 placeholder:text-stone-400' 
+                      : 'bg-stone-100 border-dashed border-stone-300 placeholder:text-stone-300'
                   }`}
                 />
               </div>
@@ -466,11 +475,11 @@ export default function AdminVisibilitaMockup() {
                 <input
                   type="text"
                   readOnly
-                  value={piantaMockup.tipologia}
-                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none ${
+                  placeholder="Tipologia (es. Succulenta da esterno, Alberello da vaso...)"
+                  className={`w-full px-3.5 py-3 border rounded-xl text-sm transition-all cursor-not-allowed select-none placeholder:italic ${
                     campiVisibili.tipologia 
-                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 text-[#1C201C]' 
-                      : 'bg-stone-100 border-dashed border-stone-300 text-stone-400'
+                      ? 'bg-[#FAF9F6] border-[#1C201C]/15 placeholder:text-stone-400' 
+                      : 'bg-stone-100 border-dashed border-stone-300 placeholder:text-stone-300'
                   }`}
                 />
               </div>
@@ -478,7 +487,7 @@ export default function AdminVisibilitaMockup() {
 
             <hr className="border-[#1C201C]/10" />
 
-            {/* SEZIONE FORMATI VASO & DISPONIBILITÀ (FOCUS PRINCIPALE: DISPONIBILITÀ VENDITA VS GIACENZA) */}
+            {/* SEZIONE FORMATI VASO & DISPONIBILITÀ */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -508,8 +517,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`Ø ${piantaMockup.vaso_cm} cm`}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-bold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Calibro (es. Ø 14 cm, Ø 16 cm...)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-stone-500 placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                   <span className="text-[10px] text-stone-500 block mt-1.5">
                     Mostra il calibro vaso nella scheda
@@ -531,11 +540,11 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${Number(piantaMockup.disponibile).toLocaleString('it-IT')} pz`}
-                    className={`w-full px-3 py-2 rounded-xl text-base font-bold cursor-not-allowed ${
+                    placeholder="Conteggio vendita (es. 4.000 pz)"
+                    className={`w-full px-3 py-2 rounded-xl text-sm font-semibold placeholder:italic cursor-not-allowed ${
                       campiVisibili.disponibile 
-                        ? 'bg-white border border-[#25570A]/40 text-[#25570A]' 
-                        : 'bg-stone-100 border border-stone-300 text-stone-400'
+                        ? 'bg-white border border-[#25570A]/40 placeholder:text-[#25570A]/60' 
+                        : 'bg-stone-100 border border-stone-300 placeholder:text-stone-300'
                     }`}
                   />
                   <div className="mt-2 pt-1.5 border-t border-[#25570A]/10 text-[10px] font-semibold flex items-center justify-between">
@@ -564,11 +573,11 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${Number(piantaMockup.giacenza).toLocaleString('it-IT')} pz`}
-                    className={`w-full px-3 py-2 rounded-xl text-base font-bold cursor-not-allowed ${
+                    placeholder="Scorte magazzino (es. 4.000 pz)"
+                    className={`w-full px-3 py-2 rounded-xl text-sm font-semibold placeholder:italic cursor-not-allowed ${
                       campiVisibili.giacenza 
-                        ? 'bg-white border border-amber-300 text-amber-900' 
-                        : 'bg-stone-100 border border-stone-300 text-stone-400'
+                        ? 'bg-white border border-amber-300 placeholder:text-amber-800/60' 
+                        : 'bg-stone-100 border border-stone-300 placeholder:text-stone-300'
                     }`}
                   />
                   <div className="mt-2 pt-1.5 border-t border-amber-200 text-[10px] font-semibold flex items-center justify-between">
@@ -627,8 +636,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={piantaMockup.disponibilita_carrelli}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Volume settimanale (es. 6 CC o 12 carrelli)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
 
@@ -647,8 +656,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${piantaMockup.pz_carrello} pz`}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Capienza per carrello Danese (es. 70 o 100)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
 
@@ -667,8 +676,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${piantaMockup.pz_pianale} pz`}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Capienza pianale (es. 14 o 21/33)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
 
@@ -687,8 +696,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${piantaMockup.altezza_cm} cm`}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Altezza media in cm (es. 25-30)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
 
@@ -707,8 +716,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={`${piantaMockup.peso_kg} kg`}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Peso stimato singola pianta (es. 1.2 kg)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
 
@@ -727,8 +736,8 @@ export default function AdminVisibilitaMockup() {
                   <input
                     type="text"
                     readOnly
-                    value={piantaMockup.prezzo}
-                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm font-semibold text-[#1C201C] cursor-not-allowed"
+                    placeholder="Prezzo interno o listino (es. € 4,50)"
+                    className="w-full px-3 py-2 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-sm placeholder:text-stone-400 placeholder:italic cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -756,8 +765,8 @@ export default function AdminVisibilitaMockup() {
                 <textarea
                   readOnly
                   rows={2}
-                  value={piantaMockup.note}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-xs sm:text-sm text-[#1C201C] cursor-not-allowed resize-none"
+                  placeholder="Dettagli fornitura, uniformità lotto, fioritura ed esposizione..."
+                  className="w-full px-3.5 py-2.5 bg-[#FAF9F6] border border-[#1C201C]/15 rounded-xl text-xs sm:text-sm text-stone-500 placeholder:text-stone-400 placeholder:italic cursor-not-allowed resize-none"
                 />
               </div>
             </div>
