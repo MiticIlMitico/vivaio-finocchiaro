@@ -28,8 +28,6 @@ import {
 import Toast from '../components/Toast';
 import { 
   DEFAULT_CAMPI_VISIBILI, 
-  PRESET_CAMPI, 
-  ELENCO_CAMPI, 
   normalizzaCampiVisibili 
 } from '../lib/campiConfig';
 
@@ -56,10 +54,8 @@ export default function AdminLista() {
   const [validoFino, setValidoFino] = useState('31 Agosto 2026');
   const [salvataggioValidoFino, setSalvataggioValidoFino] = useState(false);
 
-  // Campi visibili ai clienti nella card e nei dettagli (preset e singoli flag)
+  // Campi visibili ai clienti (mostrati nel riepilogo rapido)
   const [campiVisibili, setCampiVisibili] = useState(DEFAULT_CAMPI_VISIBILI);
-  const [pannelloCampiAperto, setPannelloCampiAperto] = useState(false);
-  const [salvataggioCampi, setSalvataggioCampi] = useState(false);
 
   const navigate = useNavigate();
 
@@ -238,75 +234,6 @@ export default function AdminLista() {
   useEffect(() => {
     caricaDati();
   }, []);
-
-  // Rilevamento preset attivo
-  const presetAttivoId = useMemo(() => {
-    for (const key of Object.keys(PRESET_CAMPI)) {
-      const pValori = PRESET_CAMPI[key].valori;
-      const match = ELENCO_CAMPI.every(c => Boolean(campiVisibili[c.chiave]) === Boolean(pValori[c.chiave]));
-      if (match) return key;
-    }
-    return 'personalizzato';
-  }, [campiVisibili]);
-
-  // Salvataggio sul database Supabase dei campi visibili
-  const salvaCampiSuDb = async (nuoviValori, messaggioSuccesso) => {
-    setSalvataggioCampi(true);
-    try {
-      const { error } = await supabase
-        .from('impostazioni')
-        .upsert([
-          {
-            chiave: 'campi_visibili',
-            valore: JSON.stringify(nuoviValori),
-            updated_at: new Date().toISOString()
-          },
-          {
-            chiave: 'mostra_giacenze',
-            valore: String(Boolean(nuoviValori.giacenza)),
-            updated_at: new Date().toISOString()
-          }
-        ]);
-
-      if (error) throw error;
-
-      if (messaggioSuccesso) {
-        setToast({
-          message: messaggioSuccesso,
-          type: 'success'
-        });
-      }
-    } catch (err) {
-      console.error('Errore aggiornamento campi visibili:', err);
-      setToast({
-        message: 'Impossibile aggiornare i campi visibili.',
-        type: 'error'
-      });
-    } finally {
-      setSalvataggioCampi(false);
-    }
-  };
-
-  // Applicazione preset rapido
-  const handleApplicaPreset = async (presetKey) => {
-    const preset = PRESET_CAMPI[presetKey];
-    if (!preset) return;
-    const nuoviCampi = { ...preset.valori };
-    setCampiVisibili(nuoviCampi);
-    await salvaCampiSuDb(nuoviCampi, `Preset "${preset.nome}" applicato ai clienti!`);
-  };
-
-  // Toggle singolo campo
-  const handleToggleCampo = async (chiave) => {
-    const nuoviCampi = {
-      ...campiVisibili,
-      [chiave]: !campiVisibili[chiave]
-    };
-    setCampiVisibili(nuoviCampi);
-    const campoDef = ELENCO_CAMPI.find(c => c.chiave === chiave);
-    const statoTesto = nuoviCampi[chiave] ? 'visibile' : 'nascosto';
-    await salvaCampiSuDb(nuoviCampi, `Campo "${campoDef?.etichetta || chiave}" ora ${statoTesto} ai clienti.`);
-  };
 
   // Salvataggio rapido periodo di validità listino
   const handleSalvaValidoFino = async (e) => {
@@ -574,7 +501,7 @@ export default function AdminLista() {
           </form>
         </div>
 
-        {/* Card Gestione Campi Visibili ai Clienti con Preset & Accesso al Mockup Editor */}
+        {/* Card Gestione Campi Visibili ai Clienti con Accesso al Mockup Pianta */}
         <div className="mb-4 bg-white rounded-2xl border border-[#1C201C]/10 shadow-xs overflow-hidden">
           <div className="p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3">
@@ -583,30 +510,11 @@ export default function AdminLista() {
                   <SlidersHorizontal className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-xs sm:text-sm text-[#1C201C] leading-snug">
-                      Cosa Mostrare ai Clienti
-                    </h3>
-                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                      presetAttivoId === 'solo_disponibile'
-                        ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20'
-                        : presetAttivoId === 'solo_giacenza'
-                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                        : presetAttivoId === 'entrambi'
-                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                        : presetAttivoId === 'ingrosso'
-                        ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20'
-                        : presetAttivoId === 'completo'
-                        ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                        : presetAttivoId === 'essenziale'
-                        ? 'bg-stone-100 text-stone-800 border border-stone-200'
-                        : 'bg-stone-100 text-stone-700 border border-stone-200'
-                    }`}>
-                      {presetAttivoId ? `Preset: ${PRESET_CAMPI[presetAttivoId]?.nome}` : 'Personalizzato'}
-                    </span>
-                  </div>
+                  <h3 className="font-bold text-xs sm:text-sm text-[#1C201C] leading-snug">
+                    Cosa Mostrare ai Clienti
+                  </h3>
                   <p className="text-[11px] text-[#1C201C]/60 mt-0.5 leading-relaxed">
-                    Scegli con un tocco tra i preset principali o apri il mockup interattivo per decidere col flag su ogni campo.
+                    Usa il mockup pianta per decidere col flag a destra su ogni campo cosa far vedere o nascondere nel catalogo pubblico.
                   </p>
                 </div>
               </div>
@@ -615,7 +523,7 @@ export default function AdminLista() {
                 to="/admin/visibilita"
                 className="px-3.5 py-1.5 rounded-xl bg-[#25570A]/10 hover:bg-[#25570A]/20 text-[#25570A] text-xs font-bold flex items-center gap-1.5 transition-colors touch-target flex-shrink-0"
               >
-                <span>Mockup Editor</span>
+                <span>Mockup Pianta</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -636,34 +544,6 @@ export default function AdminLista() {
               </span>
             </div>
 
-            {/* Pulsanti Preset Rapidi */}
-            <div className="mt-3 pt-3 border-t border-stone-100">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block mb-2">
-                Preset Rapidi a 1 Tocco:
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {Object.values(PRESET_CAMPI).map((preset) => {
-                  const isAttivo = presetAttivoId === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => handleApplicaPreset(preset.id)}
-                      disabled={salvataggioCampi}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 touch-target ${
-                        isAttivo
-                          ? 'bg-[#25570A] text-white shadow-xs ring-2 ring-[#6BB221]/30'
-                          : 'bg-[#F2F3EB] hover:bg-[#E5E7DC] text-[#282B27] border border-[#B7BEA9]/40'
-                      }`}
-                    >
-                      {isAttivo && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      <span>{preset.nome}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Tasto Call to Action per aprire l'editor mockup di prova */}
             <Link
               to="/admin/visibilita"
@@ -671,7 +551,7 @@ export default function AdminLista() {
             >
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-[#6BB221]" />
-                <span>Apri Mockup Pianta con Flag (Editor di Prova)</span>
+                <span>Apri Mockup Pianta con Flag (Decidi cosa mostrare)</span>
               </div>
               <ArrowRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
             </Link>

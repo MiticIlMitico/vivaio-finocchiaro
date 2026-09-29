@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { 
   DEFAULT_CAMPI_VISIBILI, 
-  PRESET_CAMPI, 
   normalizzaCampiVisibili 
 } from '../lib/campiConfig';
 import Toast from '../components/Toast';
@@ -13,7 +12,6 @@ import {
   Eye, 
   EyeOff, 
   Check, 
-  Sparkles, 
   SlidersHorizontal, 
   Layers, 
   Package, 
@@ -124,27 +122,6 @@ export default function AdminVisibilitaMockup() {
     setCampiVisibili(nuovaConfig);
     salvaSuDb(nuovaConfig);
   };
-
-  // Applica preset rapido
-  const handleApplicaPreset = (presetId) => {
-    const preset = PRESET_CAMPI[presetId];
-    if (!preset) return;
-    const nuovaConfig = { ...preset.valori };
-    setCampiVisibili(nuovaConfig);
-    salvaSuDb(nuovaConfig);
-    setToast({
-      message: `Preset "${preset.nome}" applicato!`,
-      type: 'success'
-    });
-  };
-
-  // Riconoscimento preset attivo
-  const presetAttivoId = Object.keys(PRESET_CAMPI).find((id) => {
-    const valoriPreset = PRESET_CAMPI[id].valori;
-    return Object.keys(valoriPreset).every(
-      (k) => Boolean(campiVisibili[k]) === Boolean(valoriPreset[k])
-    );
-  }) || null;
 
   // Dati pianta dimostrativa neutra per l'anteprima card
   const piantaMockup = {
@@ -292,35 +269,8 @@ export default function AdminVisibilitaMockup() {
                 Configura i campi visibili ai clienti sul mockup della pianta
               </h2>
               <p className="text-xs text-white/80 mt-1 leading-relaxed">
-                Questa scheda è un <strong>editor di prova interattivo</strong>. Al posto di compilare i dati, usa il <strong className="text-[#6BB221]">flag a destra di ogni campo</strong> per decidere se farlo vedere o meno ai clienti nel catalogo pubblico.
+                Questa scheda è un <strong>mockup dimostrativo</strong>: usa il <strong className="text-[#6BB221]">flag a destra di ogni campo</strong> per decidere cosa mostrare o nascondere ai clienti nel catalogo pubblico.
               </p>
-            </div>
-          </div>
-
-          {/* Preset Rapidi con focus su Disponibilità Vendita vs Giacenza Magazzino */}
-          <div className="mt-4 pt-3.5 border-t border-white/15">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-white/70 block mb-2">
-              Preset Rapidi a 1 tocco:
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {Object.values(PRESET_CAMPI).map((preset) => {
-                const isAttivo = presetAttivoId === preset.id;
-                return (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => handleApplicaPreset(preset.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 touch-target active:scale-95 ${
-                      isAttivo
-                        ? 'bg-white text-[#25570A] shadow-md ring-2 ring-white/50'
-                        : 'bg-white/15 hover:bg-white/25 text-white border border-white/20'
-                    }`}
-                  >
-                    {isAttivo && <Check className="w-3.5 h-3.5 stroke-[3] text-[#25570A]" />}
-                    <span>{preset.nome}</span>
-                  </button>
-                );
-              })}
             </div>
           </div>
         </div>
