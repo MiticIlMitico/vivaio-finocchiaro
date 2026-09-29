@@ -63,8 +63,9 @@ export default function DettaglioPiantaModal({ pianta, validoFino, mostraGiacenz
   const giacCorrente = varianteAttiva?.giacenza ?? giacenza ?? 0;
 
   const whatsappNumber = AZIENDA.contatti.whatsapp.replace(/\D/g, '');
+  const quantitaTesto = mostraGiacenze && dispCorrente !== null ? ` (Disponibili: ${dispCorrente} pz)` : '';
   const testoMessaggio = encodeURIComponent(
-    `Salve ${AZIENDA.nome}, vorrei richiedere quotazione e disponibilità per: ${nome}${nome_comune ? ` (${nome_comune})` : ''} - Vaso Ø ${vasoCorrente || '-'} cm (Disponibili: ${dispCorrente} pz)`
+    `Salve ${AZIENDA.nome}, vorrei richiedere quotazione e disponibilità per: ${nome}${nome_comune ? ` (${nome_comune})` : ''} - Vaso Ø ${vasoCorrente || '-'} cm${quantitaTesto}`
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${testoMessaggio}`;
 
@@ -184,7 +185,9 @@ export default function DettaglioPiantaModal({ pianta, validoFino, mostraGiacenz
                 <span className="text-[#25570A] block text-[11px] font-bold flex items-center justify-between gap-1">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
-                    Disponibilità {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
+                    {mostraGiacenze 
+                      ? `Disponibilità ${vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}`
+                      : `Stato Fornitura ${vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}`}
                   </span>
                 </span>
                 <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
@@ -235,7 +238,7 @@ export default function DettaglioPiantaModal({ pianta, validoFino, mostraGiacenz
                 </div>
               )}
 
-              {disponibilita_carrelli && (
+              {mostraGiacenze && disponibilita_carrelli && (
                 <div className="bg-[#25570A]/10 p-3 rounded-xl border border-[#25570A]/20">
                   <span className="text-[#25570A] block text-[11px] font-semibold">Carrelli pronti</span>
                   <span className="font-bold text-[#25570A] text-sm mt-0.5 block">
@@ -279,12 +282,21 @@ export default function DettaglioPiantaModal({ pianta, validoFino, mostraGiacenz
         <div className="p-4 sm:p-5 bg-[#F2F3EB] border-t border-[#B7BEA9]/40 flex items-center justify-between gap-4 flex-shrink-0">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/60 block">
-              Disponibili {vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}
+              {mostraGiacenze
+                ? `Disponibili ${vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}`
+                : `Stato fornitura ${vasoCorrente ? `(Ø ${vasoCorrente} cm)` : ''}`}
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-xl sm:text-2xl font-extrabold text-[#25570A]">
-                {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
-              </span>
+              {mostraGiacenze ? (
+                <span className="text-xl sm:text-2xl font-extrabold text-[#25570A]">
+                  {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
+                </span>
+              ) : (
+                <span className="text-lg sm:text-xl font-extrabold text-[#25570A] flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#6BB221] animate-pulse inline-block"></span>
+                  Pronto in serra
+                </span>
+              )}
               {validoFino && (
                 <span className="text-[11px] font-bold text-[#25570A] bg-[#25570A]/10 px-2 py-0.5 rounded-full">
                   Fino al {validoFino}

@@ -160,7 +160,9 @@ export default function CardPianta({ pianta, onOpenDetail, mostraGiacenze = true
         <div className="mt-5 pt-3 border-t border-[#25570A]/10 flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/50 block tracking-wider leading-none mb-1">
-              Disponibilità {elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}
+              {mostraGiacenze
+                ? `Disponibilità ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`
+                : `Stato lotto ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`}
             </span>
             {mostraGiacenze ? (
               <div className="flex items-baseline gap-1">

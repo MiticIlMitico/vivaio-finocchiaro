@@ -347,7 +347,7 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8 pb-6 border-b border-stone-200">
           <div>
             <span className="text-[#25570A] text-xs font-bold tracking-[0.2em] uppercase block mb-1">
-              Giacenze & Magazzino
+              {mostraGiacenze ? "Giacenze & Magazzino" : "Disponibilità & Magazzino"}
             </span>
             <h2 className="font-display text-3xl sm:text-5xl font-medium text-[#25570A] tracking-tight">
               Listino Piante
