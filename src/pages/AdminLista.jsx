@@ -20,9 +20,18 @@ import {
   Layers,
   X,
   Check,
-  Ruler
+  Ruler,
+  SlidersHorizontal,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import Toast from '../components/Toast';
+import { 
+  DEFAULT_CAMPI_VISIBILI, 
+  PRESET_CAMPI, 
+  ELENCO_CAMPI, 
+  normalizzaCampiVisibili 
+} from '../lib/campiConfig';
 
 export default function AdminLista() {
   const [piante, setPiante] = useState([]);
@@ -47,13 +56,10 @@ export default function AdminLista() {
   const [validoFino, setValidoFino] = useState('31 Agosto 2026');
   const [salvataggioValidoFino, setSalvataggioValidoFino] = useState(false);
 
-  // Visibilità giacenze ai clienti (flag con dialog di conferma)
-  const [mostraGiacenze, setMostraGiacenze] = useState(true);
-  const [confirmGiacenzeModal, setConfirmGiacenzeModal] = useState({
-    isOpen: false,
-    targetValue: true,
-    loading: false
-  });
+  // Campi visibili ai clienti nella card e nei dettagli (preset e singoli flag)
+  const [campiVisibili, setCampiVisibili] = useState(DEFAULT_CAMPI_VISIBILI);
+  const [pannelloCampiAperto, setPannelloCampiAperto] = useState(false);
+  const [salvataggioCampi, setSalvataggioCampi] = useState(false);
 
   const navigate = useNavigate();
 
@@ -203,9 +209,19 @@ export default function AdminLista() {
         const vf = impData.find(i => i.chiave === 'valido_fino');
         if (vf?.valore) setValidoFino(vf.valore);
 
-        const mg = impData.find(i => i.chiave === 'mostra_giacenze');
-        if (mg?.valore !== undefined) {
-          setMostraGiacenze(mg.valore === 'true');
+        const cp = impData.find(i => i.chiave === 'campi_visibili');
+        if (cp?.valore) {
+          try {
+            setCampiVisibili(normalizzaCampiVisibili(JSON.parse(cp.valore)));
+          } catch (e) {
+            console.error('Errore parsing campi_visibili:', e);
+          }
+        } else {
+          // Retrocompatibilità con mostra_giacenze
+          const mg = impData.find(i => i.chiave === 'mostra_giacenze');
+          if (mg?.valore !== undefined) {
+            setCampiVisibili(prev => ({ ...prev, giacenza: mg.valore === 'true' }));
+          }
         }
       }
     } catch (err) {
@@ -222,6 +238,75 @@ export default function AdminLista() {
   useEffect(() => {
     caricaDati();
   }, []);
+
+  // Rilevamento preset attivo
+  const presetAttivoId = useMemo(() => {
+    for (const key of Object.keys(PRESET_CAMPI)) {
+      const pValori = PRESET_CAMPI[key].valori;
+      const match = ELENCO_CAMPI.every(c => Boolean(campiVisibili[c.chiave]) === Boolean(pValori[c.chiave]));
+      if (match) return key;
+    }
+    return 'personalizzato';
+  }, [campiVisibili]);
+
+  // Salvataggio sul database Supabase dei campi visibili
+  const salvaCampiSuDb = async (nuoviValori, messaggioSuccesso) => {
+    setSalvataggioCampi(true);
+    try {
+      const { error } = await supabase
+        .from('impostazioni')
+        .upsert([
+          {
+            chiave: 'campi_visibili',
+            valore: JSON.stringify(nuoviValori),
+            updated_at: new Date().toISOString()
+          },
+          {
+            chiave: 'mostra_giacenze',
+            valore: String(Boolean(nuoviValori.giacenza)),
+            updated_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) throw error;
+
+      if (messaggioSuccesso) {
+        setToast({
+          message: messaggioSuccesso,
+          type: 'success'
+        });
+      }
+    } catch (err) {
+      console.error('Errore aggiornamento campi visibili:', err);
+      setToast({
+        message: 'Impossibile aggiornare i campi visibili.',
+        type: 'error'
+      });
+    } finally {
+      setSalvataggioCampi(false);
+    }
+  };
+
+  // Applicazione preset rapido
+  const handleApplicaPreset = async (presetKey) => {
+    const preset = PRESET_CAMPI[presetKey];
+    if (!preset) return;
+    const nuoviCampi = { ...preset.valori };
+    setCampiVisibili(nuoviCampi);
+    await salvaCampiSuDb(nuoviCampi, `Preset "${preset.nome}" applicato ai clienti!`);
+  };
+
+  // Toggle singolo campo
+  const handleToggleCampo = async (chiave) => {
+    const nuoviCampi = {
+      ...campiVisibili,
+      [chiave]: !campiVisibili[chiave]
+    };
+    setCampiVisibili(nuoviCampi);
+    const campoDef = ELENCO_CAMPI.find(c => c.chiave === chiave);
+    const statoTesto = nuoviCampi[chiave] ? 'visibile' : 'nascosto';
+    await salvaCampiSuDb(nuoviCampi, `Campo "${campoDef?.etichetta || chiave}" ora ${statoTesto} ai clienti.`);
+  };
 
   // Salvataggio rapido periodo di validità listino
   const handleSalvaValidoFino = async (e) => {
@@ -252,46 +337,6 @@ export default function AdminLista() {
       });
     } finally {
       setSalvataggioValidoFino(false);
-    }
-  };
-
-  // Gestione cambio visibilità giacenze con dialog di conferma
-  const handleRichiediToggleGiacenze = (targetVal) => {
-    setConfirmGiacenzeModal({
-      isOpen: true,
-      targetValue: targetVal,
-      loading: false
-    });
-  };
-
-  const handleConfermaToggleGiacenze = async () => {
-    setConfirmGiacenzeModal((prev) => ({ ...prev, loading: true }));
-    try {
-      const { error } = await supabase
-        .from('impostazioni')
-        .upsert({
-          chiave: 'mostra_giacenze',
-          valore: String(confirmGiacenzeModal.targetValue),
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
-
-      setMostraGiacenze(confirmGiacenzeModal.targetValue);
-      setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false });
-      setToast({
-        message: confirmGiacenzeModal.targetValue
-          ? 'Giacenze magazzino ora VISIBILI ai clienti nel catalogo.'
-          : 'Giacenze magazzino ora NASCOSTE ai clienti nel catalogo.',
-        type: 'success'
-      });
-    } catch (err) {
-      console.error('Errore aggiornamento visibilità giacenze:', err);
-      setToast({
-        message: 'Impossibile aggiornare la visibilità delle giacenze.',
-        type: 'error'
-      });
-      setConfirmGiacenzeModal((prev) => ({ ...prev, loading: false }));
     }
   };
 
@@ -519,60 +564,155 @@ export default function AdminLista() {
           </form>
         </div>
 
-        {/* Box Impostazione Visibilità Giacenze ai Clienti con Spunta e Dialog di Conferma */}
-        <div className="mb-4 bg-white p-4 rounded-2xl border border-[#1C201C]/10 shadow-xs">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-start gap-3 min-w-0">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                mostraGiacenze ? 'bg-[#25570A]/10 text-[#25570A]' : 'bg-stone-100 text-stone-400'
-              }`}>
-                <Warehouse className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-bold text-xs sm:text-sm text-[#1C201C] leading-snug">
-                    Visibilità Giacenze ai Clienti
-                  </h3>
-                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                    mostraGiacenze 
-                      ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20' 
-                      : 'bg-stone-200/70 text-stone-600'
-                  }`}>
-                    {mostraGiacenze ? 'Attive · Visibili' : 'Disattivate · Nascoste'}
-                  </span>
+        {/* Card Gestione Campi Visibili ai Clienti con Preset & Flag per ogni campo */}
+        <div className="mb-4 bg-white rounded-2xl border border-[#1C201C]/10 shadow-xs overflow-hidden">
+          {/* Header Card */}
+          <div className="p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-[#25570A]/10 text-[#25570A] flex items-center justify-center flex-shrink-0">
+                  <SlidersHorizontal className="w-5 h-5" />
                 </div>
-                <p className="text-[11px] text-[#1C201C]/60 mt-0.5 leading-relaxed">
-                  Decidi se mostrare o nascondere il campo delle giacenze all'utente finale su ogni scheda pianta.
-                </p>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-bold text-xs sm:text-sm text-[#1C201C] leading-snug">
+                      Cosa Mostrare ai Clienti
+                    </h3>
+                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                      presetAttivoId === 'ingrosso'
+                        ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20'
+                        : presetAttivoId === 'completo'
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : presetAttivoId === 'essenziale'
+                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                        : 'bg-stone-100 text-stone-700 border border-stone-200'
+                    }`}>
+                      {presetAttivoId === 'ingrosso' ? 'Preset: Standard Ingrosso' :
+                       presetAttivoId === 'completo' ? 'Preset: Tutto Visibile' :
+                       presetAttivoId === 'essenziale' ? 'Preset: Vetrina Essenziale' : 'Personalizzato'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#1C201C]/60 mt-0.5 leading-relaxed">
+                    Scegli un preset rapido o decidi per ogni campo se farlo vedere o meno ai clienti (schede e modale).
+                  </p>
+                </div>
               </div>
+
+              {/* Tasto Espandi/Comprimi Personalizzazione */}
+              <button
+                type="button"
+                onClick={() => setPannelloCampiAperto(!pannelloCampiAperto)}
+                className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#1C201C] text-xs font-bold flex items-center gap-1.5 transition-colors touch-target flex-shrink-0"
+              >
+                <span>{pannelloCampiAperto ? 'Chiudi' : 'Personalizza'}</span>
+                {pannelloCampiAperto ? (
+                  <ChevronUp className="w-4 h-4 text-stone-500" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-stone-500" />
+                )}
+              </button>
             </div>
 
-            {/* Spunta / Switch con Touch Target generoso */}
-            <button
-              type="button"
-              onClick={() => handleRichiediToggleGiacenze(!mostraGiacenze)}
-              className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#25570A] focus:ring-offset-2 touch-target ${
-                mostraGiacenze ? 'bg-[#25570A]' : 'bg-stone-300'
-              }`}
-              role="switch"
-              aria-checked={mostraGiacenze}
-              title={mostraGiacenze ? "Tocca per nascondere le giacenze ai clienti" : "Tocca per mostrare le giacenze ai clienti"}
-            >
-              <span className="sr-only">Attiva o disattiva visualizzazione giacenze ai clienti</span>
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-flex h-7 w-7 transform items-center justify-center rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                  mostraGiacenze ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              >
-                {mostraGiacenze ? (
-                  <Check className="w-4 h-4 text-[#25570A] stroke-[3]" />
-                ) : (
-                  <X className="w-4 h-4 text-stone-400 stroke-[2.5]" />
-                )}
+            {/* Pulsanti Preset Rapidi */}
+            <div className="mt-3.5 pt-3 border-t border-stone-100">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block mb-2">
+                Preset Rapidi:
               </span>
-            </button>
+              <div className="flex flex-wrap gap-2">
+                {Object.values(PRESET_CAMPI).map((preset) => {
+                  const isAttivo = presetAttivoId === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handleApplicaPreset(preset.id)}
+                      disabled={salvataggioCampi}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 touch-target ${
+                        isAttivo
+                          ? 'bg-[#25570A] text-white shadow-xs'
+                          : 'bg-[#F2F3EB] hover:bg-[#E5E7DC] text-[#282B27] border border-[#B7BEA9]/40'
+                      }`}
+                    >
+                      {isAttivo && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      <span>{preset.nome}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
+
+          {/* Sezione dettagliata con flag per ogni singolo campo (espandibile) */}
+          {pannelloCampiAperto && (
+            <div className="p-4 sm:p-5 bg-stone-50/70 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
+                  Singoli Campi Scheda & Dettagli Cliente
+                </span>
+                <span className="text-[11px] font-semibold text-[#25570A]">
+                  {Object.values(campiVisibili).filter(Boolean).length} di {ELENCO_CAMPI.length} visibili
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {ELENCO_CAMPI.map((campo) => {
+                  const attivo = Boolean(campiVisibili[campo.chiave]);
+                  return (
+                    <div
+                      key={campo.chiave}
+                      onClick={() => handleToggleCampo(campo.chiave)}
+                      className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none touch-target ${
+                        attivo
+                          ? 'bg-white border-[#25570A]/30 shadow-xs'
+                          : 'bg-stone-100/70 border-stone-200 opacity-75'
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`font-bold text-xs ${attivo ? 'text-[#1C201C]' : 'text-stone-500'}`}>
+                            {campo.etichetta}
+                          </span>
+                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 uppercase">
+                            {campo.categoria}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-500 mt-0.5 truncate">
+                          {campo.descrizione}
+                        </p>
+                      </div>
+
+                      {/* Switch iOS/Tailwind touch-target */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleCampo(campo.chiave);
+                        }}
+                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          attivo ? 'bg-[#25570A]' : 'bg-stone-300'
+                        }`}
+                        role="switch"
+                        aria-checked={attivo}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`pointer-events-none inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                            attivo ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        >
+                          {attivo ? (
+                            <Check className="w-3 h-3 text-[#25570A] stroke-[3]" />
+                          ) : (
+                            <X className="w-3 h-3 text-stone-400 stroke-[2.5]" />
+                          )}
+                        </span>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Barra di Ricerca con Tasto Cancella Rapido (X) & Filtro Categoria */}
@@ -1039,84 +1179,7 @@ export default function AdminLista() {
         </div>
       )}
 
-      {/* Dialog di Conferma Cambio Visibilità Giacenze */}
-      {confirmGiacenzeModal.isOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => !confirmGiacenzeModal.loading && setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false })}
-        >
-          <div 
-            className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center gap-3.5 mb-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${
-                confirmGiacenzeModal.targetValue
-                  ? 'bg-[#25570A]/10 text-[#25570A]'
-                  : 'bg-[#D34816]/10 text-[#D34816]'
-              }`}>
-                {confirmGiacenzeModal.targetValue ? (
-                  <Eye className="w-6 h-6" />
-                ) : (
-                  <EyeOff className="w-6 h-6" />
-                )}
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-[#1C201C] leading-snug">
-                  {confirmGiacenzeModal.targetValue 
-                    ? 'Mostrare le giacenze?' 
-                    : 'Nascondere le giacenze?'}
-                </h3>
-                <span className="text-[11px] text-stone-500 font-medium block">
-                  Catalogo pubblico per i clienti
-                </span>
-              </div>
-            </div>
 
-            <div className="text-xs text-stone-600 leading-relaxed mb-6 bg-[#FAF9F6] p-3.5 rounded-2xl border border-stone-200/60">
-              {confirmGiacenzeModal.targetValue ? (
-                <p>
-                  I clienti potranno vedere il campo <strong className="text-[#1C201C]">Giacenza magazzino</strong> e i quantitativi nella scheda di ogni pianta.
-                </p>
-              ) : (
-                <p>
-                  Il campo <strong className="text-[#1C201C]">Giacenza magazzino</strong> e le quantità numeriche verranno <strong className="text-[#D34816]">nascosti</strong> all'utente finale. I dati resteranno comunque salvati qui nel gestionale.
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                disabled={confirmGiacenzeModal.loading}
-                onClick={() => setConfirmGiacenzeModal({ isOpen: false, targetValue: true, loading: false })}
-                className="px-3.5 py-2.5 rounded-xl border border-stone-300 text-stone-700 hover:bg-stone-100 text-xs font-semibold transition-all touch-target active:scale-95"
-              >
-                Annulla
-              </button>
-              <button
-                type="button"
-                disabled={confirmGiacenzeModal.loading}
-                onClick={handleConfermaToggleGiacenze}
-                className={`px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow-sm transition-all touch-target active:scale-95 flex items-center gap-1.5 ${
-                  confirmGiacenzeModal.targetValue
-                    ? 'bg-[#25570A] hover:bg-[#1E4608]'
-                    : 'bg-[#D34816] hover:bg-[#B83D12]'
-                }`}
-              >
-                {confirmGiacenzeModal.loading ? (
-                  <span>Salvataggio...</span>
-                ) : (
-                  <>
-                    <Check className="w-4 h-4 stroke-[2.5]" />
-                    <span>{confirmGiacenzeModal.targetValue ? 'Sì, Mostra' : 'Sì, Nascondi'}</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modale Eliminazione */}
       {eliminaModal.isOpen && (

@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Sprout, Warehouse, Eye, Layers, Ruler } from 'lucide-react';
+import { normalizzaCampiVisibili } from '../lib/campiConfig';
 
-export default function CardPianta({ pianta, onOpenDetail, mostraGiacenze = true }) {
+export default function CardPianta({ pianta, onOpenDetail, campiVisibili, mostraGiacenze = true }) {
+  const vis = normalizzaCampiVisibili(
+    campiVisibili || { giacenza: mostraGiacenze }
+  );
+
   const {
     nome,
     nome_comune,
@@ -95,76 +100,82 @@ export default function CardPianta({ pianta, onOpenDetail, mostraGiacenze = true
             {nome}
           </h3>
 
-          {nome_comune && (
+          {vis.nome_comune && nome_comune && (
             <p className="text-[#282B27]/65 text-xs sm:text-sm mt-0.5 line-clamp-1 italic font-serif">
               {nome_comune}
             </p>
           )}
 
-          {/* Formati Vaso: capsule minimali */}
-          <div className="mt-4 pt-3 border-t border-[#25570A]/10">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#282B27]/50">
-                {elencoVarianti.length > 1 ? 'Formati disponibili' : 'Diametro vaso'}
-              </span>
-              {elencoVarianti.length > 1 && (
-                <span className="text-[10px] font-bold text-[#25570A] bg-[#25570A]/5 px-2 py-0.5 rounded-md">
-                  {elencoVarianti.length} calibri
-                </span>
+          {/* Formati Vaso e Altezza: mostrati in base alla configurazione */}
+          {(vis.vaso_cm || (vis.altezza_cm && altezza_cm)) && (
+            <div className="mt-4 pt-3 border-t border-[#25570A]/10">
+              {vis.vaso_cm && (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#282B27]/50">
+                      {elencoVarianti.length > 1 ? 'Formati disponibili' : 'Diametro vaso'}
+                    </span>
+                    {elencoVarianti.length > 1 && (
+                      <span className="text-[10px] font-bold text-[#25570A] bg-[#25570A]/5 px-2 py-0.5 rounded-md">
+                        {elencoVarianti.length} calibri
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Pulsanti vaso */}
+                  {elencoVarianti.length > 1 ? (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {elencoVarianti.map((v, idx) => {
+                        const isSelected = v.vaso_cm === vasoCorrente;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={(e) => handleSelectVaso(e, v)}
+                            className={`min-h-[34px] px-3 py-1 rounded-lg text-xs font-semibold transition-all active:scale-95 flex items-center gap-1 ${
+                              isSelected
+                                ? 'bg-[#25570A] text-white shadow-xs'
+                                : 'bg-[#F2F3EB] hover:bg-[#E5E7DC] text-[#282B27]/80'
+                            }`}
+                          >
+                            <span>{v.vaso_cm ? `Ø ${v.vaso_cm} cm` : 'Std'}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F2F3EB] text-[#282B27] text-xs font-semibold">
+                      <span>{vasoCorrente ? `Ø ${vasoCorrente} cm` : 'Calibro standard'}</span>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Altezza Pianta */}
+              {vis.altezza_cm && altezza_cm && (
+                <div className={`flex items-center justify-between text-xs ${vis.vaso_cm ? 'mt-2.5 pt-2 border-t border-[#25570A]/5' : ''}`}>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#282B27]/50">
+                    Altezza pianta
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#25570A] bg-[#25570A]/8 px-2 py-0.5 rounded-md text-xs">
+                    <Ruler className="w-3 h-3 text-[#25570A]/70" />
+                    <span>{String(altezza_cm).includes('cm') ? altezza_cm : `${altezza_cm} cm`}</span>
+                  </span>
+                </div>
               )}
             </div>
-
-            {/* Pulsanti vaso */}
-            {elencoVarianti.length > 1 ? (
-              <div className="flex flex-wrap items-center gap-1.5">
-                {elencoVarianti.map((v, idx) => {
-                  const isSelected = v.vaso_cm === vasoCorrente;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={(e) => handleSelectVaso(e, v)}
-                      className={`min-h-[34px] px-3 py-1 rounded-lg text-xs font-semibold transition-all active:scale-95 flex items-center gap-1 ${
-                        isSelected
-                          ? 'bg-[#25570A] text-white shadow-xs'
-                          : 'bg-[#F2F3EB] hover:bg-[#E5E7DC] text-[#282B27]/80'
-                      }`}
-                    >
-                      <span>{v.vaso_cm ? `Ø ${v.vaso_cm} cm` : 'Std'}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F2F3EB] text-[#282B27] text-xs font-semibold">
-                <span>{vasoCorrente ? `Ø ${vasoCorrente} cm` : 'Calibro standard'}</span>
-              </div>
-            )}
-
-            {/* Altezza Pianta */}
-            {altezza_cm && (
-              <div className="mt-2.5 flex items-center justify-between text-xs pt-2 border-t border-[#25570A]/5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#282B27]/50">
-                  Altezza pianta
-                </span>
-                <span className="inline-flex items-center gap-1 font-semibold text-[#25570A] bg-[#25570A]/8 px-2 py-0.5 rounded-md text-xs">
-                  <Ruler className="w-3 h-3 text-[#25570A]/70" />
-                  <span>{String(altezza_cm).includes('cm') ? altezza_cm : `${altezza_cm} cm`}</span>
-                </span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
         {/* 3. FOOTER DISPONIBILITÀ E SCHEDA TECNICA */}
         <div className="mt-5 pt-3 border-t border-[#25570A]/10 flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/50 block tracking-wider leading-none mb-1">
-              {mostraGiacenze
+              {vis.giacenza
                 ? `Disponibilità ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`
-                : `Stato lotto ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`}
+                : `Stato lotto ${elencoVarianti.length > 1 && vasoCorrente && vis.vaso_cm ? `Ø ${vasoCorrente}` : ''}`}
             </span>
-            {mostraGiacenze ? (
+            {vis.giacenza ? (
               <div className="flex items-baseline gap-1">
                 <span className="text-xl sm:text-2xl font-bold text-[#25570A] leading-none">
                   {dispCorrente !== null ? Number(dispCorrente).toLocaleString('it-IT') : '0'}

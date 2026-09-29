@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 import { AZIENDA } from '../content/azienda';
+import { DEFAULT_CAMPI_VISIBILI, normalizzaCampiVisibili } from '../lib/campiConfig';
 import CardPianta from '../components/CardPianta';
 import DettaglioPiantaModal from '../components/DettaglioPiantaModal';
 import Lightbox from '../components/Lightbox';
@@ -28,6 +29,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [errore, setErrore] = useState(null);
   const [validoFino, setValidoFino] = useState('31 Agosto 2026');
+  const [campiVisibili, setCampiVisibili] = useState(DEFAULT_CAMPI_VISIBILI);
   const [mostraGiacenze, setMostraGiacenze] = useState(true);
 
   // Filtri catalogo
@@ -77,9 +79,22 @@ export default function Home() {
         const vf = impData.find(i => i.chiave === 'valido_fino');
         if (vf?.valore) setValidoFino(vf.valore);
 
-        const mg = impData.find(i => i.chiave === 'mostra_giacenze');
-        if (mg?.valore !== undefined) {
-          setMostraGiacenze(mg.valore === 'true');
+        const cp = impData.find(i => i.chiave === 'campi_visibili');
+        if (cp?.valore) {
+          try {
+            const parsed = normalizzaCampiVisibili(JSON.parse(cp.valore));
+            setCampiVisibili(parsed);
+            setMostraGiacenze(Boolean(parsed.giacenza));
+          } catch (e) {
+            console.error('Errore parsing campi_visibili:', e);
+          }
+        } else {
+          const mg = impData.find(i => i.chiave === 'mostra_giacenze');
+          if (mg?.valore !== undefined) {
+            const isGiac = mg.valore === 'true';
+            setMostraGiacenze(isGiac);
+            setCampiVisibili(prev => ({ ...prev, giacenza: isGiac }));
+          }
         }
       }
     } catch (err) {
@@ -536,6 +551,7 @@ export default function Home() {
                 key={pianta.id}
                 pianta={pianta}
                 mostraGiacenze={mostraGiacenze}
+                campiVisibili={campiVisibili}
                 onOpenLightbox={(src, title) => setLightboxData({ isOpen: true, src, title })}
                 onOpenDetail={(p) => setPiantaDettaglio(p)}
               />
@@ -1070,6 +1086,7 @@ export default function Home() {
           pianta={piantaDettaglio}
           validoFino={validoFino}
           mostraGiacenze={mostraGiacenze}
+          campiVisibili={campiVisibili}
           onClose={() => setPiantaDettaglio(null)}
           onOpenLightbox={(src, title) => setLightboxData({ isOpen: true, src, title })}
         />
