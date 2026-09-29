@@ -7,7 +7,9 @@ export default function CategoriaAccordion({
   piante,
   isOpen,
   onToggle,
-  onOpenLightbox
+  onOpenDetail,
+  campiVisibili,
+  mostraGiacenze
 }) {
   return (
     <section className="border border-stone-200/90 rounded-2xl bg-white shadow-sm overflow-hidden mb-5 transition-all">
@@ -50,7 +52,9 @@ export default function CategoriaAccordion({
                 <CardPianta
                   key={pianta.id}
                   pianta={pianta}
-                  onOpenLightbox={onOpenLightbox}
+                  onOpenDetail={onOpenDetail}
+                  campiVisibili={campiVisibili}
+                  mostraGiacenze={mostraGiacenze}
                 />
               ))}
             </div>
