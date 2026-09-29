@@ -58,19 +58,13 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#FAF9F6] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans antialiased text-[#1C201C]">
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <Link to="/" className="flex flex-col items-center justify-center gap-2 mb-6 group">
-          <picture>
-            <source srcSet="/brand/logo-mark.svg" type="image/svg+xml" />
-            <img
-              src="/brand/logo-mark.webp"
-              alt="Logo Campo dei Fiori"
-              decoding="async"
-              className="w-16 h-16 object-contain drop-shadow-md group-hover:scale-105 transition-transform"
-            />
-          </picture>
-          <span className="font-serif font-bold text-2xl sm:text-3xl text-[#1C201C] tracking-tight">
-            Campo dei Fiori
-          </span>
+        <Link to="/" className="flex flex-col items-center justify-center mb-6 group" title="Torna alla Home">
+          <img
+            src="/brand/loghi-vettoriali/Loghi%20ufficiali%20vettoriali/campodeifiori-verticale.svg"
+            alt="Logo Campo dei Fiori"
+            decoding="async"
+            className="w-44 sm:w-52 h-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+          />
         </Link>
         <h2 className="text-center font-serif font-semibold text-xl sm:text-2xl text-[#1C201C] tracking-tight">
           Gestione Vivaio & Magazzino

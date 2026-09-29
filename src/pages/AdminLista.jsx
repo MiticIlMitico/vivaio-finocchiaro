@@ -420,24 +420,18 @@ export default function AdminLista() {
       {/* Header Unico e Pulito Gestione */}
       <header className="sticky top-0 z-30 bg-[#1C201C] text-white shadow-md border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-          {/* Brand con Link Diretto alla Home (Solo icona logo ufficiale) */}
-          <Link to="/" className="flex items-center gap-3 min-w-0 group" title="Vai al Catalogo Pubblico">
-            <picture>
-              <source srcSet="/brand/logo-mark.svg" type="image/svg+xml" />
-              <img
-                src="/brand/logo-mark.webp"
-                alt="Logo Campo dei Fiori"
-                decoding="async"
-                className="h-9 w-auto object-contain drop-shadow group-hover:scale-105 transition-transform"
-              />
-            </picture>
-            <div className="min-w-0">
-              <h1 className="font-serif font-semibold text-base sm:text-lg text-white leading-tight truncate">
-                {AZIENDA.nome}
-              </h1>
-              <p className="text-[10px] text-[#6BB221] font-bold uppercase tracking-wider leading-none mt-0.5">
-                Pannello Gestione
-              </p>
+          {/* Brand con Link Diretto alla Home (Logo ufficiale vettoriale) */}
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0 group" title="Vai al Catalogo Pubblico">
+            <img
+              src="/brand/loghi-vettoriali/Loghi%20ufficiali%20vettoriali/campodeifiori-white.svg"
+              alt="Logo Campo dei Fiori"
+              decoding="async"
+              className="h-8 sm:h-9 w-auto object-contain group-hover:opacity-90 transition-opacity"
+            />
+            <div className="hidden sm:block border-l border-white/20 pl-2.5">
+              <span className="text-[10px] text-[#6BB221] font-bold uppercase tracking-wider block leading-none">
+                Gestione
+              </span>
             </div>
           </Link>
 
