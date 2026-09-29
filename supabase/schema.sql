@@ -165,6 +165,42 @@ create policy "cancellazione foto solo autenticati"
   on storage.objects for delete
   to authenticated
   using (bucket_id = 'foto-piante');
+-- ---------- 5. Tabella storico_attivita (registro modifiche admin) ----------
+
+create table if not exists public.storico_attivita (
+  id                      uuid primary key default gen_random_uuid(),
+  pianta_id               uuid,                       -- id pianta se disponibile
+  pianta_nome             text not null,              -- nome pianta all'atto dell'azione
+  tipo                    text not null check (tipo in ('inserimento', 'eliminazione', 'visibilita', 'giacenza')),
+  descrizione             text not null,              -- sintesi testuale per l'operatore
+  dettagli                jsonb default '{}'::jsonb,  -- vecchi e nuovi valori (es. giacenza, delta, visibile)
+  operatore               text default 'Admin',
+  created_at              timestamptz not null default now()
+);
+
+create index if not exists storico_created_at_idx on public.storico_attivita (created_at desc);
+create index if not exists storico_tipo_idx       on public.storico_attivita (tipo);
+create index if not exists storico_pianta_idx     on public.storico_attivita (pianta_nome);
+
+alter table public.storico_attivita enable row level security;
+
+drop policy if exists "storico visibile solo autenticati" on public.storico_attivita;
+create policy "storico visibile solo autenticati"
+  on public.storico_attivita for select
+  to authenticated
+  using (true);
+
+drop policy if exists "storico inseribile solo autenticati" on public.storico_attivita;
+create policy "storico inseribile solo autenticati"
+  on public.storico_attivita for insert
+  to authenticated
+  with check (true);
+
+drop policy if exists "storico cancellabile solo autenticati" on public.storico_attivita;
+create policy "storico cancellabile solo autenticati"
+  on public.storico_attivita for delete
+  to authenticated
+  using (true);
 
 -- ============================================================
 -- Fatto. Prossimi passi manuali dalla dashboard Supabase:

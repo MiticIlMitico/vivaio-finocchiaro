@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import CampoFoto from '../components/CampoFoto';
 import Toast from '../components/Toast';
+import { registraAttivita } from '../lib/storico';
 import { ArrowLeft, Save, Loader2, Plus, Sprout, AlertCircle, Layers, Trash2, CheckCircle2, Eye, EyeOff, Package, Ruler } from 'lucide-react';
 
 export default function AdminForm() {
@@ -16,6 +17,9 @@ export default function AdminForm() {
     const nuovo = Math.max(0, attuale + delta);
     handleChange(campo, String(nuovo));
   };
+
+  // Stato snapshot originale per confronto variazioni (giacenza, visibilità)
+  const [piantaOriginale, setPiantaOriginale] = useState(null);
 
   // Stato form
   const [formData, setFormData] = useState({
@@ -80,6 +84,7 @@ export default function AdminForm() {
           if (piantaError) throw piantaError;
 
           if (pianta) {
+            setPiantaOriginale(pianta);
             let variantiList = [];
             if (Array.isArray(pianta.varianti) && pianta.varianti.length > 0) {
               variantiList = pianta.varianti.map(v => ({
@@ -239,12 +244,68 @@ export default function AdminForm() {
           .eq('id', id);
 
         if (updateError) throw updateError;
+
+        // Tracciamento giacenza (SOLO il campo delle giacenze se modificato, positivo o negativo)
+        if (piantaOriginale) {
+          const vecchiaGiacenza = Number(piantaOriginale.giacenza) || 0;
+          const nuovaGiacenza = Number(payload.giacenza) || 0;
+          if (vecchiaGiacenza !== nuovaGiacenza) {
+            const delta = nuovaGiacenza - vecchiaGiacenza;
+            await registraAttivita({
+              tipo: 'giacenza',
+              pianta_id: id,
+              pianta_nome: formData.nome.trim(),
+              descrizione: `Giacenza modificata da ${vecchiaGiacenza} a ${nuovaGiacenza} pz (${delta > 0 ? '+' : ''}${delta} pz)`,
+              dettagli: {
+                prima: vecchiaGiacenza,
+                dopo: nuovaGiacenza,
+                delta: delta,
+                unita: 'pz',
+                varianti: variantiPulite
+              }
+            });
+          }
+
+          // Tracciamento se la visibilità è stata cambiata all'interno del form
+          if (Boolean(piantaOriginale.visibile) !== Boolean(payload.visibile)) {
+            await registraAttivita({
+              tipo: 'visibilita',
+              pianta_id: id,
+              pianta_nome: formData.nome.trim(),
+              descrizione: payload.visibile
+                ? `Prodotto "${formData.nome.trim()}" reso visibile nel catalogo`
+                : `Prodotto "${formData.nome.trim()}" nascosto dal catalogo`,
+              dettagli: {
+                prima: piantaOriginale.visibile,
+                dopo: payload.visibile,
+                stato: payload.visibile ? 'visibile' : 'nascosto'
+              }
+            });
+          }
+        }
       } else {
-        const { error: insertError } = await supabase
+        const { data: insertData, error: insertError } = await supabase
           .from('piante')
-          .insert([payload]);
+          .insert([payload])
+          .select('id, nome');
 
         if (insertError) throw insertError;
+
+        const newId = insertData?.[0]?.id || null;
+
+        // Tracciamento inserimento nuovo prodotto
+        await registraAttivita({
+          tipo: 'inserimento',
+          pianta_id: newId,
+          pianta_nome: formData.nome.trim(),
+          descrizione: `Nuovo prodotto "${formData.nome.trim()}" inserito nel catalogo`,
+          dettagli: {
+            categoria: formData.categoria,
+            giacenza: payload.giacenza,
+            visibile: payload.visibile,
+            prezzo: payload.prezzo
+          }
+        });
       }
 
       // Feedback e redirect

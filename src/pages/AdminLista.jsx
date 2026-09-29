@@ -23,9 +23,12 @@ import {
   Ruler,
   SlidersHorizontal,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  History
 } from 'lucide-react';
 import Toast from '../components/Toast';
+import CasellaCronologia from '../components/CasellaCronologia';
+import { registraAttivita } from '../lib/storico';
 import { 
   DEFAULT_CAMPI_VISIBILI, 
   normalizzaCampiVisibili 
@@ -37,6 +40,7 @@ export default function AdminLista() {
   const [ricerca, setRicerca] = useState('');
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [eliminaModal, setEliminaModal] = useState({ isOpen: false, pianta: null, loading: false });
+  const [cronologiaAperta, setCronologiaAperta] = useState(false);
 
   // Filtri rapidi per usabilità immediata da smartphone
   const [filtroStato, setFiltroStato] = useState('tutte'); // 'tutte' | 'visibili' | 'nascoste'
@@ -163,6 +167,26 @@ export default function AdminLista() {
         .eq('id', pianta.id);
 
       if (error) throw error;
+
+      // Tracciamento nello storico se la giacenza è cambiata
+      const vecchiaGiacenza = Number(pianta.giacenza) || 0;
+      const nuovaGiacenza = Number(updatePayload.giacenza) || 0;
+      if (vecchiaGiacenza !== nuovaGiacenza) {
+        const delta = nuovaGiacenza - vecchiaGiacenza;
+        await registraAttivita({
+          tipo: 'giacenza',
+          pianta_id: pianta.id,
+          pianta_nome: pianta.nome,
+          descrizione: `Giacenza aggiornata da ${vecchiaGiacenza} a ${nuovaGiacenza} pz (${delta > 0 ? '+' : ''}${delta} pz)`,
+          dettagli: {
+            prima: vecchiaGiacenza,
+            dopo: nuovaGiacenza,
+            delta: delta,
+            unita: 'pz',
+            varianti: variantiPulite
+          }
+        });
+      }
 
       // Aggiornamento ottimistico dello state locale
       setPiante(prev => prev.map(p => p.id === pianta.id ? { ...p, ...updatePayload } : p));
@@ -294,6 +318,21 @@ export default function AdminLista() {
 
       if (error) throw error;
 
+      // Tracciamento nello storico dell'attività
+      await registraAttivita({
+        tipo: 'visibilita',
+        pianta_id: piantaTarget.id,
+        pianta_nome: piantaTarget.nome,
+        descrizione: nuovoStato
+          ? `Prodotto "${piantaTarget.nome}" reso visibile nel catalogo (occhio aperto)`
+          : `Prodotto "${piantaTarget.nome}" nascosto dal catalogo (occhio sbarrato)`,
+        dettagli: {
+          prima: piantaTarget.visibile,
+          dopo: nuovoStato,
+          stato: nuovoStato ? 'visibile' : 'nascosto'
+        }
+      });
+
       setToast({
         message: `${piantaTarget.nome} ${nuovoStato ? 'ora è visibile' : 'è stata nascosta'}`,
         type: 'success'
@@ -333,6 +372,19 @@ export default function AdminLista() {
           console.warn('Errore rimozione foto da storage:', storageErr);
         }
       }
+
+      // Tracciamento nello storico dell'eliminazione
+      await registraAttivita({
+        tipo: 'eliminazione',
+        pianta_id: pianta.id,
+        pianta_nome: pianta.nome,
+        descrizione: `Prodotto "${pianta.nome}" eliminato definitivamente dal catalogo`,
+        dettagli: {
+          categoria: pianta.categoria,
+          ultima_giacenza: pianta.giacenza,
+          prezzo: pianta.prezzo
+        }
+      });
 
       setPiante((prev) => prev.filter((p) => p.id !== pianta.id));
       setToast({
@@ -418,6 +470,17 @@ export default function AdminLista() {
               <SlidersHorizontal className="w-4 h-4 text-[#6BB221]" />
               <span className="hidden md:inline">Cosa Mostrare</span>
             </Link>
+
+            {/* Tasto Cronologia e Storico Modifiche */}
+            <button
+              type="button"
+              onClick={() => setCronologiaAperta(true)}
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white/90 border border-white/15 text-xs font-bold flex items-center gap-1.5 transition-all touch-target active:scale-95"
+              title="Storico e Cronologia modifiche (giacenze, visibilità, inserimenti, eliminazioni)"
+            >
+              <History className="w-4 h-4 text-[#E68A00]" />
+              <span className="hidden md:inline">Cronologia</span>
+            </button>
 
             {/* Tasto esplicito per tornare al sito normale */}
             <Link
@@ -1056,6 +1119,12 @@ export default function AdminLista() {
           </div>
         </div>
       )}
+
+      {/* Drawer Casella Cronologia e Storico Eventi */}
+      <CasellaCronologia
+        isOpen={cronologiaAperta}
+        onClose={() => setCronologiaAperta(false)}
+      />
 
       {/* Toast Feedback */}
       <Toast
