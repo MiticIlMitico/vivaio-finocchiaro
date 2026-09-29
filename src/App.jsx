@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import AdminLista from './pages/AdminLista';
 import AdminForm from './pages/AdminForm';
+import AdminVisibilitaMockup from './pages/AdminVisibilitaMockup';
 
 export default function App() {
   return (
@@ -26,6 +27,14 @@ export default function App() {
               element={
                 <RequireAuth>
                   <AdminLista />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/visibilita"
+              element={
+                <RequireAuth>
+                  <AdminVisibilitaMockup />
                 </RequireAuth>
               }
             />

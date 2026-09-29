@@ -482,6 +482,16 @@ export default function AdminLista() {
 
           {/* Azioni Barra */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Tasto Editor di Prova Visibilità Campi */}
+            <Link
+              to="/admin/visibilita"
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white/90 border border-white/15 text-xs font-bold flex items-center gap-1.5 transition-all touch-target active:scale-95"
+              title="Editor di Prova: decidi cosa mostrare ai clienti"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-[#6BB221]" />
+              <span className="hidden md:inline">Cosa Mostrare</span>
+            </Link>
+
             {/* Tasto esplicito per tornare al sito normale */}
             <Link
               to="/"
@@ -564,9 +574,8 @@ export default function AdminLista() {
           </form>
         </div>
 
-        {/* Card Gestione Campi Visibili ai Clienti con Preset & Flag per ogni campo */}
+        {/* Card Gestione Campi Visibili ai Clienti con Preset & Accesso al Mockup Editor */}
         <div className="mb-4 bg-white rounded-2xl border border-[#1C201C]/10 shadow-xs overflow-hidden">
-          {/* Header Card */}
           <div className="p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0">
@@ -579,44 +588,58 @@ export default function AdminLista() {
                       Cosa Mostrare ai Clienti
                     </h3>
                     <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                      presetAttivoId === 'ingrosso'
+                      presetAttivoId === 'solo_disponibile'
+                        ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20'
+                        : presetAttivoId === 'solo_giacenza'
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : presetAttivoId === 'entrambi'
+                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                        : presetAttivoId === 'ingrosso'
                         ? 'bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20'
                         : presetAttivoId === 'completo'
-                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        ? 'bg-purple-100 text-purple-800 border border-purple-200'
                         : presetAttivoId === 'essenziale'
-                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                        ? 'bg-stone-100 text-stone-800 border border-stone-200'
                         : 'bg-stone-100 text-stone-700 border border-stone-200'
                     }`}>
-                      {presetAttivoId === 'ingrosso' ? 'Preset: Standard Ingrosso' :
-                       presetAttivoId === 'completo' ? 'Preset: Tutto Visibile' :
-                       presetAttivoId === 'essenziale' ? 'Preset: Vetrina Essenziale' : 'Personalizzato'}
+                      {presetAttivoId ? `Preset: ${PRESET_CAMPI[presetAttivoId]?.nome}` : 'Personalizzato'}
                     </span>
                   </div>
                   <p className="text-[11px] text-[#1C201C]/60 mt-0.5 leading-relaxed">
-                    Scegli un preset rapido o decidi per ogni campo se farlo vedere o meno ai clienti (schede e modale).
+                    Scegli con un tocco tra i preset principali o apri il mockup interattivo per decidere col flag su ogni campo.
                   </p>
                 </div>
               </div>
 
-              {/* Tasto Espandi/Comprimi Personalizzazione */}
-              <button
-                type="button"
-                onClick={() => setPannelloCampiAperto(!pannelloCampiAperto)}
-                className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#1C201C] text-xs font-bold flex items-center gap-1.5 transition-colors touch-target flex-shrink-0"
+              <Link
+                to="/admin/visibilita"
+                className="px-3.5 py-1.5 rounded-xl bg-[#25570A]/10 hover:bg-[#25570A]/20 text-[#25570A] text-xs font-bold flex items-center gap-1.5 transition-colors touch-target flex-shrink-0"
               >
-                <span>{pannelloCampiAperto ? 'Chiudi' : 'Personalizza'}</span>
-                {pannelloCampiAperto ? (
-                  <ChevronUp className="w-4 h-4 text-stone-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-stone-500" />
-                )}
-              </button>
+                <span>Mockup Editor</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Stato rapido scorte attive */}
+            <div className="mt-3 py-1.5 px-3 rounded-xl bg-stone-50 border border-stone-200/70 text-[11px] flex items-center gap-2 flex-wrap text-stone-600">
+              <span className="font-bold text-[#1C201C]">Quantità clienti:</span>
+              <span className={`inline-flex items-center gap-1 font-semibold ${campiVisibili.disponibile ? 'text-[#25570A]' : 'text-stone-400 line-through'}`}>
+                {campiVisibili.disponibile ? '✓' : '✕'} Disp. Vendita
+              </span>
+              <span className="text-stone-300">&bull;</span>
+              <span className={`inline-flex items-center gap-1 font-semibold ${campiVisibili.giacenza ? 'text-amber-800' : 'text-stone-400 line-through'}`}>
+                {campiVisibili.giacenza ? '✓' : '✕'} Giacenza Magazzino
+              </span>
+              <span className="text-stone-300">&bull;</span>
+              <span className={`inline-flex items-center gap-1 font-semibold ${campiVisibili.disponibilita_carrelli ? 'text-[#25570A]' : 'text-stone-400 line-through'}`}>
+                {campiVisibili.disponibilita_carrelli ? '✓' : '✕'} Carrelli
+              </span>
             </div>
 
             {/* Pulsanti Preset Rapidi */}
-            <div className="mt-3.5 pt-3 border-t border-stone-100">
+            <div className="mt-3 pt-3 border-t border-stone-100">
               <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block mb-2">
-                Preset Rapidi:
+                Preset Rapidi a 1 Tocco:
               </span>
               <div className="flex flex-wrap gap-2">
                 {Object.values(PRESET_CAMPI).map((preset) => {
@@ -629,7 +652,7 @@ export default function AdminLista() {
                       disabled={salvataggioCampi}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 touch-target ${
                         isAttivo
-                          ? 'bg-[#25570A] text-white shadow-xs'
+                          ? 'bg-[#25570A] text-white shadow-xs ring-2 ring-[#6BB221]/30'
                           : 'bg-[#F2F3EB] hover:bg-[#E5E7DC] text-[#282B27] border border-[#B7BEA9]/40'
                       }`}
                     >
@@ -640,79 +663,19 @@ export default function AdminLista() {
                 })}
               </div>
             </div>
+
+            {/* Tasto Call to Action per aprire l'editor mockup di prova */}
+            <Link
+              to="/admin/visibilita"
+              className="mt-4 w-full py-3 px-4 bg-[#1C201C] hover:bg-[#25570A] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between shadow-xs transition-all touch-target active:scale-98 group"
+            >
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-[#6BB221]" />
+                <span>Apri Mockup Pianta con Flag (Editor di Prova)</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
-
-          {/* Sezione dettagliata con flag per ogni singolo campo (espandibile) */}
-          {pannelloCampiAperto && (
-            <div className="p-4 sm:p-5 bg-stone-50/70 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
-                  Singoli Campi Scheda & Dettagli Cliente
-                </span>
-                <span className="text-[11px] font-semibold text-[#25570A]">
-                  {Object.values(campiVisibili).filter(Boolean).length} di {ELENCO_CAMPI.length} visibili
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {ELENCO_CAMPI.map((campo) => {
-                  const attivo = Boolean(campiVisibili[campo.chiave]);
-                  return (
-                    <div
-                      key={campo.chiave}
-                      onClick={() => handleToggleCampo(campo.chiave)}
-                      className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none touch-target ${
-                        attivo
-                          ? 'bg-white border-[#25570A]/30 shadow-xs'
-                          : 'bg-stone-100/70 border-stone-200 opacity-75'
-                      }`}
-                    >
-                      <div className="min-w-0 pr-2">
-                        <div className="flex items-center gap-2">
-                          <span className={`font-bold text-xs ${attivo ? 'text-[#1C201C]' : 'text-stone-500'}`}>
-                            {campo.etichetta}
-                          </span>
-                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 uppercase">
-                            {campo.categoria}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-stone-500 mt-0.5 truncate">
-                          {campo.descrizione}
-                        </p>
-                      </div>
-
-                      {/* Switch iOS/Tailwind touch-target */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleCampo(campo.chiave);
-                        }}
-                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          attivo ? 'bg-[#25570A]' : 'bg-stone-300'
-                        }`}
-                        role="switch"
-                        aria-checked={attivo}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                            attivo ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        >
-                          {attivo ? (
-                            <Check className="w-3 h-3 text-[#25570A] stroke-[3]" />
-                          ) : (
-                            <X className="w-3 h-3 text-stone-400 stroke-[2.5]" />
-                          )}
-                        </span>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Barra di Ricerca con Tasto Cancella Rapido (X) & Filtro Categoria */}

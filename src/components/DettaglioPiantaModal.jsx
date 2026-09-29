@@ -186,38 +186,54 @@ export default function DettaglioPiantaModal({ pianta, validoFino, campiVisibili
           {/* Tabella Dati e Logistica aggiornata per il vaso selezionato */}
           <div className="pt-2 border-t border-[#B7BEA9]/30">
             <div className="grid grid-cols-2 gap-2.5 text-xs">
-              {/* Disponibilità Vaso Selezionato */}
-              <div className={`p-3 rounded-xl border border-[#25570A]/20 bg-[#25570A]/10 ${!vis.giacenza ? 'col-span-2' : ''}`}>
-                <span className="text-[#25570A] block text-[11px] font-bold flex items-center justify-between gap-1">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
-                    {vis.giacenza 
-                      ? `Disponibilità ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`
-                      : `Stato Fornitura ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`}
+              {/* Disponibilità Vendita (se visibile) */}
+              {vis.disponibile && (
+                <div className={`p-3 rounded-xl border border-[#25570A]/20 bg-[#25570A]/10 ${!vis.giacenza ? 'col-span-2' : ''}`}>
+                  <span className="text-[#25570A] block text-[11px] font-bold flex items-center justify-between gap-1">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
+                      {`Disponibilità ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`}
+                    </span>
                   </span>
-                </span>
-                <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
-                  {vis.giacenza
-                    ? (dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'Disponibile')
-                    : 'Pronto per il carico'}
-                </span>
-                {validoFino && (
-                  <span className="text-[10px] text-[#25570A]/85 font-bold block mt-1">
-                    Valide fino al {validoFino}
+                  <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
+                    {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'Disponibile'}
                   </span>
-                )}
-              </div>
+                  {validoFino && (
+                    <span className="text-[10px] text-[#25570A]/85 font-bold block mt-1">
+                      Valide fino al {validoFino}
+                    </span>
+                  )}
+                </div>
+              )}
 
-              {/* Giacenza Magazzino (visibile solo se flag attivo) */}
+              {/* Giacenza Magazzino (se visibile) */}
               {vis.giacenza && (
-                <div className="bg-[#F2F3EB] p-3 rounded-xl border border-[#B7BEA9]/40">
-                  <span className="text-[#282B27]/60 block text-[11px] font-semibold flex items-center gap-1">
-                    <Warehouse className="w-3.5 h-3.5 text-[#25570A]" />
+                <div className={`p-3 rounded-xl border border-amber-300 bg-amber-50/70 ${!vis.disponibile ? 'col-span-2' : ''}`}>
+                  <span className="text-amber-900 block text-[11px] font-semibold flex items-center gap-1">
+                    <Warehouse className="w-3.5 h-3.5 text-amber-700" />
                     Giacenza magazzino
                   </span>
-                  <span className="font-bold text-[#282B27] text-base mt-0.5 block">
+                  <span className="font-bold text-amber-950 text-base mt-0.5 block">
                     {giacCorrente !== null ? `${Number(giacCorrente).toLocaleString('it-IT')} pz` : '-'}
                   </span>
+                </div>
+              )}
+
+              {/* Se né disponibilità vendita né giacenza sono visibili: Stato Fornitura */}
+              {!vis.disponibile && !vis.giacenza && (
+                <div className="col-span-2 p-3 rounded-xl border border-[#25570A]/20 bg-[#25570A]/10">
+                  <span className="text-[#25570A] block text-[11px] font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#6BB221]" />
+                    {`Stato Fornitura ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`}
+                  </span>
+                  <span className="font-extrabold text-[#25570A] text-base mt-0.5 block">
+                    Pronto in serra per il carico
+                  </span>
+                  {validoFino && (
+                    <span className="text-[10px] text-[#25570A]/85 font-bold block mt-1">
+                      Listino valido fino al {validoFino}
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -301,14 +317,20 @@ export default function DettaglioPiantaModal({ pianta, validoFino, campiVisibili
         <div className="p-4 sm:p-5 bg-[#F2F3EB] border-t border-[#B7BEA9]/40 flex items-center justify-between gap-4 flex-shrink-0">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/60 block">
-              {vis.giacenza
-                ? `Disponibili ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`
+              {vis.disponibile
+                ? `Disponibilità ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`
+                : vis.giacenza
+                ? `Giacenza ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`
                 : `Stato fornitura ${vasoCorrente && vis.vaso_cm ? `(Ø ${vasoCorrente} cm)` : ''}`}
             </span>
             <div className="flex items-baseline gap-2">
-              {vis.giacenza ? (
+              {vis.disponibile ? (
                 <span className="text-xl sm:text-2xl font-extrabold text-[#25570A]">
                   {dispCorrente !== null ? `${Number(dispCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
+                </span>
+              ) : vis.giacenza ? (
+                <span className="text-xl sm:text-2xl font-extrabold text-amber-800">
+                  {giacCorrente !== null ? `${Number(giacCorrente).toLocaleString('it-IT')} pz` : 'In vivaio'}
                 </span>
               ) : (
                 <span className="text-lg sm:text-xl font-extrabold text-[#25570A] flex items-center gap-2">

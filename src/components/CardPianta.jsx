@@ -56,7 +56,7 @@ export default function CardPianta({ pianta, onOpenDetail, campiVisibili, mostra
     >
       {/* 1. ZONA FOTO CON OVERLAY & BADGE MINIMALE */}
       <div className="relative aspect-[4/3] w-full bg-[#E5E7DC]/50 overflow-hidden">
-        {imgSource ? (
+        {vis.foto && imgSource ? (
           <img
             key={imgSource}
             src={imgSource}
@@ -79,7 +79,7 @@ export default function CardPianta({ pianta, onOpenDetail, campiVisibili, mostra
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
 
         {/* Categoria minimale */}
-        {categoria && (
+        {vis.categoria && categoria && (
           <div className="absolute top-3 left-3 bg-[#1A3E07]/80 backdrop-blur-md text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border border-white/15">
             {categoria}
           </div>
@@ -171,16 +171,25 @@ export default function CardPianta({ pianta, onOpenDetail, campiVisibili, mostra
         <div className="mt-5 pt-3 border-t border-[#25570A]/10 flex items-center justify-between">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#282B27]/50 block tracking-wider leading-none mb-1">
-              {vis.giacenza
+              {vis.disponibile
                 ? `Disponibilità ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`
+                : vis.giacenza
+                ? `Giacenza ${elencoVarianti.length > 1 && vasoCorrente ? `Ø ${vasoCorrente}` : ''}`
                 : `Stato lotto ${elencoVarianti.length > 1 && vasoCorrente && vis.vaso_cm ? `Ø ${vasoCorrente}` : ''}`}
             </span>
-            {vis.giacenza ? (
+            {vis.disponibile ? (
               <div className="flex items-baseline gap-1">
                 <span className="text-xl sm:text-2xl font-bold text-[#25570A] leading-none">
                   {dispCorrente !== null ? Number(dispCorrente).toLocaleString('it-IT') : '0'}
                 </span>
                 <span className="text-xs font-semibold text-[#25570A]/70">esemplari</span>
+              </div>
+            ) : vis.giacenza ? (
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl sm:text-2xl font-bold text-amber-800 leading-none">
+                  {giacCorrente !== null ? Number(giacCorrente).toLocaleString('it-IT') : '0'}
+                </span>
+                <span className="text-xs font-semibold text-amber-800/70">in magazzino</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5 pt-0.5">
