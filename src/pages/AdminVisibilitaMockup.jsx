@@ -257,7 +257,7 @@ export default function AdminVisibilitaMockup() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 pt-4 sm:pt-6 space-y-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-5">
         {/* Banner esplicativo */}
         <div className="bg-[#25570A] text-white p-4 sm:p-5 rounded-3xl shadow-sm border border-[#357C0E]/50">
           <div className="flex items-start gap-3">
@@ -269,14 +269,14 @@ export default function AdminVisibilitaMockup() {
                 Configura i campi visibili ai clienti sul mockup della pianta
               </h2>
               <p className="text-xs text-white/80 mt-1 leading-relaxed">
-                Questa scheda è un <strong>mockup dimostrativo</strong>: usa il <strong className="text-[#6BB221]">flag a destra di ogni campo</strong> per decidere cosa mostrare o nascondere ai clienti nel catalogo pubblico.
+                Questa scheda è un <strong>mockup dimostrativo</strong>: usa i <strong className="text-[#6BB221]">flag a destra</strong> per decidere cosa mostrare o nascondere ai clienti. L'anteprima a destra si aggiorna in tempo reale.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Tab di navigazione tra Mockup Editor e Anteprima Card Cliente */}
-        <div className="flex items-center justify-between gap-2 bg-white p-1.5 rounded-2xl border border-[#1C201C]/10 shadow-xs">
+        {/* Tab di navigazione tra Mockup Editor e Anteprima Card Cliente: VISIBILE SOLO SU SMARTPHONE (< lg) */}
+        <div className="lg:hidden flex items-center justify-between gap-2 bg-white p-1.5 rounded-2xl border border-[#1C201C]/10 shadow-xs">
           <button
             type="button"
             onClick={() => setVistaAttiva('editor')}
@@ -287,7 +287,7 @@ export default function AdminVisibilitaMockup() {
             }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Mockup Scheda Editor (con Flag)</span>
+            <span>Mockup Scheda (Flag)</span>
           </button>
 
           <button
@@ -300,13 +300,18 @@ export default function AdminVisibilitaMockup() {
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Anteprima Card Cliente Live</span>
+            <span>Anteprima Card Live</span>
           </button>
         </div>
 
-        {/* VISTA 1: MOCKUP EDITOR DI PROVA (Esattamente identico a AdminForm.jsx) */}
-        {vistaAttiva === 'editor' && (
-          <div className="bg-white p-5 sm:p-8 rounded-3xl border border-[#1C201C]/10 shadow-xs space-y-7 animate-in fade-in duration-200">
+        {/* LAYOUT PRINCIPALE: GRIGLIA A 2 COLONNE SU DESKTOP (SINISTRA FLAG, DESTRA ANTEPRIMA LIVE) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          
+          {/* COLONNA SINISTRA: MOCKUP EDITOR CON TUTTI I FLAG */}
+          <div className={`lg:col-span-7 xl:col-span-7 ${
+            vistaAttiva !== 'editor' ? 'hidden lg:block' : 'block'
+          }`}>
+            <div className="bg-white p-5 sm:p-7 rounded-3xl border border-[#1C201C]/10 shadow-xs space-y-7 animate-in fade-in duration-200">
             
             {/* Banner di avviso: Scheda dimostrativa vuota */}
             <div className="p-4 bg-amber-50/80 border border-amber-200 rounded-2xl flex items-start gap-3 text-xs text-amber-950">
@@ -721,24 +726,43 @@ export default function AdminVisibilitaMockup() {
               </div>
             </div>
 
+            </div>
           </div>
-        )}
 
-        {/* VISTA 2: ANTEPRIMA CARD CLIENTE LIVE */}
-        {vistaAttiva === 'anteprima_card' && (
-          <div className="space-y-4 animate-in fade-in duration-200">
-            <div className="bg-white p-4 rounded-2xl border border-stone-200 text-xs text-stone-600 flex items-center justify-between">
-              <span>Questa è l'anteprima esatta di come apparirà la pianta al cliente con le impostazioni correnti:</span>
+          {/* COLONNA DESTRA: ANTEPRIMA CARD CLIENTE IN TEMPO REALE */}
+          <div className={`lg:col-span-5 xl:col-span-5 lg:sticky lg:top-24 space-y-4 ${
+            vistaAttiva !== 'anteprima_card' ? 'hidden lg:block' : 'block'
+          }`}>
+            {/* Header Anteprima */}
+            <div className="bg-white p-4 sm:p-5 rounded-3xl border border-[#1C201C]/10 shadow-xs flex items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-sm text-[#1C201C]">
+                    Anteprima Card Cliente
+                  </h3>
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#25570A]/10 text-[#25570A] border border-[#25570A]/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#6BB221] animate-pulse"></span>
+                    Live
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#1C201C]/60 mt-0.5">
+                  Si aggiorna all'istante quando attivi o disattivi i flag a sinistra.
+                </p>
+              </div>
+
+              {/* Tasto torna ai flag visibile solo su mobile */}
               <button
                 type="button"
                 onClick={() => setVistaAttiva('editor')}
-                className="px-3 py-1 bg-[#25570A] text-white font-bold rounded-lg text-xs"
+                className="lg:hidden px-3 py-1.5 bg-[#25570A] text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-xs touch-target"
               >
-                Torna a Modificare i Flag
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>Modifica Flag</span>
               </button>
             </div>
 
-            <div className="max-w-sm mx-auto">
+            {/* Card Pianta Live con proporzioni ottimali */}
+            <div className="max-w-md mx-auto w-full">
               <CardPianta
                 pianta={piantaMockup}
                 campiVisibili={campiVisibili}
@@ -747,8 +771,20 @@ export default function AdminVisibilitaMockup() {
                 onOpenLightbox={() => {}}
               />
             </div>
+
+            {/* Box informativo aggiuntivo */}
+            <div className="p-4 bg-[#F2F3EB] rounded-2xl border border-[#B7BEA9]/50 text-xs text-[#282B27]/80 leading-relaxed space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-[#25570A]">
+                <Eye className="w-4 h-4 text-[#6BB221]" />
+                <span>Cosa vedono i clienti nel catalogo pubblico:</span>
+              </div>
+              <p>
+                I campi disattivati col flag a sinistra vengono rimossi immediatamente sia dalla card principale sia dalla scheda dettagli di tutte le piante.
+              </p>
+            </div>
           </div>
-        )}
+
+        </div>
 
         {/* Tasto Flottante per tornare alla Lista Piante */}
         <div className="pt-6 pb-12 text-center">
